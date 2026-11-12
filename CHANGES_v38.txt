@@ -1,0 +1,8 @@
+SevaSphere v38 – WhatsApp Scan & Print + Header Refinement
+
+- Added tools_whatsapp_scan_print.html from the supplied WhatsApp Print.html.
+- Removed the older WhatsApp Image Print page and its category/registry listing.
+- Updated chatbot discovery metadata and sitemap for the replacement tool.
+- Corrected header balance: compact SevaSphere logo on the left and navigation on the right; hamburger menu appears on narrower screens.
+- Kept the approved SevaSphere emerald/teal/blue/purple background and theme palette from v37.
+- Existing tool logic and scripts were retained; test the new tool in a browser before publishing.

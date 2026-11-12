@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC VLE TOOLS Pro Studio â€” Document &amp; Photo Tools</title>
+<!--
+  Pro Studio v8
+  - Theme button (light / dark, header colour, button colour, background)
+  - Background remover: AI answer is checked; colour cut-out never deletes the subject; Erase + Restore brushes
+  - Signature remover rebuilt (shadows, ruled paper, table edges, pencil); ink colour: Original / Black / Blue / any; PNG trimmed to the signature
+  - Print panel: Photo sheet (sizes list, A4 plain / glossy, separate counts for Pane 1 and Pane 2, frame colour, more sheets),
+    ID card (Aadhaar both panes, PAN Pane 1 only)
+  - Frame default colour is black
+-->
+<script>
+/* Pro Studio theme: runs in <head> so the saved look is applied before the first paint. */
+(function(){
+  var KEY='ps_theme';
+  var HEADS=[['Navy','#11296c','#1a3fa6'],['Purple','#3b0f8f','#6d28d9'],['Green','#0b3d2e','#16794f'],['Teal','#0b3a46','#0e7490'],['Maroon','#5a0f24','#9f1239'],['Slate','#1f2937','#475569'],['Orange','#7c2d12','#c2410c']];
+  var ACCENTS=[['Orange','#ff9800','#fb923c','#ea580c','#9a3412','rgba(234,88,12,.4)'],['Blue','#2563eb','#60a5fa','#2563eb','#1e3a8a','rgba(37,99,235,.4)'],['Green','#16a34a','#4ade80','#16a34a','#14532d','rgba(22,163,74,.4)'],['Pink','#e11d48','#f472b6','#e11d48','#881337','rgba(225,29,72,.4)'],['Purple','#9333ea','#c084fc','#9333ea','#581c87','rgba(147,51,234,.4)'],['Cyan','#0891b2','#22d3ee','#0891b2','#155e75','rgba(8,145,178,.45)']];
+  var BGL=[['Soft blue','#f1f3fa'],['White','#ffffff'],['Cream','#fbf4e6'],['Mint','#e8f5ee'],['Grey','#e9ecf1']];
+  var BGD=[['Midnight','#0e1320'],['Black','#05070c'],['Charcoal','#1a1d24'],['Deep blue','#0b1730'],['Plum','#1a1024']];
+  var DEF={mode:'light',head:0,accent:0,bgL:'#f1f3fa',bgD:'#0e1320'};
+  function load(){try{var t=JSON.parse(localStorage.getItem(KEY)||'null');if(t&&typeof t==='object')return Object.assign({},DEF,t)}catch(e){}return Object.assign({},DEF)}
+  function save(t){try{localStorage.setItem(KEY,JSON.stringify(t))}catch(e){}}
+  function apply(t){
+    var r=document.documentElement,h=HEADS[t.head]||HEADS[0],a=ACCENTS[t.accent]||ACCENTS[0],s=r.style;
+    r.setAttribute('data-theme',t.mode==='dark'?'dark':'light');
+    s.setProperty('--head1',h[1]);s.setProperty('--head2',h[2]);
+    s.setProperty('--accent',a[1]);s.setProperty('--pri1',a[2]);s.setProperty('--pri2',a[3]);s.setProperty('--priedge',a[4]);s.setProperty('--priglow',a[5]);
+    s.setProperty('--bg',t.mode==='dark'?t.bgD:t.bgL);
+  }
+  var cur=load();apply(cur);
+  window.PSTheme={KEY:KEY,HEADS:HEADS,ACCENTS:ACCENTS,BGL:BGL,BGD:BGD,DEF:DEF,get:function(){return cur},set:function(p){cur=Object.assign({},cur,p);apply(cur);save(cur);return cur},reset:function(){cur=Object.assign({},DEF);apply(cur);save(cur);return cur}};
+})();
+
+</script>
+<style>
+/* ===== Pro Studio v7: colours, 3D buttons and cards taken from CSC VLE TOOLS v29 (csc-system.css / layout3d.css) ===== */
+:root{
+  --brand:#1a3fa6; --brand-strong:#11296c; --accent:#ff9800; --accent-strong:#e68600; --accent-soft:#fff3df;
+  --bg:#f1f3fa; --soft:#e4e8f4; --soft-2:#f6f8fd; --line:#d5dce4; --line-2:#c3cde6; --ink:#1b2430; --muted:#5a6a85;
+  --pin:#00e5ff; --tabc:#0891b2;
+  --title:#11296c; --btnink:#1a3fa6; --head1:#11296c; --head2:#1a3fa6;
+  --pri1:#fb923c; --pri2:#ea580c; --priedge:#9a3412; --priglow:rgba(234,88,12,.4);
+  --cv-bg:#e9edf7; --cv1:#dfe5f3; --cv2:#eef1f9; --track:#cdd6ec; --status-bg:rgba(255,255,255,.94); --loading-bg:rgba(241,243,250,.86); --shadow:rgba(20,40,110,.12);
+  /* names used by the unchanged canvas rules */
+  --panel:#fff; --border:var(--line); --border-focus:var(--brand); --text:var(--ink); --accent-hover:var(--accent-strong);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;scrollbar-width:thin;scrollbar-color:#aab6d6 transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-size:13px;display:flex;flex-direction:column;overflow:hidden}
+svg.ic{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Site colour sets (same gradients and edges as the v29 header buttons) ---------- */
+.c-orange{--g1:#fb923c;--g2:#ea580c;--edge:#9a3412;--glow:rgba(234,88,12,.45);--tint:#fff1e6;--txt:#c2410c}
+.c-cyan{--g1:#22d3ee;--g2:#0891b2;--edge:#155e75;--glow:rgba(8,145,178,.45);--tint:#e3f8fc;--txt:#0e7490}
+.c-pink{--g1:#f472b6;--g2:#e11d48;--edge:#881337;--glow:rgba(225,29,72,.4);--tint:#fde8ef;--txt:#be123c}
+.c-green{--g1:#4ade80;--g2:#16a34a;--edge:#14532d;--glow:rgba(22,163,74,.4);--tint:#e5f8ec;--txt:#15803d}
+.c-purple{--g1:#c084fc;--g2:#9333ea;--edge:#581c87;--glow:rgba(147,51,234,.4);--tint:#f2e8fe;--txt:#7e22ce}
+.c-blue{--g1:#60a5fa;--g2:#2563eb;--edge:#1e3a8a;--glow:rgba(37,99,235,.4);--tint:#e6efff;--txt:#1d4ed8}
+.c-violet{--g1:#a78bfa;--g2:#7c3aed;--edge:#3b0f8f;--glow:rgba(124,58,237,.5)}
+
+/* ---------- Buttons ---------- */
+.btn,select,input[type=number]{font:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 13px;border-radius:11px;border:1.5px solid var(--line-2);background:var(--panel);color:var(--btnink);font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 3px 0 var(--line-2);transition:transform .12s,box-shadow .12s,background .12s}
+.btn:hover{background:var(--soft-2);transform:translateY(-1px);box-shadow:0 4px 0 var(--line-2)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line-2)}
+.btn.icon{width:36px;padding:0}
+/* solid 3D buttons: orange = main action, like Home / Explore on the site */
+.btn.pri,.btn.b3,.btn.tgl[aria-pressed=true],.btn.tgl.on,.btn.eraser-on,.btn.danger{border:0;color:#fff;background:linear-gradient(160deg,var(--g1),var(--g2));box-shadow:0 4px 0 var(--edge),0 8px 12px var(--glow),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 6px rgba(0,0,0,.15);text-shadow:0 1px 0 rgba(0,0,0,.18)}
+.btn.pri{--g1:var(--pri1);--g2:var(--pri2);--edge:var(--priedge);--glow:var(--priglow)}
+.btn.tgl[aria-pressed=true],.btn.tgl.on,.btn.eraser-on{--g1:#60a5fa;--g2:#2563eb;--edge:#1e3a8a;--glow:rgba(37,99,235,.35)}
+.btn.danger{--g1:#f472b6;--g2:#e11d48;--edge:#881337;--glow:rgba(225,29,72,.35)}
+.btn.pri:hover,.btn.b3:hover,.btn.tgl[aria-pressed=true]:hover,.btn.danger:hover{filter:brightness(1.07);transform:translateY(-2px);background:linear-gradient(160deg,var(--g1),var(--g2));box-shadow:0 6px 0 var(--edge),0 12px 16px var(--glow),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 6px rgba(0,0,0,.15)}
+.btn.pri:active,.btn.b3:active,.btn.tgl[aria-pressed=true]:active,.btn.danger:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.btn.quiet{background:transparent;border-color:transparent;box-shadow:none;color:var(--muted)}
+.btn.quiet:hover{background:var(--soft);transform:none;box-shadow:none;color:var(--btnink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,select:focus-visible,input:focus-visible,.tab:focus-visible,.swatch:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+select,input[type=number]{height:34px;background:var(--panel);color:var(--ink);border:1.5px solid var(--line-2);border-radius:10px;padding:0 10px;font-size:12.5px;font-weight:600}
+input[type=range]{accent-color:var(--accent);cursor:pointer;min-width:0}
+input[type=color]{width:34px;height:34px;padding:3px;border:1.5px solid var(--line-2);border-radius:10px;background:var(--panel);cursor:pointer}
+
+/* ---------- App bar: same navy gradient and orange edge as the site header ---------- */
+.appbar{flex:0 0 62px;height:62px;display:flex;align-items:center;gap:16px;padding:0 16px;background:linear-gradient(100deg,var(--head1) 0%,var(--head2) 100%);border-bottom:3px solid var(--accent);box-shadow:0 8px 24px rgba(10,30,90,.2);position:relative;z-index:60}
+.brand{display:flex;align-items:center;gap:9px;padding:6px 16px 6px 8px;border-radius:16px;border:2px solid rgba(255,255,255,.55);color:#fff;background:linear-gradient(160deg,#a78bfa 0%,#7c3aed 55%,#5b21b6 100%);box-shadow:0 4px 0 #3b0f8f,0 10px 16px rgba(124,58,237,.45),inset 0 2px 0 rgba(255,255,255,.55),inset 0 -4px 8px rgba(0,0,0,.2);white-space:nowrap}
+.mark{width:30px;height:30px;border-radius:10px;background:#fff;color:#7c3aed;display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.mark svg{width:19px;height:19px;stroke-width:2.2}
+.brand b{display:block;font-size:16.5px;font-weight:800;line-height:1.1}
+.brand small{display:block;font-size:10.5px;opacity:.85;font-weight:600;margin-top:1px}
+.bar-group{display:flex;align-items:center;gap:8px;padding-left:16px;border-left:1px solid rgba(255,255,255,.22)}
+.appbar .btn.b3{height:36px;border-radius:13px;font-size:13px}
+.editing{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:rgba(255,255,255,.85);font-size:12px;font-weight:600;white-space:nowrap}
+.editing i{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(255,152,0,.3)}
+.editing b{color:#fff;font-weight:800}
+.spacer{flex:1}
+.bar-right{display:flex;align-items:center;gap:10px}
+
+/* ---------- Workspace: white cards, 18px radius, soft blue shadow (like the site's tool cards) ---------- */
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;flex:1 1 auto;min-height:0;min-width:0;overflow:hidden;padding:14px}
+.pane{container-type:inline-size;min-width:0;min-height:0;width:100%;height:100%;background:var(--panel);border-radius:18px;border-bottom:5px solid var(--tabc);box-shadow:0 8px 20px var(--shadow);display:flex;flex-direction:column;overflow:hidden;position:relative;transition:box-shadow .15s}
+.pane.is-active{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 65%,transparent),0 8px 20px var(--shadow)}
+.pane-top{flex:0 0 50px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px 0 14px;border-bottom:1px solid var(--line)}
+.pane-title{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:800;color:var(--title);min-width:0}
+.pane-no{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:var(--soft);color:var(--btnink);font-size:13px;font-weight:800}
+.pane.is-active .pane-no{background:linear-gradient(160deg,var(--pri1),var(--pri2));color:#fff;box-shadow:0 2px 0 var(--priedge)}
+.pane-title span.sub{color:var(--muted);font-weight:600;font-size:12.5px}
+.header-actions{display:flex;gap:8px}
+
+/* ---------- Tool tabs: one site colour per category, tray picks up the active colour ---------- */
+.tabs{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:9px 12px 9px;background:var(--panel)}
+.tab{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border:0;border-radius:11px;background:var(--tint);color:var(--txt);font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 3px 0 rgba(0,0,0,.09);transition:transform .12s,box-shadow .12s}
+.tab:hover{transform:translateY(-2px);box-shadow:0 5px 0 rgba(0,0,0,.1)}
+.tab[aria-selected=true]{color:#fff;background:linear-gradient(160deg,var(--g1),var(--g2));box-shadow:0 4px 0 var(--edge),0 8px 12px var(--glow),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 6px rgba(0,0,0,.15);text-shadow:0 1px 0 rgba(0,0,0,.18)}
+.pane.collapsed .tab[aria-selected=true]{background:var(--tint);color:var(--txt);box-shadow:0 3px 0 rgba(0,0,0,.09);text-shadow:none}
+.tab-end{margin-left:auto;display:flex;align-items:center}
+.tray{flex:0 0 auto;height:134px;padding:11px 14px;background:var(--soft-2);border-top:3px solid var(--tabc);border-bottom:1px solid var(--line);overflow:auto;position:relative}
+.pane.collapsed .tray{display:none}
+.panel[hidden]{display:none}
+.panel{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.cl{color:var(--muted);font-size:12px;font-weight:700;margin-right:2px}
+.fld{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;font-weight:700}
+.seg{display:inline-flex;align-items:center}
+.seg .seg-l{color:var(--muted);font-size:12px;font-weight:700;margin:0 8px 0 4px}
+.seg .btn{border-radius:0;box-shadow:none;border-width:1.5px}
+.seg .btn:nth-of-type(1){border-radius:11px 0 0 11px}
+.seg .btn:last-child{border-radius:0 11px 11px 0;margin-left:-1.5px}
+.seg .btn.tgl[aria-pressed=true],.seg .btn.tgl.on{box-shadow:inset 0 2px 0 rgba(255,255,255,.4)}
+.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px}
+.sl{display:grid;grid-template-columns:auto minmax(40px,1fr) 34px;align-items:center;gap:8px;min-width:0;height:26px}
+.sl .sl-l{color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
+.sl output{font-variant-numeric:tabular-nums;color:var(--title);font-size:11.5px;font-weight:800;text-align:right}
+.sl.dim{opacity:.45}
+.swatches{display:inline-flex;align-items:center;gap:8px}
+.swatch{width:28px;height:28px;border-radius:9px;border:2px solid var(--panel);outline:1.5px solid var(--line-2);cursor:pointer;padding:0;transition:transform .1s}
+.swatch:hover{transform:scale(1.12) translateY(-1px)}
+.swatch.none{background:repeating-conic-gradient(#c9d1e6 0 25%,#fff 0 50%) 0 0/10px 10px}
+.hint{color:var(--muted);font-size:12px;font-weight:600}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.step-n{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--soft);color:var(--btnink);font-size:11px;font-weight:800;text-shadow:none}
+.pri .step-n{background:rgba(255,255,255,.28);color:#fff}
+.pane:not(.has-image) .tray .panel{opacity:.5;pointer-events:none}
+.empty-note{display:none;position:absolute;right:14px;bottom:8px;color:var(--muted);font-size:11.5px;font-weight:600}
+.pane:not(.has-image) .empty-note{display:block}
+
+/* ---------- Print drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(17,41,108,.4);z-index:90;opacity:0;pointer-events:none;transition:opacity .18s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--bg);border-left:4px solid var(--accent);z-index:95;transform:translateX(102%);transition:transform .2s ease;display:flex;flex-direction:column;box-shadow:-18px 0 40px rgba(10,30,90,.3)}
+.drawer.on{transform:none}
+.drawer-head{flex:0 0 62px;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 18px;background:linear-gradient(100deg,var(--head1),var(--head2));color:#fff;font-size:17px;font-weight:800}
+.drawer-head .btn.quiet{color:#fff}.drawer-head .btn.quiet:hover{background:rgba(255,255,255,.18);color:#fff}
+.drawer-body{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.sheet{background:var(--panel);border-radius:18px;padding:16px;box-shadow:0 8px 20px var(--shadow);border-bottom:5px solid var(--tabc)}
+.sheet h3{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;color:var(--title);margin-bottom:2px}
+.sheet h3 .ic{color:var(--txt)}
+.sheet p{color:var(--muted);font-size:12px;font-weight:600;margin-bottom:12px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.fields label{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:12px;font-weight:700}
+.fields label.wide{grid-column:1/-1}
+.fields select,.fields input{width:100%}
+.sheet .btn.pri{width:100%;height:42px;font-size:14px;border-radius:13px}
+.btn-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.drawer-foot{padding:11px 18px;background:var(--panel);border-top:1px solid var(--line);color:var(--muted);font-size:11.5px;font-weight:600}
+
+/* ---------- Responsive ---------- */
+@container (max-width:640px){.tab span{display:none}.tab{padding:0 14px}}
+@media(max-width:1180px){.appbar .btn span.lbl{display:none}.appbar .btn:not(.icon){padding:0 12px}.brand small{display:none}}
+@media(max-width:900px){
+  body{overflow:auto}
+  .main{grid-template-columns:1fr;overflow:visible;flex:0 0 auto}
+  .pane{height:auto;min-height:560px}
+  .canvas-area{min-height:300px}
+  .bar-group .editing{display:none}
+  .sliders{grid-template-columns:1fr 1fr}
+  .tray{height:auto;min-height:134px}
+}
+@media(max-width:600px){
+  .appbar{gap:8px;padding:0 8px}
+  .brand{padding:6px 8px}.brand div{display:none}
+  .bar-group{padding-left:0;border-left:0;gap:6px}
+  .bar-right{gap:6px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.appbar,.main,.drawer,.scrim{display:none}}
+
+/* ---------- Theme menu ---------- */
+.bar-right{position:relative}
+.menu{position:absolute;right:0;top:calc(100% + 12px);width:320px;max-width:92vw;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 44px rgba(8,20,70,.4);padding:14px 16px 16px;z-index:80}
+.menu[hidden]{display:none}
+.menu h4{font-size:12px;font-weight:800;color:var(--muted);margin:12px 0 7px}
+.menu h4:first-child{margin-top:0}
+.opt-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.opt{width:30px;height:30px;border-radius:10px;border:2px solid var(--panel);outline:1.5px solid var(--line-2);cursor:pointer;padding:0;transition:transform .1s}
+.opt:hover{transform:scale(1.1)}
+.opt.on{outline:3px solid var(--accent)}
+.opt-seg{display:flex;gap:8px}
+.opt-seg .btn{flex:1}
+.menu .reset{margin-top:14px;width:100%}
+/* ---------- Photo sheet panel ---------- */
+.fitnote{font-size:12px;font-weight:700;margin:-2px 0 12px;padding:9px 11px;border-radius:11px;background:var(--soft-2);color:var(--muted);line-height:1.45}
+.fitnote.ok{color:#15803d;background:rgba(22,163,74,.1)}
+.fitnote.bad{color:#be123c;background:rgba(225,29,72,.1)}
+.sheetprev{position:relative;width:126px;height:178px;background:#fff;border:1px solid var(--line-2);border-radius:4px;margin:0 auto 12px;box-shadow:0 6px 14px var(--shadow)}
+.sheetprev i{position:absolute;display:block;border:1px solid rgba(0,0,0,.4);box-sizing:border-box}
+.fields .chk{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+.fields .chk input{width:auto}
+.fields .inline{display:flex;gap:8px;align-items:flex-end}
+.btn-row.two{grid-template-columns:1fr 1fr}
+.savebtn{margin-bottom:12px}
+/* ---------- Dark theme ---------- */
+html[data-theme=dark]{
+  --bg:#0e1320; --panel:#161d2e; --soft:#222b42; --soft-2:#1b2338; --line:#2a3550; --line-2:#3a476a; --ink:#e7ecf6; --muted:#9aa8c4;
+  --title:#dbe5ff; --btnink:#aac3ff; --accent-soft:rgba(255,152,0,.14);
+  --cv-bg:#141b2c; --cv1:#1a2236; --cv2:#212a42; --track:#33415f; --status-bg:rgba(22,29,46,.94); --loading-bg:rgba(14,19,32,.82); --shadow:rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+html[data-theme=dark] .c-orange{--tint:rgba(251,146,60,.16);--txt:#fdba74}
+html[data-theme=dark] .c-cyan{--tint:rgba(34,211,238,.14);--txt:#67e8f9}
+html[data-theme=dark] .c-pink{--tint:rgba(244,114,182,.15);--txt:#f9a8d4}
+html[data-theme=dark] .c-green{--tint:rgba(74,222,128,.14);--txt:#86efac}
+html[data-theme=dark] .c-purple{--tint:rgba(192,132,252,.16);--txt:#d8b4fe}
+html[data-theme=dark] .c-blue{--tint:rgba(96,165,250,.16);--txt:#93c5fd}
+html[data-theme=dark] .swatch.none{background:repeating-conic-gradient(#3b4764 0 25%,#1b2338 0 50%) 0 0/10px 10px}
+html[data-theme=dark] .scrim{background:rgba(0,0,0,.6)}
+
+.fields .inline[hidden]{display:none}
+@media(max-width:600px){
+  .appbar{gap:6px;padding:0 6px}
+  .appbar .btn.b3{padding:0 9px;height:34px}
+  .appbar .btn.b3>.ic:last-child:not(:first-child){display:none}
+  .bar-group{gap:4px}
+  .bar-right{gap:5px}
+  .menu{position:fixed;left:8px;right:8px;top:70px;width:auto;max-width:none}
+}
+@media(max-width:380px){.bar-group .btn:nth-child(3){display:none}}
+
+/* ---- canvas workspace (from v5.2) ---- */
+.eraser-mode { cursor:crosshair; }
+.eraser-cursor { position:absolute; display:none; pointer-events:none; z-index:45; border:2px solid #fbbf24; border-radius:50%; box-shadow:0 0 0 1px rgba(0,0,0,.55), 0 0 10px rgba(251,191,36,.45); transform:translate(-50%,-50%); }
+.canvas-area {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 8px;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+}
+.canvas-container {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  line-height: 0;
+  margin: auto;
+  flex: 0 1 auto;
+  overflow: visible;
+  touch-action: none;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+.canvas-container canvas {
+  max-width: calc(100% - 12px) !important;
+  max-height: calc(100% - 12px) !important;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+}
+.canvas-area .canvas-container {
+  max-width: 100%;
+  max-height: 100%;
+}
+.canvas-area .canvas-container canvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+.canvas-container.signature-transparent canvas { background: transparent; }
+.canvas-container.crop-only {
+  box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+}
+.canvas-container.drag-image {
+  cursor: move;
+}
+.crop-frame {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--pin);
+  pointer-events: none;
+  z-index: 15;
+  display: none;
+  border-radius: 4px;
+}
+.crop-frame.active {
+  display: block;
+}
+.polygon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: visible;
+}
+.pin {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  touch-action: none;
+  user-select: none;
+  background: var(--pin);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.22), 0 0 14px rgba(0, 229, 255, 0.85);
+  z-index: 40;
+  transition: background-color 0.1s ease;
+}
+.pin:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+.pin:active {
+  cursor: grabbing;
+  background: #f43f5e;
+}
+.upload {
+  border: 2px dashed #334155;
+  padding: 36px;
+  text-align: center;
+  border-radius: 12px;
+  width: 85%;
+  max-width: 320px;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.4);
+  transition: all 0.2s ease;
+}
+.upload:hover {
+  border-color: var(--accent);
+  background: rgba(16, 185, 129, 0.05);
+}
+.status {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(11, 15, 25, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  z-index: 30;
+}
+.loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 15, 25, 0.8);
+  backdrop-filter: blur(6px);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 50;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(16, 185, 129, 0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+/* ---- light workspace: the unchanged canvas rules above were dark-theme; these re-colour them to the v29 look ---- */
+.canvas-area{background-color:var(--cv-bg);background-image:repeating-conic-gradient(var(--cv1) 0 25%,var(--cv2) 0 50%);background-size:20px 20px;border-radius:0}
+.canvas-container{box-shadow:0 10px 24px rgba(20,40,110,.28);border-radius:6px}
+.canvas-container.crop-only{box-shadow:0 12px 28px rgba(20,40,110,.34)}
+.upload{background:var(--panel);border:2.5px dashed #9fb0dc;color:var(--ink);box-shadow:0 8px 20px rgba(20,40,110,.1)}
+.upload:hover{border-color:var(--accent);background:var(--accent-soft)}
+.upload strong{color:var(--title)}
+.status{background:var(--status-bg);color:var(--title);border:1px solid var(--line);font-weight:700;box-shadow:0 3px 8px rgba(20,40,110,.12)}
+.loading{background:var(--loading-bg);color:var(--btnink)}
+.spinner{border-color:rgba(26,63,166,.18);border-top-color:var(--accent)}
+.eraser-cursor{border-color:var(--accent);box-shadow:0 0 0 1px #fff,0 0 10px rgba(255,152,0,.55)}
+/* sliders: light track, orange thumb (site accent) */
+input[type=range]{-webkit-appearance:none;appearance:none;height:20px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:var(--track)}
+input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:var(--track)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-5px;border-radius:50%;background:linear-gradient(160deg,var(--pri1),var(--pri2));border:2px solid var(--panel);box-shadow:0 2px 0 var(--priedge),0 2px 6px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:linear-gradient(160deg,var(--pri1),var(--pri2));border:2px solid var(--panel);box-shadow:0 2px 0 var(--priedge)}
+
+</style>
+<meta name="application-name" content="CSC VLE TOOLS Pro Studio">  <meta name="description" content="Prepare documents, crop images, refine photos and print ID cards with CSC VLE TOOLS Pro Studio.">
+  <meta name="keywords" content="Pro Studio, photo resizer, passport photo, signature resize, image compress, KB size, job form photo, CSC VLE tools, CSC center tools, VLE tools, free online tool, Rohtak Haryana">
+  <meta name="author" content="CSC VLE TOOLS">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/pro-studio.html">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="CSC VLE TOOLS"><meta property="og:locale" content="en_IN">
+  <meta property="og:title" content="CSC VLE TOOLS Pro Studio â€” Document &amp; Photo Tools"><meta property="og:description" content="Prepare documents, crop images, refine photos and print ID cards with CSC VLE TOOLS Pro Studio."><meta property="og:url" content="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/pro-studio.html"><meta property="og:image" content="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/og-image.png">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CSC VLE TOOLS Pro Studio â€” Document &amp; Photo Tools"><meta name="twitter:description" content="Prepare documents, crop images, refine photos and print ID cards with CSC VLE TOOLS Pro Studio."><meta name="twitter:image" content="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/og-image.png">
+  <meta name="geo.region" content="IN-HR"><meta name="geo.placename" content="Rohtak, Haryana">
+  <meta name="theme-color" content="#1a3fa6">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="icon" href="favicon.ico?v=3" sizes="any">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Pro Studio", "url": "https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/pro-studio.html", "description": "Prepare documents, crop images, refine photos and print ID cards with CSC VLE TOOLS Pro Studio.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "browserRequirements": "Requires JavaScript", "inLanguage": "en-IN", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "INR"}, "publisher": {"@type": "Organization", "name": "CSC VLE TOOLS", "url": "https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/"}, {"@type": "ListItem", "position": 2, "name": "Pro Studio", "item": "https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/pro-studio.html"}]}</script>
+
+  <link rel="stylesheet" href="assets/css/sevasphere-theme.css?v=38">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+ <defs>
+  <symbol id="i-aperture" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m14.3 3.6-5.4 9.4M19.9 9.5H9M18.2 17.2l-5.3-9.5M9.7 20.3l5.4-9.4M4.1 14.5H15M5.8 6.8l5.3 9.5"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></symbol>
+  <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 24 24"><path d="M10 4H5v16h5"/><path d="m15 8 4 4-4 4"/><path d="M9 12h10"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m6 7 1 13h10l1-13"/></symbol>
+  <symbol id="i-rot-l" viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M4.6 14a8 8 0 1 0 2-8.4L4 10"/></symbol>
+  <symbol id="i-rot-r" viewBox="0 0 24 24"><path d="M20 4v6h-6"/><path d="M19.4 14a8 8 0 1 1-2-8.4L20 10"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h8M16 6h4M4 12h3M11 12h9M4 18h10M18 18h2"/><circle cx="14" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></symbol>
+  <symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="m19 15 .8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/></symbol>
+  <symbol id="i-frame" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="8" y="8" width="8" height="8"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.4-1.2-1.4-1.2-2.7 0-1 .8-1.6 1.8-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4-4a2 2 0 0 1 0-2.8L14 3.2a2 2 0 0 1 2.8 0l4 4a2 2 0 0 1 0 2.8L11 20"/><path d="M9 21h12"/><path d="m8 9 7 7"/></symbol>
+  <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3"/><path d="M8 21v-7h8v7"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-chev-u" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.8-2 3-2s2.5.5 3 2M14 10h4M14 14h3"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></symbol>
+  <symbol id="i-page" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+ </defs>
+</svg>
+
+<header class="appbar">
+  <div class="brand">
+    <span class="mark"><svg class="ic"><use href="#i-aperture"/></svg></span>
+    <div><b>Pro Studio</b><small>CSC VLE TOOLS</small></div>
+  </div>
+  <div class="bar-group" role="group" aria-label="Navigation">
+    <a class="btn b3 c-blue" href="index.html" title="Go to CSC VLE TOOLS home page" style="text-decoration:none"><span aria-hidden="true">ðŸ </span><span class="lbl">Home</span></a>
+    <button class="btn b3 c-blue" type="button" onclick="goBack()" title="Go back to the previous page"><span aria-hidden="true">â†</span><span class="lbl">Back</span></button>
+  </div>
+  <div class="bar-group" role="group" aria-label="Undo and history">
+    <button class="btn b3 c-cyan" type="button" onclick="undoAction(activePane)" title="Undo last change in the active pane"><svg class="ic"><use href="#i-undo"/></svg><span class="lbl">Undo</span></button>
+    <button class="btn b3 c-cyan" type="button" onclick="redoAction(activePane)" title="Redo in the active pane"><svg class="ic"><use href="#i-redo"/></svg><span class="lbl">Redo</span></button>
+    <button class="btn b3 c-cyan" type="button" onclick="showHistoryInfo(activePane)" title="Show history of the active pane"><svg class="ic"><use href="#i-history"/></svg><span class="lbl">History</span></button>
+    <span class="editing" title="Undo, Redo and History work on the pane you touched last"><i></i>Editing <b id="editing-name">Pane 1 Â· Front</b></span>
+  </div>
+  <div class="spacer"></div>
+  <div class="bar-right">
+    <button class="btn b3 c-purple" type="button" id="theme-open" aria-haspopup="true" aria-expanded="false" aria-controls="themeMenu" title="Change theme: light, dark and colours"><svg class="ic"><use href="#i-palette"/></svg><span class="lbl">Theme</span><svg class="ic"><use href="#i-chev-d"/></svg></button>
+    <div class="menu" id="themeMenu" role="dialog" aria-label="Theme" hidden></div>
+    <button class="btn b3 c-blue" type="button" id="print-open" aria-haspopup="dialog" aria-expanded="false" aria-controls="printDrawer"><svg class="ic"><use href="#i-print"/></svg><span class="lbl">Print</span><svg class="ic"><use href="#i-chev-d"/></svg></button>
+    <button class="btn pri" type="button" onclick="saveAllImages()" title="Save both panes as images"><svg class="ic"><use href="#i-export"/></svg><span class="lbl">Export</span></button>
+    <button class="btn icon b3 c-pink" type="button" onclick="exitStudio()" title="Exit Pro Studio" aria-label="Exit Pro Studio"><svg class="ic"><use href="#i-exit"/></svg></button>
+  </div>
+</header>
+
+<div class="main">
+  <section class="pane is-active" id="pane-1" aria-label="Pane 1, front"></section>
+  <section class="pane" id="pane-2" aria-label="Pane 2, back"></section>
+</div>
+
+<div class="scrim" id="printScrim"></div>
+<aside class="drawer" id="printDrawer" role="dialog" aria-modal="true" aria-label="Print" aria-hidden="true">
+  <div class="drawer-head"><span>Print</span><button class="btn icon quiet" type="button" id="print-close" aria-label="Close print panel"><svg class="ic"><use href="#i-close"/></svg></button></div>
+  <div class="drawer-body">
+    <section class="sheet c-green" style="--tabc:#16a34a">
+      <h3><svg class="ic"><use href="#i-grid"/></svg>Photo sheet</h3>
+      <p>Passport, stamp and sticker photos on A4. Choose how many from each pane.</p>
+      <div class="sheetprev" id="psPrev" aria-hidden="true"></div>
+      <div class="fields">
+        <label class="wide">Photo size<select id="psSize"></select></label>
+        <label>Width (mm)<input id="psW" type="number" min="10" max="150" step="0.5" value="35"></label>
+        <label>Height (mm)<input id="psH" type="number" min="10" max="200" step="0.5" value="45"></label>
+        <div class="wide inline" id="psSaveRow" hidden><label style="flex:1">Name for this size<input id="psName" placeholder="e.g. Book sticker"></label><button type="button" class="btn" id="psSave">Save to list</button></div>
+        <label>Paper<select id="psPaper"><option value="plain">A4 Plain paper</option><option value="glossy">A4 Glossy photo paper</option></select></label>
+        <label>Gap between photos (mm)<input id="psGap" type="number" min="0" max="20" step="0.5" value="2"></label>
+        <label>Pane 1 photos<select id="psC1"></select></label>
+        <label>Pane 2 photos<select id="psC2"></select></label>
+        <label class="chk wide"><input type="checkbox" id="psFrame" checked> Draw a frame around each photo (helps cutting)</label>
+        <label>Frame thickness<select id="psFt"><option value="0.15">Thin</option><option value="0.25" selected>Medium</option><option value="0.4">Thick</option><option value="0.6">Extra thick</option></select></label>
+        <label>Frame colour<input id="psFc" type="color" value="#000000"></label>
+        <label class="chk wide"><input type="checkbox" id="psMulti"> Allow more than one A4 sheet</label>
+      </div>
+      <div class="fitnote" id="psInfo"></div>
+      <button class="btn pri" type="button" id="psPrint" data-print="printPhotoSheetV2"><svg class="ic"><use href="#i-print"/></svg>Print photo sheet</button>
+    </section>
+
+    <section class="sheet c-blue" style="--tabc:#2563eb">
+      <h3><svg class="ic"><use href="#i-id"/></svg>ID card</h3>
+      <p>Actual card size (85.6 Ã— 54 mm) on A4. Aadhaar needs both panes; PAN needs only Pane 1.</p>
+      <div class="fields">
+        <label>Card type<select id="idCardType"><option>Aadhaar Card</option><option>PAN Card</option><option>Voter ID</option><option>Ayushman Card</option><option>e-Shram Card</option><option>Driving Licence</option><option>Other ID Card</option></select></label>
+        <label>Copies<input id="idCardCopies" type="number" min="1" max="20" step="1" value="1"></label>
+        <label class="wide">Print which panes<select id="idCardLayout"><option value="frontback">Both panes: Pane 1 (front) + Pane 2 (back)</option><option value="front">Pane 1 only (front)</option><option value="back">Pane 2 only (back)</option></select></label>
+        <label id="idGapRow">Gap between cards (mm)<input id="idCardGap" type="number" min="0" max="50" step="1" value="8"></label>
+        <label id="idTopRow">Front card from top (mm)<input id="idCardFrontTop" type="number" min="0" max="100" step="1" value="25"></label>
+        <label id="idBotRow">Back card from bottom (mm)<input id="idCardBackBottom" type="number" min="0" max="100" step="1" value="50"></label>
+      </div>
+      <div class="fitnote" id="idInfo"></div>
+      <button class="btn pri" type="button" data-print="printIDCardSmart"><svg class="ic"><use href="#i-print"/></svg>Print ID card</button>
+    </section>
+
+    <section class="sheet c-orange" style="--tabc:#ea580c">
+      <h3><svg class="ic"><use href="#i-page"/></svg>Full A4 page</h3>
+      <p>Print a pane as it is, filling the page.</p>
+      <div class="btn-row">
+        <button class="btn" type="button" data-print="printSinglePaneA4" data-arg="1">Pane 1</button>
+        <button class="btn" type="button" data-print="printSinglePaneA4" data-arg="2">Pane 2</button>
+        <button class="btn" type="button" data-print="triggerSafePrint">Both panes</button>
+      </div>
+    </section>
+  </div>
+  <div class="drawer-foot">Printing opens in a new window. If nothing opens, allow pop-ups for this page.</div>
+</aside>
+<iframe id="printFrame" style="display:none"></iframe>
+
+<script>
+/* v6 UI: builds the tool tabs of both panes from ONE template. Element ids are unchanged, so the studio engine below needs no edits. */
+(function(){
+  "use strict";
+  const ic=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+  const sl=(n,id,label,min,max,val,step,on,title)=>`<label class="sl" id="sl-${id}-${n}"${title?` title="${title}"`:''}><span class="sl-l">${label}</span><input type="range" id="${id}-${n}" min="${min}" max="${max}" value="${val}" step="${step}" oninput="${on}"><output data-for="${id}-${n}"></output></label>`;
+  const sw=(n,col,name)=>`<button type="button" class="swatch" style="background:${col}" title="${name}" aria-label="${name} background" onclick="setBGColor(${n},'${col}')"></button>`;
+  const TABS=[['adjust','sliders','Adjust','cyan'],['crop','crop','Crop','green'],['bg','palette','Background','pink'],['cut','cut','Cut-out','purple'],['sign','pen','Signature','blue']];
+  const PANELS={
+    adjust:n=>`
+      <div class="row">
+        <button type="button" class="btn icon" title="Rotate left 90Â°" aria-label="Rotate left 90 degrees" onclick="rotateImage(${n},-90)">${ic('rot-l')}</button>
+        <button type="button" class="btn icon" title="Rotate right 90Â°" aria-label="Rotate right 90 degrees" onclick="rotateImage(${n},90)">${ic('rot-r')}</button>
+        <button type="button" class="btn" title="Lighten shadows on a photographed document" onclick="removeShadow(${n})">${ic('sun')}Remove shadow</button>
+        <button type="button" class="btn" title="Sharpen and improve the picture" onclick="enhanceImage(${n})">${ic('spark')}Enhance photo</button>
+        <div class="seg" role="group" aria-label="Look preset"><span class="seg-l">Look</span><button type="button" class="btn tgl" id="m-doc-${n}" onclick="setMode(${n},'doc')">Document</button><button type="button" class="btn tgl" id="m-sig-${n}" onclick="setMode(${n},'sig')">Signature</button></div>
+      </div>
+      <div class="sliders">
+        ${sl(n,'fine-angle','Straighten',-15,15,0,.5,`processImage(${n})`)}
+        ${sl(n,'bright','Brightness',50,180,100,1,`processImage(${n})`)}
+        ${sl(n,'contrast','Contrast',50,250,100,1,`processImage(${n})`)}
+        ${sl(n,'shadow','Shadow clean',0,100,0,1,`processImage(${n})`)}
+        ${sl(n,'shadowfix','Fix strength',0,100,55,1,`if(state[${n}].shadowRemoved) applyShadowFix(${n})`,'Works after Remove shadow')}
+        ${sl(n,'shadowdetail','Fix detail',0,100,55,1,`if(state[${n}].shadowRemoved) applyShadowFix(${n})`,'Works after Remove shadow')}
+      </div>`,
+    crop:n=>`
+      <div class="row">
+        <label class="fld">Output size<select id="preset-${n}" onchange="applyPresetPreview(${n})"><option value="auto">Auto document</option><option value="passport">Passport 35Ã—45 mm</option><option value="idcard">ID card 85.6Ã—54 mm</option><option value="square">Square 51Ã—51 mm</option><option value="a4">A4 ratio</option></select></label>
+        <button type="button" class="btn pri" title="Cut the picture to the four corner pins" onclick="applySmartCropDewarp(${n})">${ic('crop')}Crop</button>
+        <button type="button" class="btn" title="Find the document corners automatically" onclick="autoCorners(${n})">${ic('spark')}Auto-detect corners</button>
+        <button type="button" class="btn" onclick="resetCrop(${n})">${ic('reset')}Reset</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn tgl" id="t-pins-${n}" aria-pressed="true" onclick="togglePins(${n})">${ic('pin')}Corner pins</button>
+        <button type="button" class="btn tgl" id="t-move-${n}" aria-pressed="false" title="Drag the picture inside the pane" onclick="toggleImageDrag(${n})">${ic('move')}Move picture</button>
+        <span class="cl" style="margin-left:6px">Frame</span>
+        <select id="frame-${n}" aria-label="Frame thickness in pixels" onchange="updateFrame(${n})"><option value="2">2 px</option><option value="3" selected>3 px</option><option value="4">4 px</option><option value="5">5 px</option></select>
+        <input type="color" id="frame-color-${n}" value="#000000" title="Frame colour (default black)" aria-label="Frame colour" onchange="updateFrame(${n})">
+        <button type="button" class="btn tgl" id="t-frame-${n}" aria-pressed="false" onclick="toggleFrame(${n})">${ic('frame')}Show frame</button>
+      </div>`,
+    bg:n=>`
+      <div class="row">
+        <span class="cl">Fill</span>
+        <span class="swatches">
+          <button type="button" class="swatch none" title="Transparent" aria-label="Transparent background" onclick="setBGColor(${n},'transparent')"></button>
+          ${sw(n,'#ffffff','White')}${sw(n,'#0066cc','Blue')}${sw(n,'#87ceeb','Sky blue')}${sw(n,'#ef4444','Red')}${sw(n,'#64748b','Grey')}
+          <input type="color" id="picker-${n}" value="#ffffff" title="Pick any colour" aria-label="Choose custom background colour" onchange="setBGColor(${n},this.value)">
+        </span>
+        <button type="button" class="btn" title="Keep this colour in the Saved list" onclick="saveBGColor(${n})">${ic('plus')}Save colour</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" onclick="chooseBGImage(${n})">${ic('image')}Background picture</button>
+        <input id="bg-file-${n}" type="file" accept="image/*" hidden onchange="loadBGImage(event,${n})">
+        <select id="bg-library-${n}" title="Your saved background colours" aria-label="Saved backgrounds" onchange="applySavedBG(${n},this.value)" style="max-width:160px"><option value="">Saved</option></select>
+      </div>`,
+    cut:n=>`
+      <div class="row">
+        <button type="button" class="btn pri" title="Removes the background. Signatures are detected automatically and keep their ink. Photos use AI (needs internet the first time)." onclick="smartRemoveBG(${n})">${ic('cut')}Remove background</button>
+        <div class="seg" role="group" aria-label="Touch-up brush"><button type="button" class="btn tgl" id="eraser-btn-${n}" aria-pressed="false" title="Rub out leftover background. Run Remove background first." onclick="setBrush(${n},'erase')">${ic('eraser')}Erase</button><button type="button" class="btn tgl" id="restore-btn-${n}" aria-pressed="false" title="Paint back parts that were removed by mistake" onclick="setBrush(${n},'restore')">${ic('reset')}Restore</button></div>
+        <label class="sl" style="width:190px" title="Brush size for Erase and Restore"><span class="sl-l">Brush</span><input type="range" id="eraser-size-${n}" min="4" max="120" value="28" step="2" oninput="updateEraserCursor(${n})"><output data-for="eraser-size-${n}"></output></label>
+      </div>
+      <div class="sliders">
+        ${sl(n,'bg-edge','Edge',0,100,55,1,`liveRefine(${n})`,'Higher = cut closer to the subject (and, for signatures, keep fainter strokes)')}
+        ${sl(n,'bg-clean','Clean',0,100,25,1,`liveRefine(${n})`,'Higher = remove more specks and fringe')}
+        ${sl(n,'bg-feather','Feather',0,100,35,1,`liveRefine(${n})`,'Higher = softer edge')}
+      </div>`,
+    sign:n=>`
+      <div class="steps">
+        <button type="button" class="btn" title="Boost contrast so thin strokes show clearly" onclick="setMode(${n},'sig')"><span class="step-n">1</span>Signature look</button>
+        <button type="button" class="btn" title="Makes the paper transparent and keeps only the ink" onclick="sigRemove(${n})"><span class="step-n">2</span>Remove paper</button>
+        <span class="cl" style="margin-left:6px">Ink</span>
+        <div class="seg" role="group" aria-label="Ink colour"><button type="button" class="btn tgl" id="ink-orig-${n}" aria-pressed="true" onclick="setInk(${n},'orig')">Original</button><button type="button" class="btn tgl" id="ink-black-${n}" aria-pressed="false" onclick="setInk(${n},'black')">Black</button><button type="button" class="btn tgl" id="ink-blue-${n}" aria-pressed="false" onclick="setInk(${n},'blue')">Blue</button></div>
+        <input type="color" id="signature-color-${n}" value="#123b9c" title="Pick any ink colour" aria-label="Signature ink colour" onchange="setSignatureColor(${n},this.value)">
+      </div>
+      <div class="row">
+        <button type="button" class="btn pri" onclick="saveSignaturePNG(${n})"><span class="step-n">3</span>Save PNG</button>
+        <button type="button" class="btn" onclick="copySignaturePNG(${n})">${ic('copy')}Copy PNG</button>
+        <span class="hint">Saved image is trimmed to the signature.</span>
+      </div>`
+  };
+  function paneHTML(n){
+    const label=n===1?'Front':'Back';
+    return `
+    <div class="pane-top">
+      <div class="pane-title"><span class="pane-no">${n}</span>${label}<span class="sub">Pane ${n}</span></div>
+      <div class="header-actions">
+        <button id="btn-change-${n}" type="button" class="btn" style="display:none" onclick="document.getElementById('file-${n}').click()">${ic('swap')}Change</button>
+        <button id="btn-delete-${n}" type="button" class="btn danger" style="display:none" onclick="deleteImage(${n})">${ic('trash')}Clear</button>
+        <button id="btn-upload-${n}" type="button" class="btn pri" onclick="document.getElementById('file-${n}').click()">${ic('upload')}Upload</button>
+      </div>
+      <input id="file-${n}" type="file" accept="image/*" hidden onchange="loadFile(event,${n})">
+    </div>
+    <div class="tabs" role="tablist" aria-label="Tools for pane ${n}">
+      ${TABS.map(([k,i,l,c],x)=>`<button type="button" class="tab c-${c}" role="tab" id="tab-${n}-${k}" aria-controls="panel-${n}-${k}" aria-selected="${x===0}" tabindex="${x===0?0:-1}" data-pane="${n}" data-tab="${k}" title="${l}">${ic(i)}<span>${l}</span></button>`).join('')}
+      <span class="tab-end"><button type="button" class="btn icon quiet" data-collapse="${n}" aria-expanded="true" title="Hide or show the tool tray" aria-label="Hide or show the tool tray">${ic('chev-u')}</button></span>
+    </div>
+    <div class="tray" id="tray-${n}">
+      ${TABS.map(([k],x)=>`<div class="panel" role="tabpanel" id="panel-${n}-${k}" aria-labelledby="tab-${n}-${k}"${x===0?'':' hidden'}>${PANELS[k](n)}</div>`).join('')}
+      <span class="empty-note">Upload a picture to use these tools</span>
+    </div>
+    <div class="canvas-area" id="box-${n}">
+      <div class="upload" id="drop-${n}"><strong>Drag and drop a picture here</strong><br><span class="note" style="color:var(--muted)">or click to choose a file</span></div>
+      <div class="canvas-container" id="container-${n}" style="display:none">
+        <canvas id="canvas-${n}"></canvas><div class="crop-frame" id="framebox-${n}"></div><div class="eraser-cursor" id="eraser-cursor-${n}"></div>
+        <svg class="polygon" id="svg-${n}"><polygon id="poly-${n}" points="" fill="#00e5ff26" stroke="#00e5ff" stroke-width="2" stroke-dasharray="5 3"/></svg>
+        <div class="pin" id="p${n}-0"></div><div class="pin" id="p${n}-1"></div><div class="pin" id="p${n}-2"></div><div class="pin" id="p${n}-3"></div>
+      </div>
+      <div class="status" id="status-${n}">Ready</div>
+      <div class="loading" id="loading-${n}"><div class="spinner"></div><span id="load-msg-${n}">Processing...</span></div>
+    </div>`;
+  }
+  [1,2].forEach(n=>{document.getElementById('pane-'+n).innerHTML=paneHTML(n)});
+})();
+
+</script>
+<script>
+"use strict";
+
+/* v5.2 AUDIT REFACTOR: canonical export/print renderer; expanded crop workspace; print popup no longer depends on opener callbacks. */
+const MP_VISION_VERSION = '0.10.35';
+const MP_VISION_CDN = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VISION_VERSION}`;
+const MP_WASM_CDN = `${MP_VISION_CDN}/wasm`;
+const MP_MULTI_MODEL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite';
+const BG_KEY = 'docfix_saved_backgrounds_v33';
+
+let imageSegmenterPromise = null;
+let lastSegmentationMask = {1:null, 2:null};
+let activePane = 1;
+
+const state = {
+  1:{origImg:null,currentImg:null,foregroundImg:null,shadowImg:null,bgImage:null,corners:[],mode:"normal",pinsVisible:true,fillColor:"transparent",dragHandlers:[],history:[],redo:[],dragImage:false,moveHandlersInstalled:false,offsetX:0,offsetY:0,bgImage:null,shadowRemoved:false,eraserOn:false,eraserCanvas:null,eraserDrawing:false,eraserHandlersInstalled:false},
+  2:{origImg:null,currentImg:null,foregroundImg:null,shadowImg:null,bgImage:null,corners:[],mode:"normal",pinsVisible:true,fillColor:"transparent",dragHandlers:[],history:[],redo:[],dragImage:false,moveHandlersInstalled:false,offsetX:0,offsetY:0,bgImage:null,shadowRemoved:false,eraserOn:false,eraserCanvas:null,eraserDrawing:false,eraserHandlersInstalled:false}
+};
+
+const PRESETS = {
+  auto:null,
+  passport:{ratio:35/45,width:413,height:531,label:"Passport 35Ã—45 mm @ 300 DPI"},
+  idcard:{ratio:85.6/54,width:1011,height:638,label:"ID Card 85.6Ã—54 mm @ 300 DPI"},
+  square:{ratio:1,width:602,height:602,label:"Square 51Ã—51 mm @ 300 DPI"},
+  a4:{ratio:210/297,width:2480,height:3508,label:"A4 @ 300 DPI"}
+};
+
+[1,2].forEach(id=>{
+  const pane=document.getElementById(`pane-${id}`);
+  pane.addEventListener('pointerdown',()=>activePane=id);
+  const box=document.getElementById(`box-${id}`);
+  box.addEventListener("dragover",e=>e.preventDefault());
+  box.addEventListener("drop",e=>{
+    e.preventDefault();
+    if(e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0],id);
+  });
+  document.getElementById(`drop-${id}`).addEventListener("click",()=>document.getElementById(`file-${id}`).click());
+  refreshBGLibrary(id);
+  setupEraser(id);
+});
+
+window.addEventListener('resize',()=>{fitPreviewToPane(1);fitPreviewToPane(2);});
+
+function setStatus(id,msg){document.getElementById(`status-${id}`).textContent=msg;}
+function loadFile(e,id){if(e.target.files?.[0])handleFile(e.target.files[0],id)}
+
+function handleFile(file,id){
+  if(!file.type.match(/^image\//)){
+    alert("Please select a valid image file.");
+    return;
+  }
+  const reader=new FileReader();
+  reader.onerror=()=>{
+    setStatus(id, "Error reading file.");
+    alert("Failed to read the selected file.");
+  };
+  reader.onload=evt=>{
+    const img=new Image();
+    img.onerror=()=>{
+      setStatus(id, "Error decoding image.");
+      alert("The selected file could not be decoded as an image.");
+    };
+    img.onload=()=>{
+      const s=state[id];
+      s.origImg=img;s.currentImg=img;s.foregroundImg=null;s.shadowImg=null;s.bgImage=null;s.fillColor="transparent";lastSegmentationMask[id]=null;s.mode="normal";document.getElementById(`container-${id}`)?.classList.remove('signature-transparent');s.history=[];s.redo=[];s.offsetX=0;s.offsetY=0;s.shadowRemoved=false;
+      document.getElementById(`drop-${id}`).style.display="none";
+      document.getElementById(`container-${id}`).style.display="inline-block";
+      document.getElementById(`btn-upload-${id}`).style.display="none";
+      document.getElementById(`btn-change-${id}`).style.display="inline-flex";
+      document.getElementById(`btn-delete-${id}`).style.display="inline-flex";
+      resetCrop(id);
+      fitPreviewToPane(id);
+      setStatus(id,`${img.naturalWidth} Ã— ${img.naturalHeight}px â€¢ 4-corner mode`);
+    };
+    img.src=evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function deleteImage(id){
+  const s=state[id];
+
+  // Deletion is a hard reset. Keeping old history here allowed Undo to
+  // resurrect an image that the user had explicitly cleared.
+  s.origImg=null;
+  s.currentImg=null;
+  s.foregroundImg=null;
+  s.shadowImg=null;
+  s.bgImage=null;
+  s.corners=[];
+  s.history=[];
+  s.redo=[];
+  s.fillColor="transparent";
+  s.mode="normal";
+  s.offsetX=0;
+  s.offsetY=0;
+  s.shadowRemoved=false;
+  s.dragImage=false;
+  s.eraserOn=false;
+  s.eraserCanvas=null;
+  s.eraserDrawing=false;
+  lastSegmentationMask[id]=null;
+
+  const container=document.getElementById(`container-${id}`);
+  container?.classList.remove('signature-transparent','eraser-mode','crop-only','drag-image');
+  document.getElementById(`eraser-btn-${id}`)?.classList.remove('eraser-on');
+
+  const frame=document.querySelector(`#container-${id} .crop-frame`);
+  if(frame)frame.classList.remove('active');
+
+  const c=document.getElementById(`canvas-${id}`);
+  if(c){
+    c.width=1;c.height=1;
+    c.getContext("2d")?.clearRect(0,0,1,1);
+  }
+
+  if(container)container.style.display="none";
+  document.getElementById(`drop-${id}`).style.display="block";
+  document.getElementById(`btn-upload-${id}`).style.display="inline-flex";
+  document.getElementById(`btn-change-${id}`).style.display="none";
+  document.getElementById(`btn-delete-${id}`).style.display="none";
+  document.getElementById(`file-${id}`).value="";
+  setStatus(id,"Ready");
+}
+
+function rotateImage(id,deg){
+  const s=state[id];
+  if(!s.currentImg)return;
+
+  // Preserve a real undo state. The old implementation called resetCrop()
+  // after pushHistory(), and resetCrop() cleared the history stack.
+  const previous=snapshot(id);
+  const src=s.currentImg;
+  const c=document.createElement("canvas");
+  const ctx=c.getContext("2d");
+  c.width=Math.abs(src.height);
+  c.height=Math.abs(src.width);
+  ctx.translate(c.width/2,c.height/2);
+  ctx.rotate(deg*Math.PI/180);
+  ctx.drawImage(src,-src.width/2,-src.height/2);
+
+  const img=new Image();
+  img.onload=()=>{
+    s.currentImg=img;
+    s.origImg=img;
+    s.foregroundImg=null;
+    s.shadowImg=null;
+    s.bgImage=null;
+    s.offsetX=0;
+    s.offsetY=0;
+    s.shadowRemoved=false;
+    s.eraserOn=false;
+    s.eraserCanvas=null;
+    lastSegmentationMask[id]=null;
+
+    document.getElementById(`fine-angle-${id}`).value=0;
+    document.getElementById(`shadow-${id}`).value=0;
+    document.getElementById(`contrast-${id}`).value=100;
+    document.getElementById(`bright-${id}`).value=100;
+    s.mode="normal";
+    s.fillColor="transparent";
+
+    const canvas=document.getElementById(`canvas-${id}`);
+    canvas.width=img.naturalWidth||img.width;
+    canvas.height=img.naturalHeight||img.height;
+
+    s.history.push(previous);
+    if(s.history.length>15)s.history.shift();
+    s.redo=[];
+
+    fitPreviewToPane(id);
+    processImage(id);
+    setPinsVisibility(id,true);
+
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const cr=canvas.getBoundingClientRect();
+      const br=document.getElementById(`container-${id}`).getBoundingClientRect();
+      const margin=.04;
+      const ox=cr.left-br.left,oy=cr.top-br.top,w=cr.width,h=cr.height;
+      s.corners=[
+        {x:ox+w*margin,y:oy+h*margin},
+        {x:ox+w*(1-margin),y:oy+h*margin},
+        {x:ox+w*(1-margin),y:oy+h*(1-margin)},
+        {x:ox+w*margin,y:oy+h*(1-margin)}
+      ];
+      updatePinsUI(id);
+      setupDragEvents(id);
+    }));
+    setStatus(id,`Rotated ${deg>0?'right':'left'} 90Â°`);
+  };
+  img.onerror=()=>{
+    setStatus(id,'Rotation failed');
+    alert('Could not rotate the image.');
+  };
+  img.src=c.toDataURL("image/png");
+}
+
+function setMode(id,mode){
+  const s=state[id];s.mode=mode;
+  if(mode==="doc"){
+    document.getElementById(`shadow-${id}`).value=60;
+    document.getElementById(`contrast-${id}`).value=140;
+    document.getElementById(`bright-${id}`).value=110;
+  }else if(mode==="sig"){
+    document.getElementById(`shadow-${id}`).value=0;
+    document.getElementById(`contrast-${id}`).value=180;
+    document.getElementById(`bright-${id}`).value=100;
+  }
+  processImage(id);
+}
+
+function resetCrop(id){
+  const s=state[id];if(!s.origImg)return;
+  document.getElementById(`fine-angle-${id}`).value=0;
+  document.getElementById(`shadow-${id}`).value=0;
+  document.getElementById(`contrast-${id}`).value=100;
+  document.getElementById(`bright-${id}`).value=100;
+  s.mode="normal";s.fillColor="transparent";s.currentImg=s.origImg;s.eraserOn=false;s.eraserCanvas=null;lastSegmentationMask[id]=null;document.getElementById(`container-${id}`).classList.remove('crop-only','signature-transparent','eraser-mode');document.getElementById(`eraser-btn-${id}`)?.classList.remove('eraser-on');s.foregroundImg=null;s.shadowImg=null;s.bgImage=null;s.offsetX=0;s.offsetY=0;s.shadowRemoved=false;s.history=[];s.redo=[];
+  const c=document.getElementById(`canvas-${id}`);c.width=s.currentImg.naturalWidth||s.currentImg.width;c.height=s.currentImg.naturalHeight||s.currentImg.height;
+  fitPreviewToPane(id);
+  processImage(id);
+  setPinsVisibility(id,true);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const canvas=document.getElementById(`canvas-${id}`),box=document.getElementById(`container-${id}`);
+    const cr=canvas.getBoundingClientRect(),br=box.getBoundingClientRect(),margin=.04;
+    const ox=cr.left-br.left,oy=cr.top-br.top,w=cr.width,h=cr.height;
+    s.corners=[{x:ox+w*margin,y:oy+h*margin},{x:ox+w*(1-margin),y:oy+h*margin},{x:ox+w*(1-margin),y:oy+h*(1-margin)},{x:ox+w*margin,y:oy+h*(1-margin)}];
+    updatePinsUI(id);setupDragEvents(id);
+  }));
+}
+
+function autoCorners(id){
+  const s=state[id];if(!s.currentImg)return;
+  pushHistory(id);
+  const canvas=document.getElementById(`canvas-${id}`),box=document.getElementById(`container-${id}`);
+  const cr=canvas.getBoundingClientRect(),br=box.getBoundingClientRect(),m=.025;
+  const ox=cr.left-br.left,oy=cr.top-br.top,w=cr.width,h=cr.height;
+  s.corners=[{x:ox+w*m,y:oy+h*m},{x:ox+w*(1-m),y:oy+h*m},{x:ox+w*(1-m),y:oy+h*(1-m)},{x:ox+w*m,y:oy+h*(1-m)}];
+  updatePinsUI(id);setPinsVisibility(id,true);
+  setStatus(id,"Auto 4 corners set â€¢ drag the large cyan handles to the document edges");
+}
+
+function applyPresetPreview(id){
+  const key=document.getElementById(`preset-${id}`).value;
+  if(key==="auto"){setStatus(id,"Output: original selected-corner ratio");return}
+  const p=PRESETS[key];
+  setStatus(id,`Output preset: ${p.label} â€¢ 4 corners will be adjusted to this ratio`);
+}
+
+function setPinsVisibility(id,visible){
+  const s=state[id];s.pinsVisible=visible;
+  document.getElementById(`svg-${id}`).style.display=visible?"block":"none";
+  for(let i=0;i<4;i++)document.getElementById(`p${id}-${i}`).style.display=visible?"block":"none";
+}
+function togglePins(id){setPinsVisibility(id,!state[id].pinsVisible)}
+
+function updatePinsUI(id){
+  const c=state[id].corners;if(c.length!==4)return;
+  document.getElementById(`poly-${id}`).setAttribute("points",c.map(p=>`${p.x},${p.y}`).join(" "));
+  c.forEach((p,i)=>{const pin=document.getElementById(`p${id}-${i}`);pin.style.left=`${p.x}px`;pin.style.top=`${p.y}px`});
+}
+
+function setupDragEvents(id){
+  const box=document.getElementById(`container-${id}`),s=state[id];
+  box.style.touchAction='none';
+  s.dragHandlers.forEach(h=>{
+    window.removeEventListener('pointermove',h.move);
+    window.removeEventListener('pointerup',h.up);
+    window.removeEventListener('pointercancel',h.cancel);
+  });
+  s.dragHandlers=[];
+  for(let idx=0;idx<4;idx++){
+    const pin=document.getElementById(`p${id}-${idx}`);
+    let dragging=false;
+    const down=e=>{
+      e.preventDefault();e.stopPropagation();
+      pushHistory(id);dragging=true;
+      pin.setPointerCapture?.(e.pointerId);
+      document.body.style.userSelect='none';
+    };
+    const move=e=>{
+      if(!dragging)return;
+      const r=box.getBoundingClientRect();
+      const x=Math.max(-90,Math.min(e.clientX-r.left,r.width+90));
+      const y=Math.max(-90,Math.min(e.clientY-r.top,r.height+90));
+      s.corners[idx]={x,y};updatePinsUI(id);
+    };
+    const up=e=>{
+      if(!dragging)return;
+      dragging=false;document.body.style.userSelect='';
+      try{pin.releasePointerCapture?.(e.pointerId)}catch(_){}
+    };
+    const cancel=e=>{
+      if(!dragging)return;
+      dragging=false;document.body.style.userSelect='';
+      try{pin.releasePointerCapture?.(e.pointerId)}catch(_){}
+    };
+    pin.onpointerdown=down;
+    window.addEventListener('pointermove',move,{passive:false});
+    window.addEventListener('pointerup',up,{passive:false});
+    window.addEventListener('pointercancel',cancel,{passive:false});
+    s.dragHandlers.push({move,up,cancel});
+  }
+}
+
+function showLoading(id,msg){document.getElementById(`load-msg-${id}`).textContent=msg;document.getElementById(`loading-${id}`).style.display="flex"}
+function hideLoading(id){document.getElementById(`loading-${id}`).style.display="none"}
+
+function getSavedBGs(){try{return JSON.parse(localStorage.getItem(BG_KEY)||'[]')}catch(e){return[]}}
+function saveBGList(list){try{localStorage.setItem(BG_KEY,JSON.stringify(list.slice(0,10)))}catch(e){console.error("Storage write failed",e);}}
+function refreshBGLibrary(id){
+  const sel=document.getElementById(`bg-library-${id}`); if(!sel)return;
+  const list=getSavedBGs(); sel.innerHTML='<option value="">Saved</option>';
+  list.forEach((x,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=x.name||`Color ${i+1}`;sel.appendChild(o)});
+}
+function saveBGColor(id){
+  const color=state[id].fillColor;
+  if(!color||color==='transparent')return setStatus(id,'Select a color first');
+  const list=getSavedBGs(); const same=list.findIndex(x=>x.type==='color'&&x.value===color);
+  if(same>=0){setStatus(id,'This BG color is already saved');return}
+  list.unshift({type:'color',value:color,name:color});
+  saveBGList(list); refreshBGLibrary(id); setStatus(id,'BG color saved');
+}
+function applySavedBG(id,value){
+  if(value==='')return;
+  const item=getSavedBGs()[Number(value)]; if(!item)return;
+  if(item.type==='color'){pushHistory(id);state[id].fillColor=item.value;state[id].bgImage=null;processImage(id);setStatus(id,`Saved applied â€¢ ${item.value}`)}
+}
+function chooseBGImage(id){document.getElementById(`bg-file-${id}`).click()}
+function loadBGImage(e,id){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>loadBGImageDataURL(id,r.result);r.readAsDataURL(f)}
+function loadBGImageDataURL(id,url){
+  const img=new Image(); img.onload=()=>{pushHistory(id);state[id].bgImage=img;state[id].fillColor='transparent';processImage(id);setStatus(id,'Background image applied')}; img.src=url;
+}
+function updateFrame(id){
+  const v=document.getElementById(`frame-${id}`).value;
+  const c=document.getElementById(`frame-color-${id}`)?.value || '#000000';
+  const frame=document.querySelector(`#container-${id} .crop-frame`);
+  if(frame){
+    frame.style.borderWidth=v+'px';
+    frame.style.borderColor=c;
+    frame.classList.add('active');
+  }
+  const poly=document.getElementById(`poly-${id}`);
+  if(poly)poly.setAttribute('stroke',c);
+  setStatus(id,`Frame ${v}px â€¢ ${c}`);
+}
+function toggleFrame(id){
+  const frame=document.querySelector(`#container-${id} .crop-frame`);
+  if(!frame)return;
+  const on=!frame.classList.contains('active');
+  frame.classList.toggle('active',on);
+  if(on)updateFrame(id);
+  else setStatus(id,'Frame OFF');
+}
+function imageToDataURL(img){
+  if(!img)return null;
+  try{
+    const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
+    c.getContext('2d').drawImage(img,0,0);return c.toDataURL('image/png');
+  }catch(e){return null;}
+}
+
+function snapshot(id){
+  const s=state[id];
+  return {
+    current:imageToDataURL(s.currentImg),
+    orig:imageToDataURL(s.origImg),
+    foreground:imageToDataURL(s.foregroundImg),
+    shadow:imageToDataURL(s.shadowImg),
+    bg:imageToDataURL(s.bgImage),
+    corners:s.corners.map(p=>({...p})),
+    fillColor:s.fillColor,
+    offsetX:s.offsetX,
+    offsetY:s.offsetY,
+    mode:s.mode,
+    shadowRemoved:!!s.shadowRemoved,
+    cropOnly:document.getElementById(`container-${id}`).classList.contains('crop-only'),
+    preset:document.getElementById(`preset-${id}`)?.value||'auto',
+    bright:document.getElementById(`bright-${id}`)?.value||100,
+    contrast:document.getElementById(`contrast-${id}`)?.value||100,
+    shadowVal:document.getElementById(`shadow-${id}`)?.value||0,
+    shadowFix:document.getElementById(`shadowfix-${id}`)?.value||55,
+    shadowDetail:document.getElementById(`shadowdetail-${id}`)?.value||55,
+    fineAngle:document.getElementById(`fine-angle-${id}`)?.value||0,
+    frameVal:document.getElementById(`frame-${id}`)?.value||3,
+    frameColor:document.getElementById(`frame-color-${id}`)?.value||'#00e5ff',
+    frameActive:document.querySelector(`#container-${id} .crop-frame`)?.classList.contains('active')||false
+  };
+}
+
+function dataURLToImage(url){
+  return new Promise((resolve,reject)=>{
+    if(!url)return resolve(null);const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=url;
+  });
+}
+
+async function restoreSnapshot(id,snap){
+  const s=state[id];
+  try{
+    const [cur,orig,fg,shadow,bg]=await Promise.all([
+      dataURLToImage(snap.current),dataURLToImage(snap.orig),dataURLToImage(snap.foreground),dataURLToImage(snap.shadow),dataURLToImage(snap.bg)
+    ]);
+    s.currentImg=cur;s.origImg=orig||cur;s.foregroundImg=fg;s.shadowImg=shadow;s.bgImage=bg;
+    s.corners=(snap.corners||[]).map(p=>({...p}));s.fillColor=snap.fillColor||'transparent';
+    s.offsetX=snap.offsetX||0;s.offsetY=snap.offsetY||0;s.mode=snap.mode||'normal';s.shadowRemoved=!!snap.shadowRemoved;
+
+    const preset=document.getElementById(`preset-${id}`);if(preset)preset.value=snap.preset||'auto';
+    const bright=document.getElementById(`bright-${id}`);if(bright)bright.value=snap.bright;
+    const contrast=document.getElementById(`contrast-${id}`);if(contrast)contrast.value=snap.contrast;
+    const shadowCtl=document.getElementById(`shadow-${id}`);if(shadowCtl)shadowCtl.value=snap.shadowVal;
+    const shadowFix=document.getElementById(`shadowfix-${id}`);if(shadowFix)shadowFix.value=snap.shadowFix;
+    const shadowDetail=document.getElementById(`shadowdetail-${id}`);if(shadowDetail)shadowDetail.value=snap.shadowDetail;
+    const fineAngle=document.getElementById(`fine-angle-${id}`);if(fineAngle)fineAngle.value=snap.fineAngle;
+    const frameCtl=document.getElementById(`frame-${id}`);if(frameCtl)frameCtl.value=snap.frameVal;
+    const frameColor=document.getElementById(`frame-color-${id}`);if(frameColor)frameColor.value=snap.frameColor;
+
+    const frame=document.querySelector(`#container-${id} .crop-frame`);
+    if(frame){
+      frame.classList.toggle('active',!!snap.frameActive);
+      frame.style.borderWidth=(Number(snap.frameVal)||3)+'px';
+      frame.style.borderColor=snap.frameColor||'#00e5ff';
+    }
+
+    const canvas=document.getElementById(`canvas-${id}`);
+    if(s.currentImg){canvas.width=s.currentImg.naturalWidth||s.currentImg.width;canvas.height=s.currentImg.naturalHeight||s.currentImg.height;}
+    document.getElementById(`container-${id}`).classList.toggle('crop-only',!!snap.cropOnly);
+    fitPreviewToPane(id);
+    processImage(id);updatePinsUI(id);setupDragEvents(id);setPinsVisibility(id,!snap.cropOnly);
+  }catch(err){console.error('History restore failed',err);setStatus(id,'History restore failed');}
+}
+
+function pushHistory(id){
+  const s=state[id];
+  s.history.push(snapshot(id));
+  if(s.history.length>15)s.history.shift();
+  s.redo=[];
+}
+async function undoAction(id){
+  const s=state[id];if(!s.history.length){setStatus(id,'Nothing to undo');return;}
+  const previous=s.history.pop();s.redo.push(snapshot(id));await restoreSnapshot(id,previous);setStatus(id,'Undo applied');
+}
+async function redoAction(id){
+  const s=state[id];if(!s.redo.length){setStatus(id,'Nothing to redo');return;}
+  const next=s.redo.pop();s.history.push(snapshot(id));await restoreSnapshot(id,next);setStatus(id,'Redo applied');
+}
+
+
+function showHistoryInfo(id){
+  const s=state[id];
+  const undo=s.history?.length||0, redo=s.redo?.length||0;
+  setStatus(id,`History: ${undo} undo state${undo===1?'':'s'} â€¢ ${redo} redo state${redo===1?'':'s'} â€¢ Undo restores erased pixels`);
+  alert(`Pane ${id} History\n\nUndo states: ${undo}\nRedo states: ${redo}\n\nUse Undo to recover pixels removed by the manual Eraser. Redo reapplies the change.`);
+}
+
+function toggleEraser(id){
+  const s=state[id];
+  if(!s.foregroundImg){
+    setStatus(id,'Run Remove BG first, then use Eraser on unwanted remaining pixels');
+    return;
+  }
+  s.eraserOn=!s.eraserOn;
+  const btn=document.getElementById(`eraser-btn-${id}`);
+  btn?.classList.toggle('eraser-on',s.eraserOn);
+  document.getElementById(`container-${id}`)?.classList.toggle('eraser-mode',s.eraserOn);
+  if(!s.eraserOn){
+    s.eraserDrawing=false;
+    s.eraserCanvas=null;
+    const cur=document.getElementById(`eraser-cursor-${id}`); if(cur)cur.style.display='none';
+  }
+  setStatus(id,s.eraserOn?(s.restoreMode?'Restore brush ON â€¢ paint over parts that were removed by mistake â€¢ Undo is available':'Eraser ON â€¢ drag over unwanted pixels â€¢ Undo restores them'):'Eraser OFF');
+}
+
+function getEraserBrushSize(id){
+  return Math.max(4,Number(document.getElementById(`eraser-size-${id}`)?.value||28));
+}
+
+function canvasPointForClient(id,e){
+  const canvas=document.getElementById(`canvas-${id}`),r=canvas.getBoundingClientRect();
+  const sx=canvas.width/Math.max(1,r.width),sy=canvas.height/Math.max(1,r.height);
+  return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy,sx,sy,r};
+}
+
+function sourcePointFromCanvasPoint(id,x,y){
+  const s=state[id],canvas=document.getElementById(`canvas-${id}`),w=canvas.width,h=canvas.height;
+  const angle=(Number(document.getElementById(`fine-angle-${id}`)?.value||0))*Math.PI/180;
+  const dx=x-w/2-s.offsetX,dy=y-h/2-s.offsetY;
+  const cos=Math.cos(angle),sin=Math.sin(angle);
+  return {x:dx*cos+dy*sin+w/2,y:-dx*sin+dy*cos+h/2};
+}
+
+function eraseAt(id,x,y){
+  const s=state[id],c=s.eraserCanvas;
+  if(!c)return;
+  const p=sourcePointFromCanvasPoint(id,x,y),r=getEraserBrushSize(id);
+  const ctx=c.getContext('2d');
+  ctx.save();
+  if(s.restoreMode&&s.currentImg){
+    /* v8 Restore brush: paint the original picture back where the cut-out removed too much */
+    ctx.beginPath();ctx.arc(p.x,p.y,r/2,0,Math.PI*2);ctx.clip();
+    ctx.drawImage(s.currentImg,0,0,c.width,c.height);
+  }else{
+    ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();ctx.arc(p.x,p.y,r/2,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+  s.foregroundImg=c;
+  processImage(id);
+}
+
+function updateEraserCursor(id,e){
+  const cur=document.getElementById(`eraser-cursor-${id}`),canvas=document.getElementById(`canvas-${id}`);
+  if(!cur||!canvas||!state[id].eraserOn)return;
+  const r=canvas.getBoundingClientRect();
+  cur.style.left=(e.clientX-r.left)+'px';cur.style.top=(e.clientY-r.top)+'px';
+  const cssRadius=getEraserBrushSize(id)*(r.width/Math.max(1,canvas.width));
+  cur.style.width=Math.max(4,cssRadius)+'px';cur.style.height=Math.max(4,cssRadius)+'px';cur.style.display='block';
+}
+
+function setupEraser(id){
+  const box=document.getElementById(`container-${id}`),canvas=document.getElementById(`canvas-${id}`),s=state[id];
+  if(!box||!canvas||s.eraserHandlersInstalled)return;
+  const move=e=>{
+    if(!s.eraserOn)return;
+    updateEraserCursor(id,e);
+    if(s.eraserDrawing){e.preventDefault();const p=canvasPointForClient(id,e);eraseAt(id,p.x,p.y);}
+  };
+  const down=e=>{
+    if(!s.eraserOn || !s.foregroundImg || e.target.closest('.pin'))return;
+    e.preventDefault();e.stopPropagation();
+    pushHistory(id);
+    const w=canvas.width,h=canvas.height;
+    const work=document.createElement('canvas');work.width=w;work.height=h;
+    work.getContext('2d').drawImage(s.foregroundImg,0,0,w,h);
+    s.eraserCanvas=work;s.eraserDrawing=true;
+    try{box.setPointerCapture?.(e.pointerId)}catch(_){ }
+    const p=canvasPointForClient(id,e);eraseAt(id,p.x,p.y);updateEraserCursor(id,e);
+  };
+  const up=e=>{
+    if(!s.eraserDrawing)return;
+    s.eraserDrawing=false;
+    try{box.releasePointerCapture?.(e.pointerId)}catch(_){ }
+    if(s.eraserCanvas){
+      const url=s.eraserCanvas.toDataURL('image/png');
+      const out=new Image();
+      out.onload=()=>{s.foregroundImg=out;s.eraserCanvas=null;processImage(id);setStatus(id,s.restoreMode?'Restored â€¢ Undo is available':'Manual erase applied â€¢ Undo can restore it');};
+      out.src=url;
+    }
+  };
+  box.addEventListener('pointermove',move,{passive:false});
+  box.addEventListener('pointerdown',down,{passive:false});
+  box.addEventListener('pointerup',up,{passive:false});
+  box.addEventListener('pointercancel',up,{passive:false});
+  box.addEventListener('pointerleave',()=>{const cur=document.getElementById(`eraser-cursor-${id}`);if(cur)cur.style.display='none';});
+  box.addEventListener('pointerenter',e=>{if(s.eraserOn)updateEraserCursor(id,e);});
+  s.eraserHandlersInstalled=true;
+}
+
+function toggleImageDrag(id){
+  const s=state[id];s.dragImage=!s.dragImage;
+  const box=document.getElementById(`container-${id}`);
+  box.classList.toggle('drag-image',s.dragImage);
+  if(!s.moveHandlersInstalled){
+    let moving=false,lastX=0,lastY=0;
+    box.addEventListener('pointerdown',e=>{
+      if(!s.dragImage || e.target.closest('.pin'))return;
+      e.preventDefault();moving=true;lastX=e.clientX;lastY=e.clientY;
+      box.setPointerCapture?.(e.pointerId);
+    });
+    box.addEventListener('pointermove',e=>{
+      if(!moving || !s.dragImage)return;
+      const canvas=document.getElementById(`canvas-${id}`);
+      const r=canvas.getBoundingClientRect();
+      const sx=canvas.width/Math.max(1,r.width),sy=canvas.height/Math.max(1,r.height);
+      s.offsetX+=(e.clientX-lastX)*sx;s.offsetY+=(e.clientY-lastY)*sy;
+      lastX=e.clientX;lastY=e.clientY;processImage(id);
+    });
+    const stop=()=>{if(moving){pushHistory(id);} moving=false;};
+    box.addEventListener('pointerup',stop);box.addEventListener('pointercancel',stop);
+    s.moveHandlersInstalled=true;
+  }
+  setStatus(id,s.dragImage?'Move Image ON â€” drag the image':'Move Image OFF');
+}
+
+function removeShadow(id){
+  const s=state[id];if(!s.currentImg)return;
+  pushHistory(id);s.shadowRemoved=true;
+  document.getElementById(`shadowfix-${id}`).value=65;
+  applyShadowFix(id);
+}
+
+function applyShadowFix(id){
+  const s=state[id];if(!s.currentImg)return;
+  const strength=Number(document.getElementById(`shadowfix-${id}`).value||55)/100;
+  const detail=Number(document.getElementById(`shadowdetail-${id}`)?.value||55)/100;
+  const src=s.foregroundImg||s.currentImg,w=src.naturalWidth||src.width,h=src.naturalHeight||src.height;
+  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(src,0,0,w,h);
+  const im=ctx.getImageData(0,0,w,h),d=im.data;
+  const target=215;
+  for(let i=0;i<d.length;i+=4){
+    const lum=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+    if(lum<target){
+      const deficit=(target-lum)/target;
+      const lift=Math.min(.82, deficit*(0.75+strength*0.55)*(0.75+detail*0.35));
+      const factor=1+lift;
+      d[i]=Math.min(255,Math.round(d[i]*factor));
+      d[i+1]=Math.min(255,Math.round(d[i+1]*factor));
+      d[i+2]=Math.min(255,Math.round(d[i+2]*factor));
+    }
+  }
+  ctx.putImageData(im,0,0);const out=new Image();out.onload=()=>{s.shadowImg=out;processImage(id);setStatus(id,'Shadow refined')};out.src=c.toDataURL('image/png');
+}
+
+function fitPreviewToPane(id){
+  const box=document.getElementById(`box-${id}`);
+  const container=document.getElementById(`container-${id}`);
+  const canvas=document.getElementById(`canvas-${id}`);
+  if(!box||!container||!canvas||!canvas.width||!canvas.height)return;
+  const oldW=container.getBoundingClientRect().width,oldH=container.getBoundingClientRect().height;
+  const cs=getComputedStyle(box);
+  const padX=parseFloat(cs.paddingLeft||0)+parseFloat(cs.paddingRight||0)+16;
+  const padY=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0)+16;
+  const maxW=Math.max(80,box.clientWidth-padX);
+  const maxH=Math.max(80,box.clientHeight-padY);
+  const scale=Math.min(1,maxW/canvas.width,maxH/canvas.height);
+  const w=Math.max(1,Math.round(canvas.width*scale));
+  const h=Math.max(1,Math.round(canvas.height*scale));
+  canvas.style.width=w+'px';
+  canvas.style.height=h+'px';
+  container.style.width=w+'px';
+  container.style.height=h+'px';
+  container.style.margin='0 auto';
+  if(oldW>0&&oldH>0&&state[id]?.corners?.length===4){
+    const kx=w/oldW,ky=h/oldH;
+    state[id].corners=state[id].corners.map(p=>({x:p.x*kx,y:p.y*ky}));
+    updatePinsUI(id);
+  }
+}
+
+async function getImageSegmenter(){
+  if(imageSegmenterPromise) return imageSegmenterPromise;
+  imageSegmenterPromise=(async()=>{
+    const mod=await import(`${MP_VISION_CDN}/vision_bundle.mjs`);
+    if(!mod.FilesetResolver || !mod.ImageSegmenter){
+      throw new Error('MediaPipe Tasks Vision ImageSegmenter is unavailable.');
+    }
+    const fileset=await mod.FilesetResolver.forVisionTasks(MP_WASM_CDN);
+    return await mod.ImageSegmenter.createFromOptions(fileset,{
+      baseOptions:{modelAssetPath:MP_MULTI_MODEL,delegate:'CPU'},
+      runningMode:'IMAGE',
+      outputCategoryMask:false,
+      outputConfidenceMasks:true
+    });
+  })().catch(err=>{imageSegmenterPromise=null;throw err;});
+  return imageSegmenterPromise;
+}
+
+function clamp01(v){return Math.max(0,Math.min(1,v));}
+function smoothstep(a,b,x){
+  x=clamp01((x-a)/(b-a));
+  return x*x*(3-2*x);
+}
+
+function buildBaseMultiMask(result){
+  const masks=result.confidenceMasks||[];
+  if(masks.length<6) throw new Error('Multi-class model returned an incomplete confidence mask.');
+  const mw=masks[0].width, mh=masks[0].height;
+  const channels=masks.map(m=>m.getAsFloat32Array());
+  const alpha=new Float32Array(mw*mh);
+  let category=null;
+  try{ category=result.categoryMask?.getAsUint8Array?.()||null; }catch(e){ category=null; }
+
+  for(let i=0;i<alpha.length;i++){
+    let person=0, bestClass=0, best=channels[0]?.[i]||0;
+    for(let c=1;c<=5;c++){
+      const q=channels[c]?.[i]||0;
+      person=Math.max(person,q);
+      if(q>best){best=q;bestClass=c;}
+    }
+    if(category && category[i]!==undefined) bestClass=category[i];
+    let a=smoothstep(0.16,0.52,person);
+    if(bestClass===0) a*=0.08; else a=Math.max(a,0.35);
+    alpha[i]=clamp01(a);
+  }
+  return {alpha,mw,mh};
+}
+
+function buildRefinedMask(base,edge,clean,feather=35){
+  const alpha=new Float32Array(base.alpha),mw=base.mw,mh=base.mh;
+  const keep=0.72+(edge/100)*0.28;
+  const featherPx=0.018+(feather/100)*0.085;
+  const threshold=0.16-(edge/100)*0.075;
+
+  for(let i=0;i<alpha.length;i++){
+    let a=clamp01(alpha[i]*keep);
+    a=smoothstep(threshold,Math.min(.97,threshold+featherPx),a);
+    alpha[i]=a;
+  }
+
+  const radius=clean<20?0:clean<55?1:2;
+  if(radius){
+    const src=alpha.slice();
+    const r2=radius*radius;
+    for(let y=radius;y<mh-radius;y++){
+      for(let x=radius;x<mw-radius;x++){
+        const idx=y*mw+x, a=src[idx];
+        if(a<0.08) continue;
+        let neighbors=0, total=0;
+        for(let yy=-radius;yy<=radius;yy++){
+          for(let xx=-radius;xx<=radius;xx++){
+            if(xx*xx+yy*yy>r2) continue;
+            total++;
+            if(src[(y+yy)*mw+(x+xx)]>0.18) neighbors++;
+          }
+        }
+        const ratio=neighbors/Math.max(1,total);
+        if(a<0.45 && ratio<(0.22+(clean/100)*0.18)) alpha[idx]=0;
+        else if(a<0.85 && ratio<0.35) alpha[idx]*=0.72;
+      }
+    }
+  }
+
+  return {alpha,mw,mh,edge};
+}
+
+function maskToCanvas(mask,w,h){
+  const c=document.createElement('canvas');c.width=mask.mw;c.height=mask.mh;const ctx=c.getContext('2d');const id=ctx.createImageData(mask.mw,mask.mh);
+  for(let i=0,p=0;i<mask.alpha.length;i++,p+=4){const a=Math.round(mask.alpha[i]*255);id.data[p]=255;id.data[p+1]=255;id.data[p+2]=255;id.data[p+3]=a}ctx.putImageData(id,0,0);
+  const full=document.createElement('canvas');full.width=w;full.height=h;const fctx=full.getContext('2d',{willReadFrequently:true});fctx.imageSmoothingEnabled=true;fctx.imageSmoothingQuality='high';fctx.drawImage(c,0,0,w,h);return fctx.getImageData(0,0,w,h).data;
+}
+
+function applyAlphaToSource(source,mask,edge){
+  const w=source.naturalWidth||source.width,h=source.naturalHeight||source.height,c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(source,0,0,w,h);const fg=ctx.getImageData(0,0,w,h),md=maskToCanvas(mask,w,h);
+  const softness=0.018+(edge/100)*0.055,threshold=0.20-(edge/100)*0.08;
+  for(let i=0;i<fg.data.length;i+=4){const v=md[i]/255;fg.data[i+3]=Math.round(fg.data[i+3]*smoothstep(threshold,Math.min(.98,threshold+softness),v))}
+  ctx.putImageData(fg,0,0);return c.toDataURL('image/png');
+}
+
+function refineForeground(id){
+  const s=state[id],cached=lastSegmentationMask[id];if(!s.currentImg||!cached)return;
+  const edge=Number(document.getElementById(`bg-edge-${id}`)?.value||55),clean=Number(document.getElementById(`bg-clean-${id}`)?.value||25),feather=Number(document.getElementById(`bg-feather-${id}`)?.value||35);
+  const refined=buildRefinedMask(cached,edge,clean,feather),url=applyAlphaToSource(cached.source,refined,edge),out=new Image();out.onload=()=>{s.foregroundImg=out;processImage(id);setStatus(id,`BG refined`)};out.src=url;
+}
+
+/* ===== v8: signature remover (local paper model) ===== */
+function psBoxBlur(a,w,h,r){
+  /* separable box blur with edge normalisation; a is Float32Array */
+  const t=new Float32Array(w*h),o=new Float32Array(w*h);
+  for(let y=0;y<h;y++){
+    let sum=0,cnt=0;const row=y*w;
+    for(let x=0;x<=Math.min(r,w-1);x++){sum+=a[row+x];cnt++}
+    for(let x=0;x<w;x++){
+      t[row+x]=sum/cnt;
+      const add=x+r+1,rem=x-r;
+      if(add<w){sum+=a[row+add];cnt++}
+      if(rem>=0){sum-=a[row+rem];cnt--}
+    }
+  }
+  for(let x=0;x<w;x++){
+    let sum=0,cnt=0;
+    for(let y=0;y<=Math.min(r,h-1);y++){sum+=t[y*w+x];cnt++}
+    for(let y=0;y<h;y++){
+      o[y*w+x]=sum/cnt;
+      const add=y+r+1,rem=y-r;
+      if(add<h){sum+=t[add*w+x];cnt++}
+      if(rem>=0){sum-=t[rem*w+x];cnt--}
+    }
+  }
+  return o;
+}
+function psLabel(mask,w,h){
+  /* connected components (8-neighbour) of a Uint8Array mask -> {lab,comps[]} */
+  const N=w*h,lab=new Int32Array(N),stack=new Int32Array(N),comps=[];
+  for(let i=0;i<N;i++){
+    if(!mask[i]||lab[i])continue;
+    const id=comps.length+1;let sp=0;stack[sp++]=i;lab[i]=id;
+    let area=0,x0=w,y0=h,x1=0,y1=0,border=false;
+    while(sp){
+      const p=stack[--sp],x=p%w,y=(p-x)/w;area++;
+      if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
+      if(x===0||y===0||x===w-1||y===h-1)border=true;
+      for(let dy=-1;dy<=1;dy++){const yy=y+dy;if(yy<0||yy>=h)continue;
+        for(let dx=-1;dx<=1;dx++){const xx=x+dx;if(xx<0||xx>=w)continue;const q=yy*w+xx;if(mask[q]&&!lab[q]){lab[q]=id;stack[sp++]=q}}}
+    }
+    comps.push({id,area,x0,y0,x1,y1,border,dens:0});
+  }
+  return {lab,comps};
+}
+function signatureCutout(src,opts){
+  const edge=opts.edge,clean=opts.clean,feather=opts.feather;
+  const w0=src.naturalWidth||src.width,h0=src.naturalHeight||src.height,sc=Math.min(1,2000/Math.max(w0,h0));
+  const W=Math.max(2,Math.round(w0*sc)),H=Math.max(2,Math.round(h0*sc));
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(src,0,0,W,H);
+  const im=ctx.getImageData(0,0,W,H),d=im.data,N=W*H;
+  /* 1. small grid (block average) so thin pen strokes vanish and only the paper remains */
+  const k=Math.max(1,Math.round(Math.max(W,H)/320)),sw=Math.ceil(W/k),sh=Math.ceil(H/k);
+  const ch=[new Float32Array(sw*sh),new Float32Array(sw*sh),new Float32Array(sw*sh)],cnt=new Float32Array(sw*sh);
+  for(let y=0;y<H;y++){const sy=Math.min(sh-1,(y/k)|0);for(let x=0;x<W;x++){const sx=Math.min(sw-1,(x/k)|0),si=sy*sw+sx,i=(y*W+x)*4;ch[0][si]+=d[i];ch[1][si]+=d[i+1];ch[2][si]+=d[i+2];cnt[si]++}}
+  for(let i=0;i<sw*sh;i++){const n=cnt[i]||1;ch[0][i]/=n;ch[1][i]/=n;ch[2][i]/=n}
+  /* 2. paper brightness map: blur that ignores dark (ink) pixels, repeated 3 times */
+  const R=Math.max(3,Math.round(0.07*Math.max(sw,sh))),L=new Float32Array(sw*sh);
+  for(let i=0;i<sw*sh;i++)L[i]=.299*ch[0][i]+.587*ch[1][i]+.114*ch[2][i];
+  let m=new Float32Array(sw*sh).fill(1),B=[null,null,null];
+  for(let it=0;it<3;it++){
+    const mb=psBoxBlur(m,sw,sh,R);
+    for(let c3=0;c3<3;c3++){const wv=new Float32Array(sw*sh);for(let i=0;i<wv.length;i++)wv[i]=ch[c3][i]*m[i];const bb=psBoxBlur(wv,sw,sh,R);for(let i=0;i<bb.length;i++)bb[i]=bb[i]/Math.max(1e-4,mb[i]);B[c3]=bb}
+    const nm=new Float32Array(sw*sh);
+    for(let i=0;i<nm.length;i++){const bl=.299*B[0][i]+.587*B[1][i]+.114*B[2][i];nm[i]=L[i]>bl*0.84?1:0.03}
+    m=nm;
+  }
+  /* 3. ink density for every full-resolution pixel (relative darkness against local paper) */
+  const dens=new Float32Array(N),Bfull=new Float32Array(N*3);
+  const bil=(arr,fx,fy)=>{const x0=Math.max(0,Math.min(sw-1,Math.floor(fx))),y0=Math.max(0,Math.min(sh-1,Math.floor(fy))),x1=Math.min(sw-1,x0+1),y1=Math.min(sh-1,y0+1),tx=Math.max(0,Math.min(1,fx-x0)),ty=Math.max(0,Math.min(1,fy-y0));
+    return (arr[y0*sw+x0]*(1-tx)+arr[y0*sw+x1]*tx)*(1-ty)+(arr[y1*sw+x0]*(1-tx)+arr[y1*sw+x1]*tx)*ty};
+  for(let y=0;y<H;y++){const fy=(y+0.5)/k-0.5;for(let x=0;x<W;x++){
+    const fx=(x+0.5)/k-0.5,p=y*W+x,i=p*4,b0=bil(B[0],fx,fy),b1=bil(B[1],fx,fy),b2=bil(B[2],fx,fy);
+    Bfull[p*3]=b0;Bfull[p*3+1]=b1;Bfull[p*3+2]=b2;
+    const bl=Math.max(20,.299*b0+.587*b1+.114*b2),l=.299*d[i]+.587*d[i+1]+.114*d[i+2];
+    const dl=(bl-l)/bl,dm=Math.max((b0-d[i])/Math.max(20,b0),(b1-d[i+1])/Math.max(20,b1),(b2-d[i+2])/Math.max(20,b2));
+    dens[p]=Math.max(0,Math.min(1,Math.max(dl,dm*0.88)));
+  }}
+  /* 4. adaptive threshold from the noise of the paper itself */
+  const bins=400,hist=new Uint32Array(bins+1);
+  for(let p=0;p<N;p+=3)hist[Math.min(bins,(dens[p]*bins)|0)]++;
+  const total=Math.ceil(N/3);let acc=0,med=0;for(let b=0;b<=bins;b++){acc+=hist[b];if(acc>=total/2){med=b/bins;break}}
+  const h2=new Uint32Array(bins+1);for(let p=0;p<N;p+=3)h2[Math.min(bins,(Math.abs(dens[p]-med)*bins)|0)]++;
+  acc=0;let mad=0;for(let b=0;b<=bins;b++){acc+=h2[b];if(acc>=total/2){mad=b/bins;break}}
+  const sigma=1.4826*mad,sens=1.75-(edge/100)*1.25;
+  const t0=Math.max(0.03,Math.min(0.30,(med+3.6*sigma+0.02)*sens)),soft=0.09+(feather/100)*0.2,t1=t0+soft;
+  const alpha=new Float32Array(N);
+  for(let p=0;p<N;p++){const v=dens[p];if(v<=t0)continue;let a=Math.min(1,(v-t0)/(t1-t0));a=a*a*(3-2*a);alpha[p]=Math.pow(a,0.85)}
+  /* 5. clean: dust, border blobs, faint long ruled lines */
+  /* pale marks (ruled lines, shadow edges) survive only right next to real ink */
+  const hh=new Uint32Array(bins+1);let hn=0;for(let p=0;p<N;p+=2){if(dens[p]>t0*1.5){hh[Math.min(bins,(dens[p]*bins)|0)]++;hn++}}
+  let ink98=t0*4;if(hn>30){let ac=0;for(let b=0;b<=bins;b++){ac+=hh[b];if(ac>=hn*0.98){ink98=b/bins;break}}}
+  const strongT=Math.max(t0*2.6,ink98*0.5),strong=new Float32Array(N);
+  for(let p=0;p<N;p++)if(dens[p]>=strongT)strong[p]=1;
+  const near2=psBoxBlur(strong,W,H,Math.max(2,Math.round(Math.max(W,H)*0.002)));
+  for(let p=0;p<N;p++)if(alpha[p]>0&&dens[p]<strongT&&near2[p]<=0.0001)alpha[p]=0;
+  /* big solid regions (table, dark shadow, blots) = opening of the mask; thin pen strokes cannot survive it */
+  let mk=new Float32Array(N);for(let p=0;p<N;p++)if(alpha[p]>0.35)mk[p]=1;
+  const rO=Math.max(4,Math.round(Math.max(W,H)*0.012)),core=psBoxBlur(mk,W,H,rO),cm=new Float32Array(N);
+  for(let p=0;p<N;p++)if(core[p]>0.9999)cm[p]=1;
+  const reg=psBoxBlur(cm,W,H,rO),regM=new Uint8Array(N);for(let p=0;p<N;p++)if(reg[p]>0.0001&&mk[p])regM[p]=1;
+  const rl=psLabel(regM,W,H);
+  rl.comps.forEach(cp=>{if(cp.border||cp.area>N*0.02)for(let y=cp.y0;y<=cp.y1;y++)for(let x=cp.x0;x<=cp.x1;x++){const p=y*W+x;if(rl.lab[p]===cp.id)alpha[p]=0}});
+  const mask=new Uint8Array(N);for(let p=0;p<N;p++)if(alpha[p]>0.35)mask[p]=1;
+  const {lab,comps}=psLabel(mask,W,H);
+  comps.forEach(cp=>{let s=0,n=0;for(let y=cp.y0;y<=cp.y1;y+=2)for(let x=cp.x0;x<=cp.x1;x+=2){const p=y*W+x;if(lab[p]===cp.id){s+=dens[p];n++}}cp.dens=n?s/n:0});
+  const long=Math.max(W,H),minArea=Math.max(8,Math.round(N*0.0000085*(1+clean/18))),big=comps.filter(cp=>cp.area>=minArea*12),near=Math.round(long*0.05);
+  const drop=new Uint8Array(comps.length+1);
+  comps.forEach(cp=>{
+    const bw=cp.x1-cp.x0+1,bh=cp.y1-cp.y0+1,fill=cp.area/(bw*bh);
+    if(cp.area<minArea){let close=false;for(const b of big){if(b===cp)continue;if(cp.x1>=b.x0-near&&cp.x0<=b.x1+near&&cp.y1>=b.y0-near&&cp.y0<=b.y1+near){close=true;break}}if(!close)drop[cp.id]=1}
+    else if(cp.border&&(cp.area>N*0.12||(Math.min(bw,bh)<0.03*long&&Math.max(bw,bh)>0.5*long)))drop[cp.id]=1;
+    else if(bw>0.4*W&&bh<0.025*H&&cp.dens<Math.max(0.17,t0*2.6))drop[cp.id]=1;
+  });
+  /* 6. un-mix paper from the edge pixels so no pale halo appears on dark backgrounds */
+  for(let p=0;p<N;p++){
+    const i=p*4;let a=alpha[p];if(a>0&&drop[lab[p]])a=0;
+    if(a<=0.003){d[i+3]=0;continue}
+    const af=Math.max(a,0.28);
+    for(let q=0;q<3;q++){const v=(d[i+q]-(1-a)*Bfull[p*3+q])/af;d[i+q]=v<0?0:v>255?255:v}
+    d[i+3]=Math.round(255*a);
+  }
+  ctx.putImageData(im,0,0);
+  return c;
+}
+function removeSignatureBackground(id,quiet){
+  const s=state[id];
+  if(!s.currentImg)return;
+  showLoading(id,'Removing paper from signature...');
+  setStatus(id,'Removing paper from signature...');
+  setTimeout(()=>{
+    try{
+      const edge=Number(document.getElementById(`bg-edge-${id}`)?.value||55);
+      const clean=Number(document.getElementById(`bg-clean-${id}`)?.value||25);
+      const feather=Number(document.getElementById(`bg-feather-${id}`)?.value||35);
+      const c=signatureCutout(s.currentImg,{edge,clean,feather});
+      const out=new Image();
+      out.onload=()=>{
+        if(!quiet)pushHistory(id);
+        s.shadowImg=null;s.foregroundImg=out;s.fillColor='transparent';s.mode='sig';s.cutKind='sig';
+        document.getElementById(`container-${id}`)?.classList.add('signature-transparent');
+        processImage(id);hideLoading(id);
+        setStatus(id,'Signature ready â€¢ Save PNG or Copy PNG');
+      };
+      out.onerror=()=>{hideLoading(id);setStatus(id,'Signature cut-out failed')};
+      out.src=c.toDataURL('image/png');
+    }catch(err){
+      console.error('Signature BG removal failed:',err);
+      hideLoading(id);setStatus(id,'Signature cut-out failed. Try a clearer picture.');
+    }
+  },30);
+}
+/* ===== v8: colour based photo cut-out (flood fill from the border, never eats the subject) ===== */
+function classicCutout(id,quiet){
+  const s=state[id],src=s.currentImg;if(!src)return {ok:false,msg:'No picture'};
+  const w=src.naturalWidth||src.width,h=src.naturalHeight||src.height,sc=Math.min(1,800/Math.max(w,h)),sw=Math.max(8,Math.round(w*sc)),sh=Math.max(8,Math.round(h*sc)),N=sw*sh;
+  const c=document.createElement('canvas');c.width=sw;c.height=sh;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(src,0,0,sw,sh);
+  const d=ctx.getImageData(0,0,sw,sh).data;
+  const edgeV=Number(document.getElementById(`bg-edge-${id}`)?.value||55),clean=Number(document.getElementById(`bg-clean-${id}`)?.value||25),feather=Number(document.getElementById(`bg-feather-${id}`)?.value||35);
+  const ring=Math.max(2,Math.round(Math.min(sw,sh)*0.03)),ringIdx=[];
+  for(let y=0;y<sh;y++)for(let x=0;x<sw;x++)if(x<ring||x>=sw-ring||y<ring||y>=sh-ring)ringIdx.push(y*sw+x);
+  /* dominant border colours (up to 3) */
+  /* learn the background colour only from the top edge and the upper sides: a subject (shirt, card, hand) usually touches the bottom */
+  const sampleIdx=ringIdx.filter(p=>{const y=(p/sw)|0,x=p%sw;return y<ring||((x<ring||x>=sw-ring)&&y<sh*0.6)});
+  const bk={};sampleIdx.forEach(p=>{const i=p*4,key=((d[i]>>4)<<8)|((d[i+1]>>4)<<4)|(d[i+2]>>4),o=bk[key]||(bk[key]={n:0,r:0,g:0,b:0});o.n++;o.r+=d[i];o.g+=d[i+1];o.b+=d[i+2]});
+  const cents=Object.values(bk).sort((a,b)=>b.n-a.n).filter((o,i)=>i===0||o.n>=sampleIdx.length*0.12).slice(0,3).map(o=>[o.r/o.n,o.g/o.n,o.b/o.n]);
+  const dist=i=>{let m=1e9;for(const q of cents){const dr=d[i]-q[0],dg=d[i+1]-q[1],db=d[i+2]-q[2],v=dr*dr*0.9+dg*dg*1.2+db*db*0.9;if(v<m)m=v}return Math.sqrt(m)};
+  let sp=0,sn=0;sampleIdx.forEach(p=>{const v=dist(p*4);if(v<90){sp+=v;sn++}});const spread=sn?sp/sn:8;
+  const baseTol=Math.max(18,Math.min(62,14+2.8*spread))*(0.6+edgeV/100*0.8);
+  const L=new Float32Array(N);for(let p=0;p<N;p++){const i=p*4;L[p]=.299*d[i]+.587*d[i+1]+.114*d[i+2]}
+  const grad=new Float32Array(N);for(let y=1;y<sh-1;y++)for(let x=1;x<sw-1;x++){const p=y*sw+x;grad[p]=Math.abs(L[p+1]-L[p-1])+Math.abs(L[p+sw]-L[p-sw])}
+  const gmax=26+4*spread,dd=new Float32Array(N);for(let p=0;p<N;p++)dd[p]=dist(p*4);
+  const flood=tol=>{
+    const bg=new Uint8Array(N),q=new Int32Array(N);let qh=0,qt=0;
+    ringIdx.forEach(p=>{if(dd[p]<=tol*1.3){bg[p]=1;q[qt++]=p}});
+    while(qh<qt){const p=q[qh++],x=p%sw,y=(p-x)/sw;
+      if(x>0){const n=p-1;if(!bg[n]&&dd[n]<=tol&&grad[n]<gmax){bg[n]=1;q[qt++]=n}}
+      if(x<sw-1){const n=p+1;if(!bg[n]&&dd[n]<=tol&&grad[n]<gmax){bg[n]=1;q[qt++]=n}}
+      if(y>0){const n=p-sw;if(!bg[n]&&dd[n]<=tol&&grad[n]<gmax){bg[n]=1;q[qt++]=n}}
+      if(y<sh-1){const n=p+sw;if(!bg[n]&&dd[n]<=tol&&grad[n]<gmax){bg[n]=1;q[qt++]=n}}}
+    return bg;
+  };
+  const pts=[[.5,.5],[.5,.38],[.5,.62],[.38,.5],[.62,.5]].map(v=>Math.round(v[1]*sh)*sw+Math.round(v[0]*sw));
+  const lowPts=[[.5,.9],[.3,.92],[.7,.92]].map(v=>Math.round(v[1]*sh)*sw+Math.round(v[0]*sw));
+  let bg=null,used=0,fallbackBg=null,fallbackF=0;
+  for(const f of [1,.8,.62,.48,.36,.26]){
+    const b=flood(baseTol*f);let cb=0,lb=0,bc=0;pts.forEach(p=>{if(b[p])cb++});lowPts.forEach(p=>{if(b[p])lb++});for(let p=0;p<N;p++)if(b[p])bc++;
+    const fgFrac=1-bc/N;
+    if(cb<=1&&fgFrac>=0.04&&fgFrac<=0.97){
+      if(lb===0){bg=b;used=f;break}                 /* best: centre kept and the lower body kept */
+      if(!fallbackBg){fallbackBg=b;fallbackF=f}      /* acceptable: centre kept (e.g. a card smaller than the frame) */
+    }
+  }
+  if(!bg&&fallbackBg){bg=fallbackBg;used=fallbackF}
+  if(!bg){let any=0;const t=flood(baseTol);for(let p=0;p<N;p++)if(t[p])any++;
+    return {ok:false,msg:any/N<0.03?'No plain background found around this picture.':'The background touches the subject, so it cannot be separated safely. Crop closer, or use the Eraser / Restore brush.'}}
+  /* keep only the main subject; drop dust */
+  const fg=new Uint8Array(N);for(let p=0;p<N;p++)fg[p]=bg[p]?0:1;
+  const {lab,comps}=psLabel(fg,sw,sh),centre=pts[0];
+  comps.forEach(cp=>{const keep=cp.area>=N*0.012||lab[centre]===cp.id;if(!keep)for(let y=cp.y0;y<=cp.y1;y++)for(let x=cp.x0;x<=cp.x1;x++){const p=y*sw+x;if(lab[p]===cp.id)fg[p]=0}});
+  /* choke away the coloured fringe, then soften the edge */
+  const rad=clean>=60?2:clean>=18?1:0;let cur=fg;
+  for(let r=0;r<rad;r++){const nx=new Uint8Array(N);for(let y=1;y<sh-1;y++)for(let x=1;x<sw-1;x++){const p=y*sw+x;nx[p]=(cur[p]&&cur[p-1]&&cur[p+1]&&cur[p-sw]&&cur[p+sw])?1:0}cur=nx}
+  let af=new Float32Array(N);for(let p=0;p<N;p++)af[p]=cur[p];
+  const br=1+Math.round(feather/100*2.2);af=psBoxBlur(af,sw,sh,br);af=psBoxBlur(af,sw,sh,1);
+  const mc=document.createElement('canvas');mc.width=sw;mc.height=sh;const mctx=mc.getContext('2d'),mid=mctx.createImageData(sw,sh);
+  for(let p=0;p<N;p++){const a=af[p],v=a<0.08?0:a>0.92?1:a,i=p*4;mid.data[i]=255;mid.data[i+1]=255;mid.data[i+2]=255;mid.data[i+3]=Math.round(255*v)}
+  mctx.putImageData(mid,0,0);
+  const out=document.createElement('canvas');out.width=w;out.height=h;const octx=out.getContext('2d');
+  octx.drawImage(src,0,0,w,h);octx.globalCompositeOperation='destination-in';octx.imageSmoothingEnabled=true;octx.imageSmoothingQuality='high';octx.drawImage(mc,0,0,w,h);
+  return {ok:true,canvas:out,tol:baseTol*used};
+}
+function fallbackColorDistanceBG(id,quiet){
+  const s=state[id],r=classicCutout(id,quiet);
+  if(!r.ok){setStatus(id,r.msg);return false}
+  const fg=new Image();
+  fg.onload=()=>{if(!quiet)pushHistory(id);s.foregroundImg=fg;s.shadowImg=null;s.fillColor='transparent';s.cutKind='classic';processImage(id);setStatus(id,'Background removed (colour method) â€¢ fine-tune with Edge / Clean / Feather, or use Eraser / Restore')};
+  fg.src=r.canvas.toDataURL('image/png');
+  return true;
+}
+
+async function removeBackgroundAI(id){
+  const s=state[id];
+  if(!s.currentImg)return;
+
+  // The MediaPipe selfie model is designed for people, not handwritten
+  // signatures. Using it on a signature can classify the entire image as
+  // background and produce a blank transparent result.
+  if(s.mode==="sig"){
+    removeSignatureBackground(id);
+    return;
+  }
+
+  showLoading(id,'AI background removal loading...');
+  setStatus(id,'Removing background...');
+  try{
+    const source=s.currentImg;
+    const segmenter=await getImageSegmenter();
+    const result=segmenter.segment(source);
+    if(!result || !result.confidenceMasks || result.confidenceMasks.length<6){
+      throw new Error('MediaPipe mask unavailable.');
+    }
+
+    const baseMask=buildBaseMultiMask(result);
+    /* v8: the AI model only knows people. Reject its answer when it found no sensible subject
+       (almost nothing kept, everything kept, or the centre of the picture thrown away). */
+    (function(){
+      const A=baseMask.alpha,mw=baseMask.mw,mh=baseMask.mh;let fgc=0,cc=0,ct=0;
+      for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){const v=A[y*mw+x]>0.5;if(v)fgc++;if(x>=mw*.3&&x<mw*.7&&y>=mh*.3&&y<mh*.7){ct++;if(v)cc++}}
+      const frac=fgc/(mw*mh),cr=ct?cc/ct:0;
+      if(frac<0.05||frac>0.985||cr<0.45){try{result.close?.();}catch{}throw new Error('AI mask rejected (no clear person found)');}
+    })();
+    lastSegmentationMask[id]={source,alpha:baseMask.alpha,mw:baseMask.mw,mh:baseMask.mh};
+
+    const edge=Number(document.getElementById(`bg-edge-${id}`)?.value||55);
+    const clean=Number(document.getElementById(`bg-clean-${id}`)?.value||25);
+    const feather=Number(document.getElementById(`bg-feather-${id}`)?.value||35);
+    const refined=buildRefinedMask(lastSegmentationMask[id],edge,clean,feather);
+    const url=applyAlphaToSource(source,refined,edge);
+
+    await new Promise((resolve,reject)=>{
+      const out=new Image();
+      out.onload=()=>{
+        pushHistory(id);
+        s.foregroundImg=out;
+        s.fillColor='transparent';
+        processImage(id);
+        hideLoading(id);
+        s.cutKind='ai';setStatus(id,'AI background removed successfully');
+        try{result.close?.();}catch{}
+        resolve();
+      };
+      out.onerror=()=>{
+        try{result.close?.();}catch{}
+        reject(new Error('Image decoding failed for segmentation result'));
+      };
+      out.src=url;
+    });
+  }catch(err){
+    console.error('AI BG removal failed:',err);
+    try{
+      const ok=fallbackColorDistanceBG(id);
+      hideLoading(id);
+      if(!ok){/* message already shown by the colour method */}
+    }catch(localErr){
+      console.error(localErr);
+      hideLoading(id);
+      setStatus(id,'BG removal failed');
+    }
+  }
+}
+
+function setBGColor(id,color){pushHistory(id);state[id].fillColor=color;state[id].bgImage=null;const p=document.getElementById(`picker-${id}`);if(p && color!=="transparent")p.value=color;processImage(id);setStatus(id,color==="transparent"?"Background: Transparent":`Background fill: ${color}`)}
+function enhanceImage(id){
+  const s=state[id];if(!s.currentImg)return;
+  pushHistory(id);
+  document.getElementById(`shadow-${id}`).value=40;
+  document.getElementById(`contrast-${id}`).value=130;
+  document.getElementById(`bright-${id}`).value=115;
+  processImage(id);
+  setStatus(id,"Image enhancement applied");
+}
+
+function processImage(id){
+  const s=state[id];if(!s.currentImg)return;
+  const canvas=document.getElementById(`canvas-${id}`),ctx=canvas.getContext("2d",{willReadFrequently:true});
+  const w=canvas.width,h=canvas.height;
+  ctx.save();ctx.clearRect(0,0,w,h);
+  if(s.bgImage){
+    ctx.drawImage(s.bgImage,0,0,w,h);
+  }else if(s.fillColor!=="transparent"){
+    ctx.fillStyle=s.fillColor;ctx.fillRect(0,0,w,h);
+  }
+  const img=(s.mode==="sig" && s.foregroundImg) ? s.foregroundImg : (s.shadowImg||s.foregroundImg||s.currentImg);
+  if(!img){ ctx.restore(); return; }
+  const bright=+document.getElementById(`bright-${id}`).value;
+  const contrast=+document.getElementById(`contrast-${id}`).value;
+  const shadow=+document.getElementById(`shadow-${id}`).value;
+  const angle=+document.getElementById(`fine-angle-${id}`).value;
+  const shadowLift=1+Math.max(0,shadow)/250;
+  ctx.translate(w/2+s.offsetX,h/2+s.offsetY);ctx.rotate(angle*Math.PI/180);
+  ctx.filter=`brightness(${bright*shadowLift}%) contrast(${contrast}%)`;
+  ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
+  // Apply ink tint on the transparent signature preview only; do not recolor a chosen background.
+  if(s.mode==="sig" && s.foregroundImg && !s.bgImage && s.fillColor==="transparent"){
+    const color=document.getElementById(`signature-color-${id}`)?.value;
+    const rgb=color?.match(/[0-9a-f]{2}/gi)?.map(v=>parseInt(v,16));
+    if(rgb && rgb.length===3 && s.inkCustom){
+      const imageData=ctx.getImageData(0,0,w,h),px=imageData.data;
+      for(let i=0;i<px.length;i+=4){if(px[i+3]===0)continue;px[i]=rgb[0];px[i+1]=rgb[1];px[i+2]=rgb[2];}
+      ctx.putImageData(imageData,0,0);
+    }
+  }
+}
+
+function setSignatureColor(id, color){
+  const s=state[id];
+  if(!s || !s.foregroundImg){
+    setStatus(id,'Choose an ink color after clicking Remove BG');
+    return;
+  }
+  s.inkCustom=true;
+  setStatus(id,`Signature ink color set to ${color.toUpperCase()}`);
+  processImage(id);
+}
+
+function renderTransparentSignatureCanvas(id){
+  const s=state[id];
+  if(!s || !s.foregroundImg)return null;
+  const src=document.getElementById(`canvas-${id}`);
+  if(!src || !src.width || !src.height)return null;
+
+  const out=document.createElement('canvas');
+  out.width=src.width; out.height=src.height;
+  const ctx=out.getContext('2d');
+  ctx.clearRect(0,0,out.width,out.height);
+
+  const img=s.foregroundImg;
+  const bright=+document.getElementById(`bright-${id}`).value;
+  const contrast=+document.getElementById(`contrast-${id}`).value;
+  const shadow=+document.getElementById(`shadow-${id}`).value;
+  const angle=+document.getElementById(`fine-angle-${id}`).value;
+
+  ctx.save();
+  ctx.translate(out.width/2+s.offsetX,out.height/2+s.offsetY);
+  ctx.rotate(angle*Math.PI/180);
+  ctx.filter=`brightness(${bright*(1+Math.max(0,shadow)/250)}%) contrast(${contrast}%)`;
+  ctx.drawImage(img,-out.width/2,-out.height/2,out.width,out.height);
+  ctx.restore();
+
+  // Recolor only visible signature pixels; preserve each pixelâ€™s alpha for transparency/soft edges.
+  const color=document.getElementById(`signature-color-${id}`)?.value;
+  if(color){
+    const rgb=color.match(/[0-9a-f]{2}/gi)?.map(v=>parseInt(v,16));
+    if(rgb && rgb.length===3 && s.inkCustom){
+      const imageData=ctx.getImageData(0,0,out.width,out.height);
+      const px=imageData.data;
+      for(let i=0;i<px.length;i+=4){
+        if(px[i+3]===0)continue;
+        px[i]=rgb[0]; px[i+1]=rgb[1]; px[i+2]=rgb[2];
+      }
+      ctx.putImageData(imageData,0,0);
+    }
+  }
+  return psTrimCanvas(out,0.05);
+}
+function psTrimCanvas(c,padFrac){
+  const w=c.width,h=c.height,d=c.getContext('2d').getImageData(0,0,w,h).data;
+  let x0=w,y0=h,x1=-1,y1=-1;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(d[(y*w+x)*4+3]>12){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+  if(x1<0)return c;
+  const pad=Math.round(Math.max(x1-x0,y1-y0)*padFrac)+2,ax=Math.max(0,x0-pad),ay=Math.max(0,y0-pad),bx=Math.min(w,x1+pad+1),by=Math.min(h,y1+pad+1);
+  const o=document.createElement('canvas');o.width=bx-ax;o.height=by-ay;o.getContext('2d').drawImage(c,ax,ay,o.width,o.height,0,0,o.width,o.height);return o;
+}
+
+function downloadCanvasPNG(id,filename,transparent=false){
+  const source=document.getElementById(`canvas-${id}`);
+  if(!source || !state[id].currentImg)return;
+
+  let out=source;
+  if(transparent){
+    out=renderTransparentSignatureCanvas(id);
+    if(!out){
+      alert('Please click Remove BG first.');
+      return;
+    }
+  }
+
+  const a=document.createElement("a");
+  a.download=filename;
+  a.href=out.toDataURL("image/png");
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function copySignaturePNG(id){
+  const s=state[id];
+  if(!s.currentImg){alert('Please upload a signature first.');return;}
+  if(!s.foregroundImg){
+    alert('For a transparent signature, click Remove BG first.');
+    return;
+  }
+  const out=renderTransparentSignatureCanvas(id);
+  if(!out){alert('Transparent signature is not ready.');return;}
+
+  try{
+    if(!navigator.clipboard || !window.ClipboardItem){
+      throw new Error('Image clipboard is not supported in this browser context.');
+    }
+    const blob=await new Promise(resolve=>out.toBlob(resolve,'image/png'));
+    if(!blob)throw new Error('PNG conversion failed.');
+    await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+    setStatus(id,'Signature copied as transparent PNG â€¢ paste with Ctrl+V');
+  }catch(err){
+    console.error('Copy signature failed:',err);
+    setStatus(id,'Copy unavailable â€¢ use Save Sign PNG');
+    alert('Direct image copy is not available in this browser/file context. Use Save Sign PNG, then paste the PNG where needed.');
+  }
+}
+
+function saveSignaturePNG(id){
+  const s=state[id];
+  if(!s.currentImg){alert("Please upload a signature first.");return;}
+  if(!s.foregroundImg){
+    alert("For a clean signature PNG, click Remove BG first.");
+    return;
+  }
+  downloadCanvasPNG(id,`signature-pane${id}.png`,true);
+  setStatus(id,"Signature saved as transparent PNG");
+}
+
+function saveAllImages(){
+  [1,2].forEach(id=>{
+    if(state[id].currentImg){
+      const isSign=state[id].mode==="sig" && !!state[id].foregroundImg;
+      downloadCanvasPNG(id,isSign?`signature-pane${id}.png`:`docfix-pane${id}.png`,isSign);
+    }
+  });
+}
+
+function isFrameActive(id){
+  return !!document.querySelector(`#container-${id} .crop-frame`)?.classList.contains('active');
+}
+
+function getFrameSpec(id){
+  const frameEl=document.querySelector(`#container-${id} .crop-frame`);
+  const selected=Math.max(1,Math.min(5,Number(document.getElementById(`frame-${id}`)?.value)||3));
+  const color=document.getElementById(`frame-color-${id}`)?.value || '#000000';
+  const cssWidth=frameEl ? parseFloat(getComputedStyle(frameEl).borderTopWidth||selected) : selected;
+  return {
+    active:!!frameEl?.classList.contains('active'),
+    color,
+    uiWidth:Math.max(1,Number.isFinite(cssWidth)?cssWidth:selected),
+    selected
+  };
+}
+
+/*
+ * Single canonical export renderer.
+ *
+ * The editor frame is a DOM overlay, not part of the canvas pixels. Older
+ * print paths reconstructed it independently, which made screen/print output
+ * diverge. All print/export paths now come through this function.
+ */
+function renderExportCanvas(id,{includeFrame=true}={}){
+  const source=document.getElementById(`canvas-${id}`);
+  if(!source || !source.width || !source.height) return null;
+
+  const out=document.createElement('canvas');
+  out.width=source.width;
+  out.height=source.height;
+  const ctx=out.getContext('2d');
+  ctx.drawImage(source,0,0);
+
+  const frame=getFrameSpec(id);
+  if(includeFrame && frame.active){
+    /*
+     * Scale the visual frame with the exported bitmap. This keeps a 2â€“5 px
+     * editor frame visible after a large image is printed at A4/photo size.
+     */
+    const scale=Math.max(1,Math.min(4,Math.max(out.width,out.height)/1200));
+    const lineWidth=Math.max(1,Math.round(frame.selected*scale));
+    const inset=lineWidth/2;
+
+    ctx.save();
+    ctx.strokeStyle=frame.color;
+    ctx.lineWidth=lineWidth;
+    ctx.strokeRect(inset,inset,Math.max(0,out.width-lineWidth),Math.max(0,out.height-lineWidth));
+    ctx.restore();
+  }
+
+  return out;
+}
+
+function canvasDataURL(id,includeFrame=true){
+  try{
+    const out=renderExportCanvas(id,{includeFrame});
+    return out ? out.toDataURL('image/png') : null;
+  }catch(err){
+    console.error('Export render failed',err);
+    const source=document.getElementById(`canvas-${id}`);
+    try{return source?.toDataURL('image/png')||null}catch(e){return null}
+  }
+}
+
+function mmToPx(mm,dpi=300){return Math.round(mm*dpi/25.4);}
+
+/*
+ * Print-window architecture:
+ * 1) The popup is created synchronously from the user's button click.
+ * 2) It contains already-materialized data-URL images.
+ * 3) The popup owns its own print trigger; it no longer calls a parent
+ *    function through window.opener (fragile in file:///browser contexts).
+ * 4) A visible fallback Print button remains available if Chrome suppresses
+ *    an automatic print dialog.
+ */
+function openPrintWindow(title,htmlContent){
+  /*
+   * IMPORTANT: never call print() immediately after document.write().
+   * Chrome can open the print preview before the popup document has
+   * finished parsing/painting its data-URL images, which produces a blank
+   * preview/page. The popup now owns the print lifecycle and waits until
+   * the document is fully loaded and every image has decoded.
+   */
+  const w=window.open('about:blank','_blank','width=900,height=1100');
+  if(!w){
+    alert('Pop-up blocked. Please allow pop-ups for CSC VLE TOOLS Pro Studio, then click Print again.');
+    return null;
+  }
+
+  try{
+    w.document.open();
+    w.document.write(htmlContent);
+    w.document.close();
+    w.document.title=title;
+    w.focus();
+    return w;
+  }catch(err){
+    console.error('Print window creation failed',err);
+    try{w.close()}catch(e){}
+    alert('Could not prepare the print page. Please try again.');
+    return null;
+  }
+}
+
+/* Kept for compatibility with any older saved/bookmarked code. */
+function printWhenReady(w){
+  if(!w || w.closed)return;
+  const imgs=[...w.document.images];
+  Promise.all(imgs.map(img=>new Promise(resolve=>{
+    if(img.complete && img.naturalWidth>0)return resolve();
+    img.onload=resolve;
+    img.onerror=resolve;
+  }))).then(()=>{
+    setTimeout(()=>{try{w.focus();w.print()}catch(e){console.error('Print failed',e)}},120);
+  });
+}
+
+function printWindowScaffold(title,body,extraCSS=''){
+  const safeTitle=String(title).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+  return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${safeTitle}</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff;color:#000}
+  body{font-family:Arial,sans-serif}
+  .print-toolbar{
+    position:fixed;top:10px;right:10px;z-index:9999;
+    display:flex;gap:8px;align-items:center;
+    padding:8px 10px;background:rgba(15,23,42,.94);color:#fff;
+    border-radius:8px;font:600 12px Arial,sans-serif;
+    box-shadow:0 4px 14px rgba(0,0,0,.25)
+  }
+  .print-toolbar button{
+    border:0;border-radius:5px;padding:7px 12px;cursor:pointer;
+    background:#10b981;color:#022c22;font-weight:700
+  }
+  .print-toolbar span{opacity:.85}
+  @media print{
+    .print-toolbar{display:none!important}
+  }
+  ${extraCSS}
+</style>
+</head>
+<body>
+<div class="print-toolbar"><button type="button" onclick="window.focus();window.print()">ðŸ–¨ Print</button><span>If Chrome does not open print automatically, click Print.</span></div>
+${body}
+<script>
+(function(){
+  var started=false;
+  function waitForImages(){
+    var imgs=[].slice.call(document.images);
+    return Promise.all(imgs.map(function(img){
+      if(img.complete && img.naturalWidth>0){
+        if(img.decode){return img.decode().catch(function(){});}
+        return Promise.resolve();
+      }
+      return new Promise(function(resolve){
+        var done=function(){
+          if(img.decode){img.decode().catch(function(){}).finally(resolve);}
+          else resolve();
+        };
+        img.addEventListener('load',done,{once:true});
+        img.addEventListener('error',resolve,{once:true});
+      });
+    }));
+  }
+  function doPrint(){
+    if(started)return;
+    started=true;
+    waitForImages().then(function(){
+      // Give Chrome two paint frames after image decode before opening
+      // print preview. This prevents the intermittent blank-page preview.
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          setTimeout(function(){
+            try{window.focus();window.print();}
+            catch(e){console.error('Print failed',e);}
+          },250);
+        });
+      });
+    });
+  }
+  if(document.readyState==='complete') doPrint();
+  else window.addEventListener('load',doPrint,{once:true});
+})();
+<\/script>
+</body>
+</html>`;
+}
+
+function printIDCardFrontBack(){
+  const layout=document.getElementById('idCardLayout').value;
+  const gap=Math.max(0,Math.min(50,Number(document.getElementById('idCardGap').value)||0));
+  const frontTop=Math.max(0,Math.min(100,Number(document.getElementById('idCardFrontTop')?.value)||0));
+  const backBottom=Math.max(0,Math.min(100,Number(document.getElementById('idCardBackBottom')?.value)||0));
+  const copies=Math.max(1,Math.min(20,parseInt(document.getElementById('idCardCopies').value,10)||1));
+  const available={1:!!state[1].currentImg,2:!!state[2].currentImg};
+  let ids=layout==='front'?[1]:layout==='back'?[2]:[1,2];
+  ids=ids.filter(id=>available[id]);
+  if(!ids.length){alert('Please upload at least one image.');return;}
+
+  const cardW=85.6,cardH=54;
+  const cards=ids.map(id=>{
+    const data=canvasDataURL(id,true);
+    if(!data)return '';
+    if(layout==='frontback'){
+      if(id===1){
+        return `<div class="card-wrap card-front"><img src="${data}" class="id-card" alt="ID card front pane 1"></div>`;
+      }
+      return `<div class="card-wrap card-back"><img src="${data}" class="id-card" alt="ID card back pane 2"></div>`;
+    }
+    return `<div class="card-wrap"><img src="${data}" class="id-card" alt="ID card pane ${id}"></div>`;
+  }).join('');
+
+  const pages=Array.from({length:copies},()=>`<section class="sheet">${cards}</section>`).join('');
+
+  const css=`
+    @page{size:A4 portrait;margin:0}
+    .sheet{
+      width:210mm;height:297mm;position:relative;
+      overflow:hidden;
+      page-break-after:always;break-after:page
+    }
+    .card-wrap{width:${cardW}mm;height:${cardH}mm;position:absolute;left:50%;transform:translateX(-50%)}
+    .id-card{
+      display:block;width:${cardW}mm;height:${cardH}mm;
+      object-fit:fill;-webkit-print-color-adjust:exact;print-color-adjust:exact
+    }
+    .card-front{top:${frontTop.toFixed(3)}mm}
+    .card-back{bottom:${backBottom.toFixed(3)}mm}
+    .sheet:has(.card-front):has(.card-back) .card-front + .card-back{ }
+    /* For single-side printing, keep the existing centered placement. */
+    .sheet:not(:has(.card-front)):not(:has(.card-back)){
+      display:flex;align-items:center;justify-content:center
+    }
+    /* Gap remains available for compatibility, but Front+Back uses independent
+       top/bottom anchors so each card can be positioned precisely. */
+    @media print{html,body{width:210mm;height:297mm;margin:0;padding:0}}`;
+
+  return openPrintWindow('CSC VLE TOOLS ID Card Print',
+    printWindowScaffold('CSC VLE TOOLS ID Card Print',pages,css));
+}
+
+function printPhotoSheet5x5(){
+  const mode=document.getElementById('photoSheetMode')?.value||'5x5';
+  const width=Math.max(20,Math.min(42,Number(document.getElementById('photoWidthMm')?.value)||35));
+  const height=Math.max(25,Math.min(60,Number(document.getElementById('photoHeightMm')?.value)||45));
+  const rowGap=Math.max(0,Math.min(30,Number(document.getElementById('photoRowGapMm')?.value)||8));
+
+  const has1=!!state[1].currentImg;
+  const has2=!!state[2].currentImg;
+  if((mode==='5x5'||mode==='5x0')&&!has1){
+    alert('Please finish the Pane 1 photo before printing Row 1.');
+    return;
+  }
+  if((mode==='5x5'||mode==='0x5')&&!has2){
+    alert('Please finish the Pane 2 photo before printing Row 2.');
+    return;
+  }
+
+  // Exact 3 CSS-pixel cutting gap, converted to physical millimetres.
+  const cutGapPx=3;
+  const cutGapMm=cutGapPx*25.4/96;
+  const totalRowWidth=width*5+cutGapMm*4;
+  const sideMargin=Math.max(0,(210-totalRowWidth)/2);
+  if(totalRowWidth>210){
+    alert('Photo width is too large for 5 photos across A4. Use a smaller photo width.');
+    return;
+  }
+
+  const img1=has1?canvasDataURL(1,true):'';
+  const img2=has2?canvasDataURL(2,true):'';
+
+  const row1=(mode==='5x5'||mode==='5x0')
+    ?Array.from({length:5},()=>`<img src="${img1}" class="photo" alt="Pane 1 photo">`).join('')
+    :'';
+  const row2=(mode==='5x5'||mode==='0x5')
+    ?Array.from({length:5},()=>`<img src="${img2}" class="photo" alt="Pane 2 photo">`).join('')
+    :'';
+
+  const rows=[];
+  if(row1)rows.push(`<div class="photo-row row-one">${row1}</div>`);
+  if(row2)rows.push(`<div class="photo-row row-two">${row2}</div>`);
+
+  const css=`
+    @page{size:A4 portrait;margin:0}
+    .sheet{
+      position:relative;width:210mm;height:297mm;
+      overflow:hidden;background:#fff;
+      page-break-after:always;break-after:page
+    }
+    .photo-row{
+      position:absolute;left:${sideMargin.toFixed(3)}mm;
+      width:${totalRowWidth.toFixed(3)}mm;
+      display:flex;flex-direction:row;gap:${cutGapPx}px;
+      align-items:flex-start
+    }
+    .row-one{top:12mm}
+    .row-two{top:${(12+height+rowGap).toFixed(3)}mm}
+    .photo{
+      display:block;width:${width}mm;height:${height}mm;
+      object-fit:fill;margin:0;padding:0;border:0;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact
+    }
+    @media print{html,body{width:210mm;height:297mm}}`;
+
+  const page=`<section class="sheet">${rows.join('')}</section>`;
+  return openPrintWindow('CSC VLE TOOLS Photo Sheet 5+5',
+    printWindowScaffold('CSC VLE TOOLS Photo Sheet 5+5',page,css));
+}
+
+function triggerSafePrint(){
+  const active=[1,2].filter(id=>state[id].origImg||state[id].currentImg);
+  if(!active.length){
+    alert('Please upload at least one image before printing!');
+    return;
+  }
+
+  const imgs=active.map(id=>{
+    const data=canvasDataURL(id,true);
+    return data?`<img src="${data}" class="print-img" alt="Pane ${id}">`:'';
+  }).join('');
+
+  const css=`
+    @page{size:A4 portrait;margin:8mm}
+    body{display:flex;flex-direction:column;align-items:center;gap:5mm}
+    .print-img{
+      display:block;max-width:194mm;max-height:125mm;
+      width:auto;height:auto;object-fit:contain;
+      page-break-inside:avoid;break-inside:avoid;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact
+    }`;
+
+  return openPrintWindow('CSC VLE TOOLS Document Print',
+    printWindowScaffold('CSC VLE TOOLS Document Print',imgs,css));
+}
+
+function printSinglePaneA4(id){
+  const s=state[id];
+  if(!s||(!s.origImg&&!s.currentImg)){
+    alert(`Please upload an image in Pane ${id} first.`);
+    return;
+  }
+
+  const data=canvasDataURL(id,true);
+  if(!data){
+    alert('Could not prepare this pane for printing.');
+    return;
+  }
+
+  const css=`
+    @page{size:A4 portrait;margin:0}
+    html,body{width:210mm;height:297mm}
+    body{display:flex;align-items:center;justify-content:center;padding:7mm}
+    img{
+      display:block;max-width:196mm;max-height:283mm;
+      width:auto;height:auto;object-fit:contain;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact
+    }`;
+
+  return openPrintWindow(`Pane ${id} A4 Full Page`,
+    printWindowScaffold(`Pane ${id} A4 Full Page`,
+      `<img src="${data}" alt="Pane ${id} image">`,css));
+}
+
+function goBack(){
+  var same=false;try{same=document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}
+  if(same&&history.length>1){history.back()}else{location.href='cat-sheets.html'}
+}
+function exitStudio(){
+  if(confirm("Exit CSC VLE TOOLS Pro Studio? Unsaved changes will be cleared.")){
+    deleteImage(1);deleteImage(2);location.href='index.html';
+  }
+}
+
+function getSourcePoints(id){
+  const s=state[id];
+  const canvas=document.getElementById(`canvas-${id}`);
+  const box=document.getElementById(`container-${id}`);
+  if(!canvas||!box||s.corners.length!==4) throw new Error('Four crop corners are not available');
+  const cr=canvas.getBoundingClientRect();
+  const br=box.getBoundingClientRect();
+  const sx=canvas.width/Math.max(1,cr.width);
+  const sy=canvas.height/Math.max(1,cr.height);
+  const pts = s.corners.map(p=>{
+    const localX=p.x-(cr.left-br.left);
+    const localY=p.y-(cr.top-br.top);
+    return {
+      x:Math.max(0,Math.min(canvas.width-1,localX*sx)),
+      y:Math.max(0,Math.min(canvas.height-1,localY*sy))
+    };
+  });
+
+  const area = Math.abs(
+    (pts[0].x*(pts[1].y - pts[3].y) +
+     pts[1].x*(pts[2].y - pts[0].y) +
+     pts[2].x*(pts[3].y - pts[1].y) +
+     pts[3].x*(pts[0].y - pts[2].y)) / 2
+  );
+  if(area < 1000){
+    throw new Error('Selected crop area is too small or degenerate.');
+  }
+  return pts;
+}
+
+function chooseOutputSize(id,pts){
+  const key=document.getElementById(`preset-${id}`).value;
+  const p=PRESETS[key];
+  const top=Math.hypot(pts[1].x-pts[0].x,pts[1].y-pts[0].y);
+  const bottom=Math.hypot(pts[2].x-pts[3].x,pts[2].y-pts[3].y);
+  const left=Math.hypot(pts[3].x-pts[0].x,pts[3].y-pts[0].y);
+  const right=Math.hypot(pts[2].x-pts[1].x,pts[2].y-pts[1].y);
+  const naturalW=Math.max(30,Math.round((top+bottom)/2));
+  const naturalH=Math.max(30,Math.round((left+right)/2));
+  if(p)return {w:p.width,h:p.height,naturalW,naturalH,ratio:p.ratio,label:p.label,fit:true};
+  return {w:naturalW,h:naturalH,naturalW,naturalH,ratio:naturalW/naturalH,label:'Original ratio',fit:false};
+}
+
+function solveLinear8(A,b){
+  const n=8, M=A.map((r,i)=>r.slice().concat(b[i]));
+  for(let c=0;c<n;c++){
+    let piv=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[piv][c]))piv=r;
+    if(Math.abs(M[piv][c])<1e-10)throw new Error('Degenerate corner geometry');
+    [M[c],M[piv]]=[M[piv],M[c]];
+    const q=M[c][c];for(let j=c;j<=n;j++)M[c][j]/=q;
+    for(let r=0;r<n;r++)if(r!==c){const f=M[r][c];if(Math.abs(f)>1e-12)for(let j=c;j<=n;j++)M[r][j]-=f*M[c][j];}
+  }
+  return M.map(r=>r[n]);
+}
+
+function homographyToQuad(dstW,dstH,pts){
+  const d=[[0,0],[dstW,0],[dstW,dstH],[0,dstH]], A=[], b=[];
+  for(let i=0;i<4;i++){
+    const [u,v]=d[i],{x,y}=pts[i];
+    A.push([u,v,1,0,0,0,-u*x,-v*x]);b.push(x);
+    A.push([0,0,0,u,v,1,-u*y,-v*y]);b.push(y);
+  }
+  const h=solveLinear8(A,b);return [...h,1];
+}
+
+function warpQuadToRect(srcCanvas,pts,outW,outH){
+  const data=srcCanvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,srcCanvas.width,srcCanvas.height).data;
+  const dst=document.createElement('canvas');dst.width=outW;dst.height=outH;
+  const ctx=dst.getContext('2d',{willReadFrequently:true});const out=ctx.createImageData(outW,outH),H=homographyToQuad(outW,outH,pts);
+  const [h0,h1,h2,h3,h4,h5,h6,h7]=H,sw=srcCanvas.width,sh=srcCanvas.height;
+  for(let y=0;y<outH;y++)for(let x=0;x<outW;x++){
+    const den=h6*x+h7*y+1,sx=(h0*x+h1*y+h2)/den,sy=(h3*x+h4*y+h5)/den,oi=(y*outW+x)*4;
+    if(sx<0||sx>=sw-1||sy<0||sy>=sh-1){out.data[oi+3]=0;continue;}
+    const x0=Math.floor(sx),y0=Math.floor(sy),fx=sx-x0,fy=sy-y0;
+    const i00=(y0*sw+x0)*4,i10=i00+4,i01=i00+sw*4,i11=i01+4;
+    for(let k=0;k<3;k++){const a=data[i00+k]*(1-fx)+data[i10+k]*fx,b=data[i01+k]*(1-fx)+data[i11+k]*fx;out.data[oi+k]=Math.round(a*(1-fy)+b*fy)}
+    out.data[oi+3]=255;
+  }
+  ctx.putImageData(out,0,0);return dst;
+}
+
+function fitCanvasToRatio(src,targetW,targetH){
+  const target=targetW/targetH,sw=src.width,sh=src.height,srcRatio=sw/sh;
+  let cw=sw,ch=sh,sx=0,sy=0;
+  if(srcRatio>target){cw=Math.max(1,Math.round(sh*target));sx=Math.round((sw-cw)/2)}
+  else if(srcRatio<target){ch=Math.max(1,Math.round(sw/target));sy=Math.round((sh-ch)/2)}
+  const dst=document.createElement('canvas');dst.width=targetW;dst.height=targetH;const ctx=dst.getContext('2d');
+  ctx.drawImage(src,sx,sy,cw,ch,0,0,targetW,targetH);return dst;
+}
+
+function applySmartCropDewarp(id){
+  const s=state[id];if(!s.currentImg)return;
+  if(s.corners.length!==4){alert('Please set four corners first.');return}
+  try{
+    const srcCanvas=document.getElementById(`canvas-${id}`),pts=getSourcePoints(id),out=chooseOutputSize(id,pts);
+    if(out.w<30||out.h<30)return;
+    pushHistory(id);setStatus(id,'Applying precision dewarp...');showLoading(id,'Crop + dewarp...');
+    setTimeout(()=>{
+      try{
+        const src=document.createElement('canvas');src.width=srcCanvas.width;src.height=srcCanvas.height;src.getContext('2d').drawImage(s.currentImg,0,0);
+        const frameWasActive=document.querySelector(`#container-${id} .crop-frame`)?.classList.contains('active');
+        let workW=out.fit?Math.min(2400,Math.max(out.w*2,out.h*2)):out.naturalW;
+        let workH=Math.max(30,Math.round(workW/(out.naturalW/out.naturalH)));
+        let warped=warpQuadToRect(src,pts,workW,workH);
+        if(out.fit)warped=fitCanvasToRatio(warped,out.w,out.h);
+        const img=new Image();img.onload=()=>{
+          s.currentImg=img;s.origImg=img;s.foregroundImg=null;s.shadowImg=null;s.bgImage=null;
+          s.offsetX=0;s.offsetY=0;
+          srcCanvas.width=warped.width;srcCanvas.height=warped.height;
+          // The cropped/dewarped image becomes the complete canvas.
+          // Refit both canvas and container immediately so the frame follows the image,
+          // never the old preview/container dimensions.
+          const cont=document.getElementById(`container-${id}`);
+          cont.classList.add('crop-only');
+          fitPreviewToPane(id);
+          processImage(id);
+          setPinsVisibility(id,false);
+          const frame=document.querySelector(`#container-${id} .crop-frame`);
+          if(frame){
+            frame.classList.toggle('active',!!frameWasActive);
+            if(frameWasActive)updateFrame(id);
+          }
+          setStatus(id,`${out.label} â€¢ Full canvas ${warped.width} Ã— ${warped.height}px`);hideLoading(id);
+        };img.src=warped.toDataURL('image/png');
+      }catch(err){hideLoading(id);setStatus(id,'Dewarp error: '+err.message);console.error(err)}
+    },30);
+  }catch(err){
+    alert(err.message);
+    setStatus(id, err.message);
+  }
+}
+</script>
+<script>
+/* Pro Studio UI behaviour (v8): tabs, live state, theme menu, photo-sheet planner, ID card options, print panel, brushes, ink. */
+(function(){
+  "use strict";
+  const $=id=>document.getElementById(id);
+  const PANES=[1,2], NAMES={1:'Pane 1 Â· Front',2:'Pane 2 Â· Back'};
+  const TABC={adjust:'#0891b2',crop:'#16a34a',bg:'#e11d48',cut:'#9333ea',sign:'#2563eb'};
+
+  /* ================= tabs ================= */
+  function selectTab(n,key,focus){
+    document.querySelectorAll(`#pane-${n} .tab`).forEach(t=>{const on=t.dataset.tab===key;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;if(on&&focus)t.focus()});
+    document.querySelectorAll(`#pane-${n} .panel`).forEach(p=>p.hidden=p.id!==`panel-${n}-${key}`);
+    $('pane-'+n).style.setProperty('--tabc',TABC[key]);
+    setCollapsed(n,false);
+  }
+  function setCollapsed(n,c){
+    const pane=$('pane-'+n);pane.classList.toggle('collapsed',c);
+    const b=pane.querySelector('[data-collapse]');b.setAttribute('aria-expanded',String(!c));
+    b.innerHTML=`<svg class="ic" aria-hidden="true"><use href="#i-chev-${c?'d':'u'}"/></svg>`;
+    requestAnimationFrame(()=>{if(typeof fitPreviewToPane==='function')fitPreviewToPane(n)});
+  }
+  document.addEventListener('click',e=>{
+    const tab=e.target.closest('.tab');
+    if(tab){const n=+tab.dataset.pane,pane=$('pane-'+n);
+      if(tab.getAttribute('aria-selected')==='true'&&!pane.classList.contains('collapsed'))setCollapsed(n,true);else selectTab(n,tab.dataset.tab);return}
+    const col=e.target.closest('[data-collapse]');
+    if(col){const n=+col.dataset.collapse;setCollapsed(n,!$('pane-'+n).classList.contains('collapsed'))}
+  });
+  document.addEventListener('keydown',e=>{
+    const tab=e.target.closest&&e.target.closest('.tab');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+    const list=[...tab.parentElement.querySelectorAll('.tab')],i=list.indexOf(tab);
+    const j=e.key==='Home'?0:e.key==='End'?list.length-1:(i+(e.key==='ArrowRight'?1:-1)+list.length)%list.length;
+    e.preventDefault();selectTab(+tab.dataset.pane,list[j].dataset.tab,true);
+  });
+
+  /* ================= live state ================= */
+  function setPressed(id,on){const b=$(id);if(b)b.setAttribute('aria-pressed',String(!!on))}
+  function syncUI(){
+    document.querySelectorAll('.sl output').forEach(o=>{const r=$(o.dataset.for);if(r){const v=r.value;o.textContent=(r.id.startsWith('fine-angle')&&+v>0?'+':'')+v}});
+    PANES.forEach(n=>{
+      const s=state[n],pane=$('pane-'+n);
+      pane.classList.toggle('has-image',!!(s.currentImg||s.origImg));
+      setPressed('t-pins-'+n,s.pinsVisible!==false);
+      setPressed('t-move-'+n,!!s.dragImage);
+      setPressed('eraser-btn-'+n,!!s.eraserOn&&!s.restoreMode);
+      setPressed('restore-btn-'+n,!!s.eraserOn&&!!s.restoreMode);
+      const eb=$('eraser-btn-'+n);if(eb)eb.classList.toggle('eraser-on',!!s.eraserOn&&!s.restoreMode);
+      setPressed('t-frame-'+n,!!document.querySelector(`#container-${n} .crop-frame`)?.classList.contains('active'));
+      $('m-doc-'+n).classList.toggle('on',s.mode==='doc');$('m-sig-'+n).classList.toggle('on',s.mode==='sig');
+      const col=($('signature-color-'+n)||{}).value||'';
+      setPressed('ink-orig-'+n,!s.inkCustom);setPressed('ink-black-'+n,!!s.inkCustom&&col.toLowerCase()==='#111111');setPressed('ink-blue-'+n,!!s.inkCustom&&col.toLowerCase()==='#1f3fbf');
+      ['shadowfix','shadowdetail'].forEach(k=>$(`sl-${k}-${n}`).classList.toggle('dim',!s.shadowRemoved));
+    });
+    idInfo();
+  }
+  document.addEventListener('input',syncUI);
+  document.addEventListener('change',syncUI);
+  document.addEventListener('click',()=>requestAnimationFrame(syncUI));
+  const _setStatus=setStatus;setStatus=function(id,msg){_setStatus(id,msg);syncUI()};
+  setInterval(syncUI,800);
+
+  function markActive(){
+    PANES.forEach(n=>$('pane-'+n).classList.toggle('is-active',activePane===n));
+    $('editing-name').textContent=NAMES[activePane];
+  }
+  PANES.forEach(n=>$('pane-'+n).addEventListener('pointerdown',()=>setTimeout(markActive,0)));
+  document.addEventListener('focusin',e=>{const p=e.target.closest&&e.target.closest('.pane');if(p){activePane=+p.id.slice(-1);markActive()}});
+  PANES.forEach(n=>$('pane-'+n).style.setProperty('--tabc',TABC.adjust));
+
+  /* ================= theme menu ================= */
+  const T=window.PSTheme,tbtn=$('theme-open'),tmenu=$('themeMenu');
+  function swatch(kind,i,css,label,on){return `<button type="button" class="opt${on?' on':''}" data-k="${kind}" data-i="${i}" style="background:${css}" title="${label}" aria-label="${label}"></button>`}
+  function renderTheme(){
+    const t=T.get(),dark=t.mode==='dark',bgs=dark?T.BGD:T.BGL,cur=dark?t.bgD:t.bgL;
+    tmenu.innerHTML=
+      `<h4>Mode</h4><div class="opt-seg"><button type="button" class="btn tgl" data-k="mode" data-i="light" aria-pressed="${!dark}">â˜€ Light</button><button type="button" class="btn tgl" data-k="mode" data-i="dark" aria-pressed="${dark}">ðŸŒ™ Dark</button></div>`+
+      `<h4>Header colour</h4><div class="opt-row">${T.HEADS.map((h,i)=>swatch('head',i,`linear-gradient(135deg,${h[1]},${h[2]})`,h[0],t.head===i)).join('')}</div>`+
+      `<h4>Main button colour</h4><div class="opt-row">${T.ACCENTS.map((a,i)=>swatch('accent',i,`linear-gradient(135deg,${a[2]},${a[3]})`,a[0],t.accent===i)).join('')}</div>`+
+      `<h4>Workspace background</h4><div class="opt-row">${bgs.map((b,i)=>swatch('bg',i,b[1],b[0],cur.toLowerCase()===b[1])).join('')}<label class="opt" style="display:inline-grid;place-items:center;background:conic-gradient(red,yellow,lime,aqua,blue,magenta,red);position:relative" title="Pick any background colour"><input type="color" id="theme-bg-pick" value="${cur}" style="opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer" aria-label="Custom background colour"></label></div>`+
+      `<button type="button" class="btn reset" data-k="reset">Reset to default look</button>`;
+  }
+  function toggleTheme(on){tmenu.hidden=!on;tbtn.setAttribute('aria-expanded',String(on));if(on)renderTheme()}
+  tbtn.addEventListener('click',e=>{e.stopPropagation();toggleTheme(tmenu.hidden)});
+  tmenu.addEventListener('click',e=>{
+    e.stopPropagation();const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k,i=b.dataset.i;
+    if(k==='mode')T.set({mode:i});else if(k==='head')T.set({head:+i});else if(k==='accent')T.set({accent:+i});
+    else if(k==='bg'){const dark=T.get().mode==='dark',c=(dark?T.BGD:T.BGL)[+i][1];T.set(dark?{bgD:c}:{bgL:c})}
+    else if(k==='reset')T.reset();
+    renderTheme();
+  });
+  tmenu.addEventListener('input',e=>{if(e.target.id==='theme-bg-pick'){const dark=T.get().mode==='dark';T.set(dark?{bgD:e.target.value}:{bgL:e.target.value})}});
+  document.addEventListener('click',e=>{if(!tmenu.hidden&&!tmenu.contains(e.target)&&e.target!==tbtn)toggleTheme(false)});
+
+  /* ================= print drawer ================= */
+  const drawer=$('printDrawer'),scrim=$('printScrim'),openBtn=$('print-open');
+  function togglePrint(on){
+    drawer.classList.toggle('on',on);scrim.classList.toggle('on',on);drawer.setAttribute('aria-hidden',String(!on));openBtn.setAttribute('aria-expanded',String(on));
+    if(on){toggleTheme(false);psRefresh(true);$('print-close').focus()}else openBtn.focus();
+  }
+  openBtn.addEventListener('click',()=>togglePrint(!drawer.classList.contains('on')));
+  $('print-close').addEventListener('click',()=>togglePrint(false));
+  scrim.addEventListener('click',()=>togglePrint(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(drawer.classList.contains('on'))togglePrint(false);else if(!tmenu.hidden)toggleTheme(false)}});
+  drawer.addEventListener('click',e=>{
+    const b=e.target.closest('[data-print]');if(!b||b.disabled)return;
+    const fn=window[b.dataset.print];if(typeof fn!=='function')return;
+    fn(b.dataset.arg?Number(b.dataset.arg):undefined);     /* run inside the click so pop-up blockers allow the print window */
+    togglePrint(false);
+  });
+
+  /* ================= ID card options ================= */
+  const idType=$('idCardType'),idLay=$('idCardLayout');
+  idType.addEventListener('change',()=>{idLay.value=idType.value==='PAN Card'?'front':'frontback';idInfo()});
+  idLay.addEventListener('change',idInfo);
+  function idInfo(){
+    const lay=idLay.value,has1=!!state[1].currentImg,has2=!!state[2].currentImg,box=$('idInfo');
+    $('idGapRow').style.display=lay==='frontback'?'':'none';
+    $('idTopRow').style.display=lay==='back'?'none':'';
+    $('idBotRow').style.display=lay==='front'?'none':'';
+    let msg='',cls='';
+    if(lay==='frontback'){msg='Prints Pane 1 (front) at the top and Pane 2 (back) at the bottom of one A4 page.';if(!has1||!has2){msg='Both panes are needed: '+(!has1&&!has2?'Pane 1 and Pane 2 are empty.':!has1?'Pane 1 (front) is empty.':'Pane 2 (back) is empty, so only the front will print.');cls='bad'}else cls='ok'}
+    else if(lay==='front'){msg='Prints only Pane 1 (front), centred on A4. Use this for PAN card.';if(!has1){msg='Pane 1 is empty. Upload the card in Pane 1.';cls='bad'}else cls='ok'}
+    else{msg='Prints only Pane 2 (back), centred on A4.';if(!has2){msg='Pane 2 is empty.';cls='bad'}else cls='ok'}
+    box.textContent=msg;box.className='fitnote '+cls;
+  }
+  window.printIDCardSmart=function(){
+    const lay=idLay.value;
+    if(lay!=='back'&&!state[1].currentImg){alert('Pane 1 is empty. Upload the front of the card in Pane 1.');return}
+    if(lay==='back'&&!state[2].currentImg){alert('Pane 2 is empty. Upload the back of the card in Pane 2.');return}
+    if(lay==='frontback'&&!state[2].currentImg&&!confirm('Pane 2 (back) is empty. Print only the front?'))return;
+    return printIDCardFrontBack();
+  };
+
+  /* ================= photo sheet planner ================= */
+  const SIZES=[['Passport photo â€” 35 Ã— 45 mm',35,45],['Passport / visa â€” 2 Ã— 2 in (51 Ã— 51 mm)',51,51],['PAN card photo â€” 25 Ã— 35 mm',25,35],['Small passport â€” 30 Ã— 40 mm',30,40],['Stamp size â€” 20 Ã— 25 mm',20,25],['Small stamp â€” 15 Ã— 20 mm',15,20],['Sticker on book â€” 30 Ã— 35 mm',30,35]];
+  const PAPER={plain:{label:'A4 Plain paper',margin:8},glossy:{label:'A4 Glossy photo paper',margin:5}};
+  const SK='ps_sizes';
+  const customList=()=>{try{const a=JSON.parse(localStorage.getItem(SK)||'[]');return Array.isArray(a)?a.filter(x=>x&&x.name&&x.w>0&&x.h>0):[]}catch(e){return[]}};
+  const saveCustom=a=>{try{localStorage.setItem(SK,JSON.stringify(a))}catch(e){}};
+  const sSize=$('psSize'),sW=$('psW'),sH=$('psH'),sPaper=$('psPaper'),sGap=$('psGap'),sC1=$('psC1'),sC2=$('psC2'),sMulti=$('psMulti'),sFrame=$('psFrame'),sFt=$('psFt'),sFc=$('psFc'),sFit=document.createElement('select');
+  sFit.id='psFit';sFit.innerHTML='<option value="cover">Crop edges to fit (no stretching)</option><option value="fill">Stretch to the exact size</option>';
+  const fitLabel=document.createElement('label');fitLabel.className='wide';fitLabel.innerHTML='Fit picture to size';fitLabel.appendChild(sFit);
+  sFt.closest('label').parentNode.insertBefore(fitLabel,sFt.closest('label'));
+  let touched=false;
+  function fillSizes(sel){
+    const cs=customList();
+    sSize.innerHTML=SIZES.map((s,i)=>`<option value="i:${i}">${s[0]}</option>`).join('')+cs.map((s,i)=>`<option value="c:${i}">â˜… ${s.name} â€” ${s.w} Ã— ${s.h} mm</option>`).join('')+'<option value="custom">Custom sizeâ€¦</option>';
+    if(sel)sSize.value=sel;
+  }
+  function matchSize(){
+    const w=+sW.value,h=+sH.value,cs=customList();
+    for(let i=0;i<SIZES.length;i++)if(SIZES[i][1]===w&&SIZES[i][2]===h)return 'i:'+i;
+    for(let i=0;i<cs.length;i++)if(cs[i].w===w&&cs[i].h===h)return 'c:'+i;
+    return 'custom';
+  }
+  function geo(){
+    const w=+sW.value,h=+sH.value,gap=Math.max(0,+sGap.value||0),m=PAPER[sPaper.value].margin;
+    const ok=w>=10&&h>=10&&w<=190&&h<=277;
+    const cols=ok?Math.floor((210-2*m+gap)/(w+gap)):0,rows=ok?Math.floor((297-2*m+gap)/(h+gap)):0;
+    return {w,h,gap,m,cols,rows,cap:cols*rows,ok:ok&&cols>0&&rows>0};
+  }
+  function countOptions(sel,max,keep,cap,multi){
+    const vals=[];for(let v=0;v<=max;v+=5)vals.push(v);if(max%5&&!vals.includes(max))vals.push(max);
+    sel.innerHTML=vals.map(v=>{const over=!multi&&v>cap;return `<option value="${v}"${over?' disabled':''}>${v===0?'0 (none)':v}${over?' â€” needs 2 sheets':''}</option>`}).join('');
+    const ok=vals.filter(v=>multi||v<=cap),want=ok.includes(keep)?keep:ok.filter(v=>v<=keep).pop();sel.value=String(want==null?0:want);
+  }
+  function plan(g,c1,c2){
+    const r1=g.cols?Math.ceil(c1/g.cols):0,r2=g.cols?Math.ceil(c2/g.cols):0,total=r1+r2,sheets=g.rows?Math.max(1,Math.ceil(total/g.rows)):1;
+    return {r1,r2,total,sheets,fits:total<=g.rows};
+  }
+  function psRefresh(initial){
+    const g=geo(),has1=!!state[1].currentImg,has2=!!state[2].currentImg;
+    const multi=sMulti.checked;
+    if(initial&&!touched){sC1.dataset.def=has1&&has2?'5':has1?'10':has2?'0':'5';sC2.dataset.def=has1&&has2?'5':has1?'0':has2?'10':'5'}
+    const k1=+(initial&&!touched?sC1.dataset.def:sC1.value)||0,k2=+(initial&&!touched?sC2.dataset.def:sC2.value)||0;
+    const info=$('psInfo'),btn=$('psPrint');
+    if(!g.ok){info.className='fitnote bad';info.textContent='This size does not fit on A4. Make it smaller.';btn.disabled=true;sC1.innerHTML=sC2.innerHTML='<option value="0">0</option>';drawPrev(g,0,0);return}
+    const max=multi?200:Math.max(g.cap,40);
+    countOptions(sC1,max,k1,g.cap,multi);countOptions(sC2,max,k2,g.cap,multi);
+    const c1=+sC1.value,c2=+sC2.value,p=plan(g,c1,c2),paper=PAPER[sPaper.value];
+    let msg=`${paper.label}: ${g.cols} photos per row, ${g.rows} rows, up to ${g.cap} photos on one sheet. `;
+    let cls='ok',can=true;
+    if(c1+c2===0){msg+='Choose how many photos to print.';cls='';can=false}
+    else{
+      msg+=`Pane 1: ${c1} (${p.r1} row${p.r1===1?'':'s'}) Â· Pane 2: ${c2} (${p.r2} row${p.r2===1?'':'s'}). `;
+      if(p.fits)msg+=`Uses ${p.total} of ${g.rows} rows. âœ”`;
+      else if(multi)msg+=`This needs ${p.sheets} A4 sheets.`;
+      else{cls='bad';can=false;const free=Math.max(0,(g.rows-p.r1)*g.cols);msg+=`Too many for one sheet. With ${c1} in Pane 1, Pane 2 can have up to ${Math.floor(free/5)*5}. Or tick â€œAllow more than one A4 sheetâ€.`}
+    }
+    if(c1>0&&!has1){cls='bad';can=false;msg+=' Pane 1 has no picture.'}
+    if(c2>0&&!has2){cls='bad';can=false;msg+=' Pane 2 has no picture.'}
+    info.className='fitnote '+cls;info.textContent=msg;btn.disabled=!can;
+    drawPrev(g,c1,c2);
+  }
+  function drawPrev(g,c1,c2){
+    const box=$('psPrev'),k=126/210;box.innerHTML='';if(!g.ok)return;
+    const total=Math.ceil(c1/g.cols)+Math.ceil(c2/g.cols);let row=0;
+    const x0=(210-(g.cols*g.w+(g.cols-1)*g.gap))/2;
+    [[c1,'#4f8cff'],[c2,'#ff9f43']].forEach(([c,col])=>{
+      for(let i=0;i<c;i++){const r=Math.floor(i/g.cols),cc=i%g.cols,rr=row+r;if(rr>=g.rows)break;
+        const el=document.createElement('i');el.style.cssText=`left:${(x0+cc*(g.w+g.gap))*k}px;top:${(g.m+rr*(g.h+g.gap))*k}px;width:${g.w*k}px;height:${g.h*k}px;background:${col}`;box.appendChild(el)}
+      row+=Math.ceil(c/g.cols);
+    });
+  }
+  [sW,sH,sGap].forEach(el=>el.addEventListener('input',()=>{sSize.value=matchSize();syncSave();psRefresh()}));
+  [sPaper,sMulti].forEach(el=>el.addEventListener('change',()=>psRefresh()));
+  [sC1,sC2].forEach(el=>el.addEventListener('change',()=>{touched=true;psRefresh()}));
+  sSize.addEventListener('change',()=>{
+    const v=sSize.value;
+    if(v.startsWith('i:')){const s=SIZES[+v.slice(2)];sW.value=s[1];sH.value=s[2]}
+    else if(v.startsWith('c:')){const s=customList()[+v.slice(2)];if(s){sW.value=s.w;sH.value=s.h}}
+    syncSave();psRefresh();
+  });
+  function syncSave(){
+    const v=sSize.value,row=$('psSaveRow');row.hidden=!(v==='custom'||v.startsWith('c:'));
+    $('psSave').textContent=v.startsWith('c:')?'Remove from list':'Save to list';
+    $('psName').closest('label').style.display=v.startsWith('c:')?'none':'';
+  }
+  $('psSave').addEventListener('click',()=>{
+    const v=sSize.value,list=customList();
+    if(v.startsWith('c:')){list.splice(+v.slice(2),1);saveCustom(list);fillSizes('custom');syncSave();return}
+    const name=$('psName').value.trim(),w=+sW.value,h=+sH.value;
+    if(!name){alert('Type a name for this size, for example â€œBook stickerâ€.');return}
+    if(!(w>=10&&h>=10)){alert('Enter a valid width and height in mm.');return}
+    list.push({name,w,h});saveCustom(list);$('psName').value='';fillSizes('c:'+(list.length-1));syncSave();
+  });
+  window.printPhotoSheetV2=function(){
+    const g=geo();if(!g.ok){alert('This photo size does not fit on A4.');return}
+    const c1=+sC1.value||0,c2=+sC2.value||0,p=plan(g,c1,c2);
+    if(c1+c2===0){alert('Choose how many photos to print.');return}
+    if(!p.fits&&!sMulti.checked){alert('Too many photos for one A4 sheet. Reduce the numbers or tick â€œAllow more than one A4 sheetâ€.');return}
+    if(c1>0&&!state[1].currentImg){alert('Pane 1 has no picture.');return}
+    if(c2>0&&!state[2].currentImg){alert('Pane 2 has no picture.');return}
+    const PX=mm=>Math.max(8,Math.round(mm/25.4*400)),tw=PX(g.w),th=PX(g.h),cover=sFit.value==='cover';
+    const tile=id=>{
+      const cv=renderExportCanvas(id,{includeFrame:true});if(!cv)return '';
+      const o=document.createElement('canvas');o.width=tw;o.height=th;const x=o.getContext('2d');
+      x.fillStyle='#fff';x.fillRect(0,0,tw,th);x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
+      if(cover){const sc=Math.max(tw/cv.width,th/cv.height),sw=tw/sc,sh=th/sc;x.drawImage(cv,(cv.width-sw)/2,(cv.height-sh)/2,sw,sh,0,0,tw,th)}else x.drawImage(cv,0,0,tw,th);
+      return o.toDataURL('image/jpeg',0.95);
+    };
+    const imgs={1:c1?tile(1):'',2:c2?tile(2):''};
+    const x0=(210-(g.cols*g.w+(g.cols-1)*g.gap))/2,ft=+sFt.value,fc=sFc.value;
+    const pages=[];let row=0;
+    const place=(id,count)=>{
+      for(let i=0;i<count;i++){
+        const r=row+Math.floor(i/g.cols),c=i%g.cols,pg=Math.floor(r/g.rows),lr=r%g.rows;
+        (pages[pg]=pages[pg]||[]).push(`<img class="ph" alt="Pane ${id} photo" src="${imgs[id]}" style="left:${(x0+c*(g.w+g.gap)).toFixed(3)}mm;top:${(g.m+lr*(g.h+g.gap)).toFixed(3)}mm">`);
+      }
+      row+=Math.ceil(count/g.cols);
+    };
+    place(1,c1);place(2,c2);
+    const css=`
+      @page{size:A4 portrait;margin:0}
+      .sheet{position:relative;width:210mm;height:297mm;overflow:hidden;background:#fff;page-break-after:always;break-after:page}
+      .ph{position:absolute;display:block;width:${g.w}mm;height:${g.h}mm;margin:0;padding:0;border:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;${sFrame.checked?`outline:${ft}mm solid ${fc};outline-offset:-${ft}mm;`:''}}
+      @media print{html,body{width:210mm;height:297mm;margin:0;padding:0}}`;
+    const html=pages.map(a=>`<section class="sheet">${a.join('')}</section>`).join('');
+    const title=`CSC VLE TOOLS Photo Sheet ${g.w}x${g.h} (${PAPER[sPaper.value].label})`;
+    return openPrintWindow(title,printWindowScaffold(title,html,css));
+  };
+
+  /* ================= cut-out brushes, ink, smart background removal ================= */
+  window.setBrush=function(n,mode){
+    const s=state[n];
+    if(!s.foregroundImg){setStatus(n,'Run Remove background first, then use Erase or Restore');return}
+    const want=mode==='restore',active=!!s.eraserOn&&(!!s.restoreMode===want);
+    s.restoreMode=want;
+    if(active)toggleEraser(n);                       /* pressing the active brush switches it off */
+    else if(!s.eraserOn)toggleEraser(n);             /* switch the brush on */
+    else setStatus(n,want?'Restore brush ON â€¢ paint over parts that were removed by mistake':'Eraser ON â€¢ drag over unwanted pixels');
+    syncUI();
+  };
+  window.setInk=function(n,k){
+    const s=state[n];
+    if(k==='orig'){s.inkCustom=false;processImage(n);setStatus(n,'Signature keeps its original ink colour')}
+    else{const col=k==='black'?'#111111':'#1f3fbf';$('signature-color-'+n).value=col;setSignatureColor(n,col)}
+    syncUI();
+  };
+  function looksLikeSignature(img){
+    try{
+      const W=160,w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;if(!w||!h)return false;
+      const c=document.createElement('canvas');c.width=W;c.height=Math.max(8,Math.round(W*h/w));
+      const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0,c.width,c.height);
+      const d=x.getImageData(0,0,c.width,c.height).data,n=d.length/4,L=new Uint8Array(n),hist=new Uint32Array(256);
+      for(let i=0,p=0;i<d.length;i+=4,p++){const l=Math.round(.299*d[i]+.587*d[i+1]+.114*d[i+2]);L[p]=l;hist[l]++}
+      let acc=0,med=0;for(let v=0;v<256;v++){acc+=hist[v];if(acc>=n/2){med=v;break}}
+      let near=0,ink=0,sr=0,sg=0,sb=0,sc=0;
+      for(let p=0,i=0;p<n;p++,i+=4){const dv=L[p]-med;if(Math.abs(dv)<=30){near++;sr+=d[i];sg+=d[i+1];sb+=d[i+2];sc++}if(dv<-55)ink++}
+      const sat=sc?Math.max(sr,sg,sb)/sc-Math.min(sr,sg,sb)/sc:255;
+      return med>=140&&sat<=45&&near/n>=.70&&ink/n>=.003&&ink/n<=.22;
+    }catch(e){return false}
+  }
+  window.looksLikeSignature=looksLikeSignature;
+  window.smartRemoveBG=function(n){
+    const s=state[n];if(!s.currentImg){setStatus(n,'Upload a picture first');return}
+    if(s.mode==='sig'||looksLikeSignature(s.currentImg))removeSignatureBackground(n);   /* the person model would erase pen ink */
+    else removeBackgroundAI(n);                                                          /* validates its own answer, falls back to the colour method */
+  };
+  window.sigRemove=function(n){const s=state[n];if(!s.currentImg){setStatus(n,'Upload a picture first');return}removeSignatureBackground(n)};
+  const timers={};
+  window.liveRefine=function(n){
+    const s=state[n];if(!s.foregroundImg)return;
+    const k=s.cutKind;clearTimeout(timers[n]);
+    if(k==='sig')timers[n]=setTimeout(()=>removeSignatureBackground(n,true),350);
+    else if(k==='classic')timers[n]=setTimeout(()=>fallbackColorDistanceBG(n,true),350);
+    else refineForeground(n);
+  };
+
+  window.addEventListener('resize',()=>PANES.forEach(n=>fitPreviewToPane(n)));
+  fillSizes('i:0');syncSave();psRefresh(true);idInfo();markActive();syncUI();
+})();
+
+</script>
+</body>
+</html>
