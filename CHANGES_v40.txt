@@ -1,0 +1,17 @@
+CSC VLE TOOLS v40  (16 Nov 2026)  7 new tools
+
+Calculators (cat-calc.html, now 8 tools)
+1. Margin Calculator (tools_margin_calculator.html): profit, margin %, markup %, selling price or cost price; quantity and optional GST.
+2. Simple Calculator (tools_simple_calculator.html): keypad and keyboard, brackets, percent (200 + 10% = 220), history, copy result.
+Quick Utilities (cat-util.html, now 5 tools)
+3. RGB to HEX Converter (tools_rgb_hex_converter.html): HEX / RGB / HSL, colour picker, sliders, copy buttons, text contrast check, saved palette, screen eyedropper where the browser supports it.
+4. Stop Watch (tools_stopwatch.html): start / pause / reset, laps with fastest and slowest, Space / L / R keys, copy laps, CSV download.
+Resume, Documents & Text (cat-docs.html, now 8 tools)
+5. Privacy Policy Generator (tools_privacy_policy_generator.html)
+6. Disclaimer Generator (tools_disclaimer_generator.html)
+7. About Us Generator (tools_about_us_generator.html) - with "Write it again (different words)".
+The three generators give: copy text, copy HTML code, download .txt, download .html, print / save as PDF. They show a note that the text is a general template and not legal advice.
+
+All code is in assets/js/tools-extra.js (added to the tool loader in site.js). Tools are in the tool list/search, the category pages, sitemap.xml and the chatbot help. Category counts updated everywhere.
+All CSS/JS links now use ?v=40.
+Tested here (script test, 0 errors): margin results, calculator sums, HEX/RGB conversion, stopwatch laps, all three generators. Not tested: real browser look, printing, the screen eyedropper.

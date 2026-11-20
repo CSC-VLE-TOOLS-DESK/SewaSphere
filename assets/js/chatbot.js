@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS - Helper Chatbot (no AI API, no server).
+/* SevaSphere - Helper Chatbot (no AI API, no server).
    Reads the tool list from assets/js/site.js (window.CSC), so every new tool added there is found automatically.
    Contact details come from the SITE block in site.js. Edit only HELP, FAQ and SYN below. */
 (function () {
@@ -28,7 +28,7 @@
     tools_ai_bg_remover: "remove background background remove bg remove ai cutout",
     tools_bg_remover: "remove background white background bg remove",
     tools_ai_passport_studio: "passport photo stamp photo photo sheet passport size photos print photos a4",
-    tools_whatsapp_scan_print: "whatsapp photo scan crop clean print document scan",
+    tools_whatsapp_image_print: "whatsapp photo print whatsapp image print",
     tools_handwriting_converter: "handwriting hindi typing handwritten to text scan notes",
     tools_image_text_extractor: "ocr text from image image to text extract text copy text",
     "haryana-resume-generator": "resume cv biodata job bio data naukri",
@@ -175,8 +175,8 @@
 
   var root = document.createElement("div"); root.id = "cscbot"; root.className = "no-print";
   root.innerHTML = '<span class="cb-tip" id="cb-tip">Need help? Ask me 👋</span>' +
-    '<section class="cb-panel" role="dialog" aria-label="CSC VLE TOOLS help chat">' +
-    '<div class="cb-head"><span aria-hidden="true" style="font-size:26px">🤖</span><div><b>' + esc(SITE.name || "CSC VLE TOOLS") + ' Helper</b><small>Find tools, steps and help</small></div><button class="cb-x" type="button" aria-label="Close chat">×</button></div>' +
+    '<section class="cb-panel" role="dialog" aria-label="SevaSphere help chat">' +
+    '<div class="cb-head"><span aria-hidden="true" style="font-size:26px">🤖</span><div><b>' + esc(SITE.name || "SevaSphere") + ' Helper</b><small>Find tools, steps and help</small></div><button class="cb-x" type="button" aria-label="Close chat">×</button></div>' +
     '<div class="cb-msgs" aria-live="polite"></div><div class="cb-chips"></div>' +
     '<form class="cb-in"><input type="text" autocomplete="off" aria-label="Type your question" placeholder="Ask here, e.g. open Prompt Studio"><button type="submit">Send</button></form></section>' +
     '<button class="cb-fab" type="button" aria-label="Open help chat" aria-expanded="false">💬</button>';

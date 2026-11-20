@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS - Home + Back buttons and Theme / Background switcher for the ledger pages.
+/* SevaSphere - Home + Back buttons and Theme / Background switcher for the ledger pages.
    Home  -> index.html (main home page)
    Back  -> the page you came from (e.g. the category page). If the page was opened directly, Back goes to cat-bill.html.
    Theme -> saved on this device, shared by all ledgers. Shop Ledger keeps its own theme button. */

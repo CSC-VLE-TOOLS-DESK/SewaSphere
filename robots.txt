@@ -4,4 +4,4 @@ Disallow: /TEMPLATE_STARTER.html
 Disallow: /upload-check.html
 Disallow: /kids-corner-standalone.html
 
-Sitemap: https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/sitemap.xml
+Sitemap: https://cschelpdesk.github.io/sitemap.xml

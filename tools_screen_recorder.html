@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10152f">
+<title>Screen Recorder Studio</title>
+<style>
+:root{
+  --bg:#0b1024;--panel:#151d3b;--panel2:#1c2850;--text:#f5f7ff;
+  --muted:#aab4d4;--line:rgba(255,255,255,.11);--cyan:#35d6ff;
+  --purple:#9b7bff;--pink:#ff6eb4;--green:#4be0a2;--red:#ff5e78;
+  --shadow:0 22px 65px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ background:radial-gradient(circle at 10% 0%,#26316b 0,transparent 32%),radial-gradient(circle at 90% 10%,#48265e 0,transparent 28%),var(--bg)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{width:min(1180px,calc(100% - 32px));margin:auto;padding:30px 0 48px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--purple) 55%,var(--pink));box-shadow:0 8px 28px #6c6cff55}
+.logo svg{width:27px;height:27px;stroke:#11152f;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.brand h1{font-size:clamp(20px,3vw,27px);margin:0;letter-spacing:-.7px}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.secure{display:flex;align-items:center;gap:7px;border:1px solid #4be0a255;background:#4be0a214;color:#a7f5d2;padding:9px 12px;border-radius:99px;font-size:12px}
+.hero{text-align:center;margin:25px 0 27px}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#b7b0ff;background:#9b7bff18;border:1px solid #9b7bff45;padding:7px 12px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.hero h2{font-size:clamp(30px,5vw,48px);letter-spacing:-1.7px;margin:13px 0 8px}
+.gradient{background:linear-gradient(90deg,var(--cyan),#b39aff,var(--pink));background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero p{color:var(--muted);margin:0;font-size:14px}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:20px;align-items:start}
+.panel{background:linear-gradient(155deg,rgba(29,40,79,.96),rgba(17,25,54,.96));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{padding:19px 21px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel-head h3{margin:0;font-size:15px}
+.panel-body{padding:20px}
+.preview-wrap{position:relative;background:#080c1c;border:1px solid #ffffff16;border-radius:16px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center}
+#preview{width:100%;height:100%;object-fit:contain;background:#080c1c}
+.preview-empty{text-align:center;padding:22px;color:var(--muted)}
+.preview-empty svg{width:48px;height:48px;stroke:#8e9bc8;fill:none;stroke-width:1.4;margin-bottom:10px}
+.preview-empty strong{display:block;color:#e8ecff;font-size:14px}
+.preview-empty span{font-size:12px;display:block;margin-top:5px}
+.live{position:absolute;left:13px;top:13px;display:none;align-items:center;gap:7px;padding:6px 10px;border-radius:99px;background:#ff4661;color:white;font-size:11px;font-weight:800;letter-spacing:.5px}
+.live.show{display:flex}.dot{width:7px;height:7px;border-radius:50%;background:white;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.preview-foot{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;margin-top:11px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;color:white}
+.controls{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:12px 17px;font-weight:750;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+.btn:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.3)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.primary{color:#10152f;background:linear-gradient(100deg,var(--cyan),#a79aff);box-shadow:0 7px 22px #5fbdff30}
+.primary:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08)}
+.stop{background:linear-gradient(100deg,#ff6680,#ff8d9e);color:#2a1020}
+.secondary{background:#ffffff12;border:1px solid var(--line);color:var(--text)}
+.download{background:linear-gradient(100deg,#4be0a2,#75f0c8);color:#08291f}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+.field label{display:block;color:#c5cce5;font-size:12px;font-weight:700;margin-bottom:7px}
+.field select,.field input[type="text"],.field input[type="number"]{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:#0e1632;color:white;outline:none}
+.field select:focus,.field input:focus{border-color:var(--cyan)}
+.toggle-list{display:grid;gap:10px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);background:#ffffff08;border-radius:12px}
+.toggle strong{display:block;font-size:12px}.toggle small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.switch{position:relative;width:42px;height:24px;flex:0 0 auto}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;border-radius:30px;background:#465071;transition:.2s}
+.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:linear-gradient(90deg,#36c8f4,#8d7cff)}
+.switch input:checked+.slider:before{transform:translateX(18px)}
+.status{margin-top:14px;padding:11px 13px;border-radius:11px;background:#ffffff09;border:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.5}
+.status.good{color:#aaf3d2;border-color:#4be0a244;background:#4be0a20d}
+.status.error{color:#ffb5c0;border-color:#ff5e7844;background:#ff5e780d}
+.status.warn{color:#ffe0a6;border-color:#ffca6944;background:#ffca690d}
+.section-title{display:flex;align-items:center;gap:8px;margin:20px 0 12px;font-size:12px;color:#e5e9ff;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.section-title:first-child{margin-top:0}
+.section-title svg{width:15px;height:15px;stroke:var(--cyan);fill:none;stroke-width:2}
+.recordings{margin-top:20px}
+.recording-empty{padding:17px;border:1px dashed #ffffff2b;border-radius:12px;text-align:center;color:var(--muted);font-size:11px}
+.recording-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:9px;background:#ffffff08}
+.recording-item strong{font-size:12px;display:block}.recording-item small{font-size:10px;color:var(--muted)}
+.mini-btn{border:1px solid var(--line);background:#ffffff12;color:white;border-radius:9px;padding:8px 10px;font-size:11px}
+.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:19px}
+.tip{padding:13px;border:1px solid var(--line);background:#ffffff08;border-radius:13px}
+.tip b{font-size:11px;display:block;margin-bottom:5px}.tip span{font-size:10px;color:var(--muted);line-height:1.5}
+footer{text-align:center;color:#8490b7;font-size:10px;margin-top:22px;line-height:1.7}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.settings-panel{order:-1}}
+@media(max-width:520px){.app{width:min(100% - 20px,1180px);padding-top:18px}.topbar{align-items:flex-start}.secure{font-size:10px;padding:7px 9px}.panel-head,.panel-body{padding:15px}.settings-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.controls .btn{flex:1}.tips{grid-template-columns:1fr}.hero{margin:20px 0}}
+.modal{position:fixed;inset:0;background:#000c;display:grid;place-items:center;z-index:50;padding:14px}.modal[hidden]{display:none}.modal-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;width:min(900px,100%);max-height:94vh;overflow:auto}
+.area-stage{position:relative;line-height:0;overflow:hidden;touch-action:none;cursor:crosshair;user-select:none;border-radius:10px}.area-stage video{width:100%;background:#000}
+#areaSel{position:absolute;display:none;border:2px solid var(--cyan);background:#35d6ff22;box-shadow:0 0 0 9999px #0009;pointer-events:none}
+.clip{flex-wrap:wrap}.clip-info{display:flex;align-items:center;gap:10px;min-width:0}.clip-info img,.clip-info video{width:64px;height:38px;object-fit:cover;border-radius:6px;background:#000}
+.clip-ctl{display:flex;align-items:flex-end;gap:7px;flex-wrap:wrap}.clip-ctl label{font-size:10px;color:var(--muted)}.clip-ctl input{display:block;width:78px;margin-top:3px;border:1px solid var(--line);border-radius:8px;padding:7px;background:#0e1632;color:#fff}
+.thumb{width:64px;height:38px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:15px;border:1px solid #ffffff2e}
+.clip-ctl select{display:block;margin-top:3px;border:1px solid var(--line);border-radius:8px;padding:7px;background:#0e1632;color:#fff;max-width:140px}
+.clip-ctl input[type=text]{width:140px}.clip-ctl input[type=color]{width:44px;height:32px;padding:2px}
+.ed-h{margin:18px 0 8px;font-size:11px;color:#8fb0ff;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+#timeline{position:relative;background:#0b1230;border:1px solid var(--line);border-radius:12px;padding:6px 8px 6px 0;overflow:hidden}
+.tl-row{display:flex;align-items:center;gap:6px;margin:4px 0}.tl-lab{width:56px;font-size:10px;color:var(--muted);text-align:right;flex:none}
+.tl-track{position:relative;flex:1;height:26px;display:flex;gap:2px}
+.tl-blk{height:26px;border-radius:6px;font-size:10px;line-height:26px;padding:0 6px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:6px}
+.tl-aud{position:absolute;top:0;background:linear-gradient(90deg,#f59e0b,#ef4444)}
+.tl-play{position:absolute;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 8px #fff;left:62px;pointer-events:none}
+</style>
+<style>.ss-bar{position:relative;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:8px 14px;background:linear-gradient(180deg,#14306f,#0d1b3d);color:#fff;font:700 13px/1.2 "Nunito","Segoe UI",system-ui,sans-serif;box-shadow:0 3px 0 #06102a}.ss-bar a{color:#fff;text-decoration:none;padding:5px 11px;border-radius:9px;background:rgba(255,255,255,.12)}.ss-bar a:hover,.ss-bar a:focus-visible{background:#ffc928;color:#2b1d00;outline:0}.ss-bar b{margin-right:auto;font-weight:800;letter-spacing:.2px}@media print{.ss-bar{display:none}}</style><link rel="icon" href="favicon.svg?v=42" type="image/svg+xml"><link rel="icon" href="favicon-32.png?v=42" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=42">
+</head>
+<body>
+<nav class="ss-bar" aria-label="SevaSphere navigation"><b>SevaSphere</b><a href="index.html">&larr; Home</a><a href="cat-util.html">Quick Utilities</a><a href="index.html#tools">All tools</a></nav>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></svg></div>
+      <div><h1>Screen Recorder <span class="gradient">Studio</span></h1><p>Capture your screen. Keep every moment.</p></div>
+    </div>
+    <div class="secure"><span>●</span> Browser-based · No API key</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">✦ Simple · Private · Powerful</div>
+    <h2>Record your screen <span class="gradient">beautifully.</span></h2>
+    <p>Capture a tab, application window, or your entire screen directly in your browser.</p>
+  </section>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-head"><h3>Recording preview</h3><span id="stateLabel" class="secure">● Ready</span></div>
+      <div class="panel-body">
+        <div class="preview-wrap">
+          <video id="preview" autoplay muted playsinline></video>
+          <div class="preview-empty" id="emptyState">
+            <svg viewBox="0 0 48 48"><rect x="5" y="9" width="28" height="25" rx="3"/><path d="m33 17 10-5v19l-10-5M15 40h10M20 34v6"/></svg>
+            <strong>Your screen preview will appear here</strong>
+            <span>Choose your capture options, then press Start recording.</span>
+          </div>
+          <div class="live" id="liveBadge"><i class="dot"></i> RECORDING</div>
+        </div>
+        <div class="preview-foot"><span id="recordingInfo">Waiting to start</span><span class="timer" id="timer">00:00:00</span></div>
+        <div class="controls">
+          <button class="btn primary" id="startBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>Start recording</button>
+          <button class="btn secondary" id="pauseBtn" disabled><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>Pause</button>
+          <button class="btn stop" id="stopBtn" disabled><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>Stop</button>
+          <button class="btn secondary" id="playBtn" disabled><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/></svg>Play</button>
+          <button class="btn secondary" id="editBtn" disabled><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>Edit</button>
+          <button class="btn download" id="downloadBtn" disabled><svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 20h14"/></svg>Download</button>
+        </div>
+        <div class="status" id="statusBox" role="status" aria-live="polite">Ready. Your browser will ask which screen, window, or tab you want to share.</div>
+        <div class="recordings">
+          <div class="section-title">Last recording</div>
+          <div id="recordingList" class="recording-empty">No recording saved in this session yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel settings-panel">
+      <div class="panel-head"><h3>Recording settings</h3><span style="font-size:11px;color:var(--muted)">Customize capture</span></div>
+      <div class="panel-body">
+        <div class="section-title"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H4zM9 21h6M12 17v4"/></svg> Video quality</div>
+        <div class="settings-grid">
+          <div class="field"><label for="quality">Resolution preference</label>
+            <select id="quality"><option value="1080">Full HD · 1080p</option><option value="720">HD · 720p</option><option value="480">SD · 480p</option><option value="1440">QHD · 1440p</option><option value="2160">4K · 2160p</option></select>
+          </div>
+          <div class="field"><label for="fps">Frame rate</label>
+            <select id="fps"><option value="30">30 FPS · Recommended</option><option value="15">15 FPS · Smaller file</option><option value="60">60 FPS · Smooth</option></select>
+          </div>
+          <div class="field"><label for="format">File format</label><select id="format"><option value="webm">WebM</option><option value="mp4">MP4 (if browser supports)</option></select></div>
+          <div class="field"><label for="bitrate">Video quality</label><select id="bitrate"><option value="0">Auto</option><option value="1500000">Low · small file</option><option value="3000000">Medium</option><option value="6000000">High</option><option value="12000000">Ultra · large file</option></select></div>
+          <div class="field"><label for="outSize">Video size</label><select id="outSize"><option value="0">Original size</option><option value="2160">4K · 2160p</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p · Smallest</option></select></div>
+          <div class="field"><label for="area">Capture area</label><select id="area"><option value="full">Full share</option><option value="area">Area recorder · pick a small window</option></select></div>
+          <div class="field full"><label for="fileName">Recording file name</label><input id="fileName" type="text" maxlength="60" value="SevaSphere-Screen-Recording"></div>
+        </div>
+
+        <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8v8M19 8v8M8 5v14M16 5v14"/></svg> Audio options</div>
+        <div class="toggle-list">
+          <div class="toggle"><div><strong>Include microphone</strong><small>Record your voice with the screen</small></div><label class="switch"><input type="checkbox" id="micToggle"><span class="slider"></span></label></div>
+          <div class="toggle"><div><strong>Include tab / system audio</strong><small>Available when the browser offers audio sharing</small></div><label class="switch"><input type="checkbox" id="systemToggle" checked><span class="slider"></span></label></div>
+        </div>
+        <div class="field" id="micDeviceWrap" style="display:none;margin-top:12px"><label for="micDevice">Microphone device</label><select id="micDevice"><option value="">Default microphone</option></select></div>
+
+        <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/></svg> Quick information</div>
+        <div class="status">• Recording is processed locally in your browser.<br>• Choose “Share tab audio” or “Share system audio” in the browser picker when available.<br>• Use headphones to reduce microphone echo.</div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="panel" id="editorPanel" style="margin-top:20px">
+    <div class="panel-head"><h3>Video editor · Cut, join &amp; add images</h3><span style="font-size:11px;color:var(--muted)">Clips play in order</span></div>
+    <div class="panel-body">
+      <div class="controls" style="margin-top:0">
+        <label class="btn secondary">＋ Video<input type="file" id="addVideo" accept="video/*" multiple hidden></label>
+        <label class="btn secondary">＋ Image<input type="file" id="addImage" accept="image/*" multiple hidden></label>
+        <button class="btn secondary" id="addLast" disabled>＋ Last recording</button>
+        <button class="btn secondary" id="addText">＋ Subtitle</button>
+        <button class="btn secondary" id="addColor">＋ Color board</button>
+        <button class="btn secondary" id="addIcon">＋ SVG icon</button>
+      </div>
+      <div id="clipList" class="recording-empty" style="margin-top:14px">No clips yet. Add videos, images or your last recording.</div>
+      <div class="ed-h">Preview</div>
+      <canvas id="pvCanvas" width="960" height="540" style="width:100%;border-radius:12px;background:#000;display:block"></canvas>
+      <div class="controls"><button class="btn primary" id="pvPlay">▶ Preview</button><button class="btn secondary" id="pvStop" disabled>■ Stop</button><span id="pvTime" style="font-size:12px;color:var(--muted)">0.0 / 0.0 s</span></div>
+      <div class="ed-h">Timeline · video track and audio tracks</div>
+      <div id="timeline"><div id="tlRows"></div><div class="tl-play" id="tlPlay"></div></div>
+      <div class="ed-h">Audio · voice-over, music &amp; voice changer</div>
+      <div class="controls" style="margin-top:0"><button class="btn secondary" id="voBtn">● Record voice-over</button><label class="btn secondary">＋ Audio file<input type="file" id="addAudio" accept="audio/*,video/*" multiple hidden></label><span id="voInfo" style="font-size:11px;color:var(--muted)">Voice-over records while the preview plays. Use headphones.</span></div>
+      <div id="audioList" class="recording-empty" style="margin-top:12px">No audio tracks yet.</div>
+      <div class="settings-grid" style="margin-top:14px">
+        <div class="field"><label for="exSize">Export size</label><select id="exSize"><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option></select></div>
+        <div class="field"><label for="imgDur">Image duration (seconds)</label><input id="imgDur" type="number" min="0.5" step="0.5" value="5"></div>
+      </div>
+      <div class="controls"><button class="btn primary" id="exportBtn" disabled>Export joined video</button><a class="btn download" id="exDownload" style="display:none;text-decoration:none">Download edited video</a></div>
+      <div class="status" id="exStatus">Cut a video by setting start and end seconds, add images between clips, then export. Format follows the File format setting. Export renders in real time, so keep this tab open.</div>
+      <video id="exVideo" controls style="display:none;width:100%;margin-top:12px;border-radius:12px;background:#000"></video>
+    </div>
+  </section>
+  <div class="modal" id="areaModal" hidden><div class="modal-box">
+    <h3 style="margin:0 0 6px">Select recording area</h3>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 12px">Drag on the preview to draw an area, or pick a small window size and tap/drag to place it.</p>
+    <div class="area-stage" id="areaStage"><video id="areaVideo" muted playsinline></video><div id="areaSel"></div></div>
+    <div class="controls">
+      <button class="mini-btn" data-pre="free">Free draw</button><button class="mini-btn" data-pre="480x270">480×270</button><button class="mini-btn" data-pre="640x360">640×360</button><button class="mini-btn" data-pre="854x480">854×480</button><button class="mini-btn" data-pre="1280x720">1280×720</button>
+      <button class="btn primary" id="areaOk">Start recording</button><button class="btn secondary" id="areaCancel">Cancel</button>
+    </div>
+  </div></div>
+  <div class="tips">
+    <div class="tip"><b>01 · Choose a source</b><span>Share a browser tab, app window, or your entire screen.</span></div>
+    <div class="tip"><b>02 · Record and pause</b><span>Pause and resume whenever you need. Stop to prepare your video.</span></div>
+    <div class="tip"><b>03 · Save your video</b><span>Preview the result and download it as a WebM video file.</span></div>
+  </div>
+  <footer>Screen Recorder Studio · Your recording stays in this browser session.<br>Screen capture generally requires HTTPS or localhost and permission from your browser.</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const startBtn=$("startBtn"), pauseBtn=$("pauseBtn"), stopBtn=$("stopBtn"), downloadBtn=$("downloadBtn");
+  const preview=$("preview"), emptyState=$("emptyState"), statusBox=$("statusBox");
+  const stateLabel=$("stateLabel"), timer=$("timer"), liveBadge=$("liveBadge");
+  const micToggle=$("micToggle"), systemToggle=$("systemToggle"), micDevice=$("micDevice");
+  let stopCanvas=null, fallbackNote="", displayStream=null, micStream=null, mixedStream=null, audioContext=null, recorder=null;
+  let recordingBlob=null, recordingUrl=null, recordingSeconds=0, timerInterval=null, paused=false, startedAt=0, elapsedBeforePause=0;
+
+  function setStatus(message,type="") {
+    statusBox.textContent=message;
+    statusBox.className="status"+(type?" "+type:"");
+  }
+  function setState(label) { stateLabel.textContent="● "+label; }
+  function formatTime(seconds) {
+    const h=Math.floor(seconds/3600),m=Math.floor(seconds%3600/60),s=Math.floor(seconds%60);
+    return [h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
+  }
+  function updateTimer() {
+    const elapsed=elapsedBeforePause+(paused?0:(Date.now()-startedAt)/1000);
+    recordingSeconds=elapsed;
+    timer.textContent=formatTime(elapsed);
+  }
+  function stopTimer() { clearInterval(timerInterval);timerInterval=null; }
+  function cleanupTracks() {
+    [displayStream,micStream,mixedStream].forEach(stream=>{
+      if(stream) stream.getTracks().forEach(track=>{try{track.stop()}catch(e){}});
+    });
+    if(stopCanvas){stopCanvas();stopCanvas=null;}displayStream=micStream=mixedStream=null;
+    if(audioContext){audioContext.close().catch(()=>{});audioContext=null;}
+    preview.srcObject=null;
+  }
+  function resetButtons() {
+    startBtn.disabled=false;pauseBtn.disabled=true;stopBtn.disabled=true;
+    pauseBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>Pause';
+  }
+  async function populateMicrophones() {
+    if(!navigator.mediaDevices?.enumerateDevices) return;
+    try {
+      const devices=await navigator.mediaDevices.enumerateDevices();
+      const mics=devices.filter(d=>d.kind==="audioinput");
+      const previous=micDevice.value;
+      micDevice.innerHTML='<option value="">Default microphone</option>';
+      mics.forEach((device,i)=>{
+        const option=document.createElement("option");
+        option.value=device.deviceId;option.textContent=device.label||`Microphone ${i+1}`;
+        micDevice.appendChild(option);
+      });
+      if(previous) micDevice.value=previous;
+    } catch(e) {}
+  }
+  micToggle.addEventListener("change",()=>{
+    $("micDeviceWrap").style.display=micToggle.checked?"block":"none";
+    if(micToggle.checked) populateMicrophones();
+  });
+  async function getMicrophone() {
+    if(!micToggle.checked) return null;
+    const audio={echoCancellation:true,noiseSuppression:true,autoGainControl:true};
+    if(micDevice.value) audio.deviceId={exact:micDevice.value};
+    try {
+      const stream=await navigator.mediaDevices.getUserMedia({audio,video:false});
+      micStream=stream;await populateMicrophones();return stream;
+    } catch(error) {
+      setStatus("Microphone permission was not granted. The screen will continue without microphone audio.","warn");
+      return null;
+    }
+  }
+  async function combineStreams(screenStream, microphoneStream) {
+    const audioTracks=[];
+    if(systemToggle.checked) audioTracks.push(...displayStream.getAudioTracks());
+    if(microphoneStream) audioTracks.push(...microphoneStream.getAudioTracks());
+    if(audioTracks.length===0) return screenStream;
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass) {
+      return new MediaStream([...screenStream.getVideoTracks(),...audioTracks]);
+    }
+    audioContext=new AudioContextClass();
+    if(audioContext.state==="suspended") await audioContext.resume();
+    const destination=audioContext.createMediaStreamDestination();
+    const addAudio=stream=>{
+      if(!stream || !stream.getAudioTracks().length) return;
+      const source=audioContext.createMediaStreamSource(new MediaStream(stream.getAudioTracks()));
+      source.connect(destination);
+    };
+    if(systemToggle.checked) addAudio(displayStream);
+    addAudio(microphoneStream);
+    mixedStream=new MediaStream([...screenStream.getVideoTracks(),...destination.stream.getAudioTracks()]);
+    return mixedStream;
+  }
+  function chooseMimeType() {
+    fallbackNote="";const ok=t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t);
+    if($("format").value==="mp4"){
+      const m=["video/mp4;codecs=avc1.42E01E,mp4a.40.2","video/mp4;codecs=avc1,mp4a.40.2","video/mp4;codecs=avc1","video/mp4"].find(ok);
+      if(m) return m;
+      fallbackNote="MP4 recording is not supported in this browser, so WebM is used. Use the latest Chrome or Edge for MP4.";
+    }
+    return ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(ok)||"video/webm";
+  }
+  const ext=()=>recordingBlob&&/mp4/.test(recordingBlob.type)?"mp4":"webm";
+  function makeTicker(){
+    try{const w=new Worker(URL.createObjectURL(new Blob(["let t;onmessage=e=>{clearInterval(t);if(e.data)t=setInterval(()=>postMessage(0),e.data)}"],{type:"text/javascript"})));let fn=null;w.onmessage=()=>fn&&fn();
+      return{start(ms,f){fn=f;w.postMessage(ms)},stop(){fn=null;w.postMessage(0);w.terminate()}};
+    }catch(e){let t=null;return{start(ms,f){clearInterval(t);t=setInterval(f,ms)},stop(){clearInterval(t)}};}
+  }
+  function makeRecorder(stream,mime,vbps,abps){
+    const chunks=[];let blob=null;const mr=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:vbps,audioBitsPerSecond:abps});
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    return{get state(){return mr.state==="inactive"?"stopped":mr.state},startRecording:()=>mr.start(1000),pauseRecording:()=>mr.pause(),resumeRecording:()=>mr.resume(),
+      stopRecording(cb){mr.onstop=()=>{blob=new Blob(chunks,{type:mr.mimeType||mime});cb()};mr.stop()},getBlob:()=>blob};
+  }
+  async function makeCanvasStream(stream,rect,outH,fps){
+    const v=document.createElement("video");v.muted=true;v.playsInline=true;v.srcObject=stream;v.play().catch(()=>{});
+    if(v.readyState<1) await new Promise(r=>{v.onloadedmetadata=r});
+    const W=v.videoWidth||1920,H=v.videoHeight||1080,r=rect||{x:0,y:0,w:1,h:1};
+    let ow=r.w*W,oh=r.h*H;if(outH){ow=ow*outH/oh;oh=outH;}
+    const c=document.createElement("canvas");c.width=Math.max(2,Math.round(ow/2)*2);c.height=Math.max(2,Math.round(oh/2)*2);
+    const g=c.getContext("2d"),tk=makeTicker();
+    tk.start(1000/fps,()=>{const w=v.videoWidth,h=v.videoHeight;if(!w)return;try{g.drawImage(v,r.x*w,r.y*h,r.w*w,r.h*h,0,0,c.width,c.height)}catch(e){}});
+    stopCanvas=()=>{tk.stop();v.srcObject=null};
+    return c.captureStream(fps);
+  }
+  function pickArea(stream){return new Promise(async res=>{
+    const m=$("areaModal"),v=$("areaVideo"),sel=$("areaSel"),stage=$("areaStage");
+    v.srcObject=stream;await v.play().catch(()=>{});m.hidden=false;
+    let r=null,fixed=null,down=false,sx=0,sy=0;
+    const pos=e=>{const b=stage.getBoundingClientRect();return{x:Math.min(1,Math.max(0,(e.clientX-b.left)/b.width)),y:Math.min(1,Math.max(0,(e.clientY-b.top)/b.height))}};
+    const show=()=>{if(!r)return;sel.style.display="block";Object.assign(sel.style,{left:r.x*100+"%",top:r.y*100+"%",width:r.w*100+"%",height:r.h*100+"%"})};
+    const place=p=>{r={x:Math.min(1-fixed.w,Math.max(0,p.x-fixed.w/2)),y:Math.min(1-fixed.h,Math.max(0,p.y-fixed.h/2)),w:fixed.w,h:fixed.h};show()};
+    stage.onpointerdown=e=>{down=true;stage.setPointerCapture(e.pointerId);const p=pos(e);if(fixed)place(p);else{sx=p.x;sy=p.y;r={x:sx,y:sy,w:0,h:0};show()}};
+    stage.onpointermove=e=>{if(!down)return;const p=pos(e);if(fixed)place(p);else{r={x:Math.min(sx,p.x),y:Math.min(sy,p.y),w:Math.abs(p.x-sx),h:Math.abs(p.y-sy)};show()}};
+    stage.onpointerup=()=>{down=false};
+    document.querySelectorAll("[data-pre]").forEach(b=>b.onclick=()=>{
+      if(b.dataset.pre==="free"){fixed=null;return;}
+      const [w,h]=b.dataset.pre.split("x").map(Number),W=v.videoWidth||1920,H=v.videoHeight||1080;
+      fixed={w:Math.min(1,w/W),h:Math.min(1,h/H)};place({x:.5,y:.5});
+    });
+    const done=ok=>{m.hidden=true;v.srcObject=null;sel.style.display="none";res(!ok?null:(r&&r.w>.02&&r.h>.02?r:{x:0,y:0,w:1,h:1}))};
+    $("areaOk").onclick=()=>done(true);$("areaCancel").onclick=()=>done(false);
+  })}
+  async function startRecording() {
+    if(!navigator.mediaDevices?.getDisplayMedia) {
+      setStatus("Screen capture is not supported in this browser. Try the latest Chrome, Edge, or Firefox on HTTPS or localhost.","error");return;
+    }
+    if(!window.MediaRecorder){setStatus("This browser cannot record video. Try the latest Chrome or Edge.","error");return;}
+    startBtn.disabled=true;setStatus("Opening the browser screen-sharing picker…");
+    try {
+      const fps=Number($("fps").value);
+      const height=Number($("quality").value);
+      displayStream=await navigator.mediaDevices.getDisplayMedia({
+        video:{frameRate:{ideal:fps,max:fps},height:{ideal:height}},
+        audio:systemToggle.checked
+      });
+      const videoTrack=displayStream.getVideoTracks()[0];
+      if(!videoTrack) throw new Error("No screen video track was provided.");
+      videoTrack.addEventListener("ended",()=>{if(recorder && recorder.state!=="stopped") stopRecording();});
+      const microphone=await getMicrophone();
+      let rect=null;const outH=Number($("outSize").value);
+      if($("area").value==="area"){rect=await pickArea(displayStream);if(!rect){const e=new Error("cancelled");e.name="NotAllowedError";throw e;}}
+      const videoSrc=(rect||outH)?await makeCanvasStream(displayStream,rect,outH,fps):displayStream;
+      const captureStream=await combineStreams(videoSrc,microphone);
+      preview.srcObject=displayStream;
+      preview.muted=true;
+      await preview.play().catch(()=>{});
+      emptyState.style.display="none";
+      const mimeType=chooseMimeType();
+      const vb=Number($("bitrate").value)||(height>=2160?16000000:height>=1440?8000000:height>=1080?5000000:2500000);
+      recorder=makeRecorder(captureStream,mimeType,vb,128000);
+      recorder.startRecording();
+      recordingBlob=null;downloadBtn.disabled=true;$("playBtn").disabled=true;$("editBtn").disabled=true;recordingSeconds=0;elapsedBeforePause=0;paused=false;
+      startedAt=Date.now();timer.textContent="00:00:00";
+      timerInterval=setInterval(updateTimer,250);
+      startBtn.disabled=true;pauseBtn.disabled=false;stopBtn.disabled=false;
+      liveBadge.classList.add("show");setState("Recording");
+      const audioCount=captureStream.getAudioTracks().length;setTimeout(()=>{if(fallbackNote)setStatus("Recording started. "+fallbackNote,"warn")},0);
+      $("recordingInfo").textContent=audioCount?"Screen + audio capture active":"Screen capture active · No audio track";
+      setStatus(audioCount?"Recording started. Screen and selected audio are being captured.":"Recording started. No audio track is active; check the audio options if you expected sound.","good");
+    } catch(error) {
+      cleanupTracks();resetButtons();emptyState.style.display="block";liveBadge.classList.remove("show");
+      if(error.name==="NotAllowedError") setStatus("Screen sharing was cancelled or permission was denied. Press Start recording to try again.","warn");
+      else setStatus("Could not start recording: "+(error.message||error),"error");
+      setState("Ready");
+    }
+  }
+  function pauseRecording() {
+    if(!recorder) return;
+    if(!paused) {
+      recorder.pauseRecording();elapsedBeforePause+=(Date.now()-startedAt)/1000;paused=true;
+      pauseBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/></svg>Resume';
+      liveBadge.classList.remove("show");setState("Paused");setStatus("Recording paused. Press Resume to continue.","warn");
+    } else {
+      recorder.resumeRecording();startedAt=Date.now();paused=false;
+      pauseBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg>Pause';
+      liveBadge.classList.add("show");setState("Recording");setStatus("Recording resumed.","good");
+    }
+    updateTimer();
+  }
+  function stopRecording() {
+    if(!recorder || recorder.state==="stopped") return;
+    stopBtn.disabled=true;pauseBtn.disabled=true;stopTimer();
+    const activeRecorder=recorder;
+    try {
+      activeRecorder.stopRecording(()=>{
+        try {
+          recordingBlob=activeRecorder.getBlob();
+          if(!recordingBlob || !recordingBlob.size) throw new Error("The recording is empty.");
+          if(recordingUrl) URL.revokeObjectURL(recordingUrl);
+          recordingUrl=URL.createObjectURL(recordingBlob);
+          preview.srcObject=null;preview.src=recordingUrl;preview.controls=true;preview.muted=false;$("addLast").disabled=false;$("playBtn").disabled=false;$("editBtn").disabled=false;
+          downloadBtn.disabled=false;
+          const size=(recordingBlob.size/1024/1024).toFixed(2);
+          $("recordingInfo").textContent=`Ready to save · ${size} MB`;
+          $("recordingList").className="recording-item";
+          $("recordingList").innerHTML=`<div><strong>Screen recording.${ext()}</strong><small>${size} MB · ${formatTime(recordingSeconds)}</small></div><div class="clip-ctl"><button class="mini-btn" id="quickPlay">▶ Play</button><button class="mini-btn" id="quickEdit">✂ Edit</button><button class="mini-btn" id="quickDownload">Download</button></div>`;
+          $("quickDownload").addEventListener("click",downloadRecording);$("quickPlay").addEventListener("click",playRecording);$("quickEdit").addEventListener("click",editRecording);
+          setStatus("Recording complete. Preview it here or download the video file.","good");
+          setState("Complete");
+        } catch(error) {setStatus("Could not prepare the recording: "+error.message,"error");}
+        cleanupTracks();recorder=null;resetButtons();liveBadge.classList.remove("show");
+        preview.controls=true;preview.muted=false;
+      });
+    } catch(error) {
+      setStatus("Error while stopping the recording: "+error.message,"error");
+      cleanupTracks();recorder=null;resetButtons();setState("Ready");
+    }
+  }
+  function downloadRecording() {
+    if(!recordingBlob) return;
+    const safeName=($("fileName").value.trim()||"screen-recording").replace(/[\\/:*?"<>|]+/g,"-");
+    const a=document.createElement("a");a.href=recordingUrl;a.download=safeName+"."+ext();
+    document.body.appendChild(a);a.click();a.remove();
+  }
+/* ---------- Video editor: cut, join, images, slides, effects ---------- */
+  const clips=[];let clipSeq=0;const exStatus=(t,k)=>{$("exStatus").textContent=t;$("exStatus").className="status"+(k?" "+k:"")};
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const ICONS={star:'<polygon points="12 2 15 9 22 9.3 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.3 9 9"/>',heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>',check:'<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>',play:'<circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/>',mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',camera:'<path d="M23 7l-7 5 7 5z"/><rect x="1" y="5" width="15" height="14" rx="2"/>'};
+  const TRANS=[["none","No effect"],["fade","Fade"],["zoom","Zoom"],["peel","Peel"],["boxlr","Rotate box L→R"],["boxrl","Rotate box R→L"],["torn","Page torn"]];
+  const TEAR=Array.from({length:600},()=>Math.random()*2-1);
+  const FX={
+    fade:(g,o,n,p)=>{g.drawImage(o,0,0);g.globalAlpha=p;g.drawImage(n,0,0);g.globalAlpha=1},
+    zoom:(g,o,n,p,W,H)=>{g.drawImage(o,0,0);const k=.2+.8*p;g.globalAlpha=Math.min(1,p*1.6);g.drawImage(n,W*(1-k)/2,H*(1-k)/2,W*k,H*k);g.globalAlpha=1},
+    peel:(g,o,n,p,W,H)=>{g.drawImage(n,0,0);const x=W*(1-p);g.save();g.beginPath();g.rect(0,0,x,H);g.clip();g.drawImage(o,0,0);g.restore();
+      const fw=Math.min(W*.12,W-x)*(1-p*p),a=g.createLinearGradient(x,0,x+fw,0);a.addColorStop(0,"#cfd4e4");a.addColorStop(1,"#fff");g.fillStyle=a;g.fillRect(x,0,fw,H);
+      const b=g.createLinearGradient(x+fw,0,x+fw+40,0);b.addColorStop(0,"rgba(0,0,0,.45)");b.addColorStop(1,"rgba(0,0,0,0)");g.globalAlpha=1-p;g.fillStyle=b;g.fillRect(x+fw,0,40,H);g.globalAlpha=1},
+    box:(g,o,n,p,W,H,dir)=>{g.fillStyle="#000";g.fillRect(0,0,W,H);const wn=W*p,wo=W-wn,hn=H*(.8+.2*p),ho=H*(1-.2*p);
+      const nx=dir>0?0:wo,ox=dir>0?wn:0;g.drawImage(n,nx,(H-hn)/2,wn,hn);g.drawImage(o,ox,(H-ho)/2,wo,ho);
+      g.fillStyle=`rgba(0,0,0,${.55*(1-p)})`;g.fillRect(nx,0,wn,H);g.fillStyle=`rgba(0,0,0,${.55*p})`;g.fillRect(ox,0,wo,H)},
+    torn:(g,o,n,p,W,H)=>{g.drawImage(n,0,0);const x=W*(1.08-1.16*p),pts=[];for(let y=0,i=0;y<=H+20;y+=20,i++)pts.push([x+TEAR[i]*W*.03,y]);
+      g.save();g.beginPath();g.moveTo(0,0);pts.forEach(q=>g.lineTo(q[0],q[1]));g.lineTo(0,H);g.closePath();g.clip();g.drawImage(o,0,0);g.restore();
+      g.strokeStyle="#fff";g.lineWidth=6;g.beginPath();pts.forEach((q,i)=>i?g.lineTo(q[0]-3,q[1]):g.moveTo(q[0]-3,q[1]));g.stroke()}
+  };
+  function runFx(t,g,o,n,p,W,H){const e=p*p*(3-2*p);if(t==="boxlr")FX.box(g,o,n,e,W,H,1);else if(t==="boxrl")FX.box(g,o,n,e,W,H,-1);else FX[t](g,o,n,e,W,H)}
+  function loadMeta(url){return new Promise(res=>{const v=document.createElement("video");v.preload="metadata";v.muted=true;v.src=url;
+    v.onloadedmetadata=()=>{if(!isFinite(v.duration)){v.currentTime=1e101;v.ontimeupdate=()=>{v.ontimeupdate=null;res(isFinite(v.duration)?v.duration:0)}}else res(v.duration)};v.onerror=()=>res(0)})}
+  async function addVideoClip(blob,name){const url=URL.createObjectURL(blob),d=await loadMeta(url);
+    if(!d){exStatus("Could not read the video: "+name,"error");return;}
+    clips.push({id:++clipSeq,type:"video",name,url,dur:d,start:0,end:d,trans:"none"});renderClips();}
+  function addImageClip(file){const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{clips.push({id:++clipSeq,type:"image",name:file.name,url,img,show:Math.max(.5,Number($("imgDur").value)||5),trans:"none"});renderClips()};
+    img.onerror=()=>exStatus("Could not read the image: "+file.name,"error");img.src=url;}
+  function addSlide(type){clips.push({id:++clipSeq,type,name:{text:"Subtitle slide",color:"Color board",icon:"SVG icon slide"}[type],show:Math.max(.5,Number($("imgDur").value)||5),text:type==="text"?"Your subtitle here":"",bg:type==="color"?"#2563eb":"#0b1230",fg:"#ffffff",icon:"star",trans:"none"});renderClips();}
+  const genIcon=c=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512" fill="none" stroke="${c.fg}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[c.icon]}</svg>`)});
+  function totalLen(){return clips.reduce((t,c)=>t+(c.type==="video"?Math.max(0,c.end-c.start):c.show),0)}
+  const opt=(a,v)=>a.map(([x,y])=>`<option value="${x}"${x===v?" selected":""}>${y}</option>`).join("");
+  function ctl(c){const d=`data-id="${c.id}"`,num=(l,k,v,m,st)=>`<label>${l}<input type="number" min="${m}" step="${st}" value="${v}" ${d} data-k="${k}"></label>`,col=(l,k,v)=>`<label>${l}<input type="color" value="${v}" ${d} data-k="${k}"></label>`,txt=(l,k,v)=>`<label>${l}<input type="text" value="${esc(v)}" ${d} data-k="${k}"></label>`;
+    let h=c.type==="video"?num("Cut start (s)","start",c.start.toFixed(1),0,.1)+num("Cut end (s)","end",c.end.toFixed(1),.1,.1)+num("Volume %","vol",c.vol??100,0,10):num("Show for (s)","show",c.show,.5,.5);
+    if(c.type==="text")h+=txt("Subtitle","text",c.text)+col("Text","fg",c.fg)+col("Board","bg",c.bg);
+    if(c.type==="color")h+=col("Colour","bg",c.bg);
+    if(c.type==="icon")h+=`<label>Icon<select ${d} data-k="icon">${opt(Object.keys(ICONS).map(k=>[k,k]),c.icon)}</select></label>`+txt("Caption","text",c.text)+col("Icon","fg",c.fg)+col("Board","bg",c.bg);
+    return h+`<label>Effect in<select ${d} data-k="trans">${opt(TRANS,c.trans)}</select></label>`}
+  function renderClips(){
+    const L=$("clipList");$("exportBtn").disabled=!clips.length;
+    if(!clips.length){L.className="recording-empty";L.textContent="No clips yet. Add videos, images, slides or your last recording.";renderTL();return;}
+    L.className="";L.innerHTML=clips.map((c,i)=>{
+      const th=c.type==="image"?`<img src="${c.url}" alt="">`:c.type==="video"?`<video src="${c.url}#t=0.1" muted preload="metadata"></video>`:`<div class="thumb" style="background:${c.bg};color:${c.fg}">${c.type==="text"?"Aa":c.type==="icon"?"★":""}</div>`;
+      return `<div class="recording-item clip"><div class="clip-info">${th}<div><strong>${i+1}. ${esc(c.name)}</strong><small>${c.type==="video"?"Video · "+c.dur.toFixed(1)+" s total":c.type==="image"?"Image":"Slide"}</small></div></div><div class="clip-ctl">${ctl(c)}<button class="mini-btn" data-act="up" data-id="${c.id}">↑</button><button class="mini-btn" data-act="down" data-id="${c.id}">↓</button><button class="mini-btn" data-act="del" data-id="${c.id}">✕</button></div></div>`}).join("");
+    exStatus("Total length after cuts: "+totalLen().toFixed(1)+" seconds.");renderTL();
+  }
+  $("clipList").addEventListener("change",e=>{const t=e.target,c=clips.find(x=>x.id==t.dataset.id),k=t.dataset.k;if(!c||!k)return;
+    if(t.type==="number"){const v=Number(t.value)||0;if(k==="show")c.show=Math.max(.5,v);else if(k==="vol")c.vol=Math.min(200,Math.max(0,v));else if(k==="start")c.start=Math.min(Math.max(0,v),c.end-.1);else c.end=Math.max(Math.min(c.dur,v),c.start+.1);
+      t.value=Number(k==="show"?c.show:c[k]).toFixed(1);renderTL();exStatus("Total length after cuts: "+totalLen().toFixed(1)+" seconds.");}
+    else{c[k]=t.value;if(t.type==="color"||k==="icon")renderClips();}});
+  $("clipList").addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const i=clips.findIndex(x=>x.id==b.dataset.id);if(i<0)return;
+    if(b.dataset.act==="del")clips.splice(i,1);else{const j=i+(b.dataset.act==="up"?-1:1);if(j>=0&&j<clips.length)[clips[i],clips[j]]=[clips[j],clips[i]];}renderClips();});
+  $("addVideo").addEventListener("change",async e=>{for(const f of e.target.files)await addVideoClip(f,f.name);e.target.value="";});
+  $("addImage").addEventListener("change",e=>{[...e.target.files].forEach(addImageClip);e.target.value="";});
+  $("addLast").addEventListener("click",()=>{if(recordingBlob)addVideoClip(recordingBlob,"Last recording."+ext());});
+  $("addText").addEventListener("click",()=>addSlide("text"));$("addColor").addEventListener("click",()=>addSlide("color"));$("addIcon").addEventListener("click",()=>addSlide("icon"));
+  function wrapText(g,t,max){const out=[];let line="";String(t).split(/\s+/).forEach(w=>{const x=line?line+" "+w:w;if(g.measureText(x).width>max&&line){out.push(line);line=w}else line=x});out.push(line);return out}
+  function drawSlide(g,c,W,H){g.fillStyle=c.bg;g.fillRect(0,0,W,H);
+    if(c.type==="icon"&&c.ico){const k=H*(c.text?.4:.5);g.drawImage(c.ico,(W-k)/2,(H-k)/2-(c.text?H*.08:0),k,k)}
+    if(c.text&&c.type!=="color"){const fs=Math.round(H*.07);g.font=`700 ${fs}px system-ui,sans-serif`;g.fillStyle=c.fg;g.textAlign="center";g.textBaseline="middle";
+      const ls=wrapText(g,c.text,W*.8),y0=c.type==="icon"?H*.78:H/2-(ls.length-1)*fs*.6;ls.forEach((l,i)=>g.fillText(l,W/2,y0+i*fs*1.2))}}
+  /* ---------- Audio tracks, timeline, preview, export ---------- */
+  const audios=[];let audSeq=0,busy=false,stopFlag=false,curTotal=1,voN=0,vo=null;
+  const RATE={none:1,deep:.8,high:1.25,chip:1.5,robot:1,echo:1},VOICES=[["none","Normal"],["deep","Deep voice"],["high","High voice"],["chip","Chipmunk"],["robot","Robot"],["echo","Echo"]];
+  const effDur=a=>a.buf.duration/(RATE[a.voice]||1),AC=window.AudioContext||window.webkitAudioContext;
+  async function decode(blob){const ac=new AC();try{return await ac.decodeAudioData(await blob.arrayBuffer())}catch(e){return null}finally{ac.close().catch(()=>{})}}
+  function addAudio(buf,name,start){audios.push({id:++audSeq,name,buf,start:start||0,vol:100,voice:"none"});renderAudio();}
+  function renderAudio(){const L=$("audioList");
+    if(!audios.length){L.className="recording-empty";L.textContent="No audio tracks yet.";renderTL();return;}
+    L.className="";L.innerHTML=audios.map(a=>{const d=`data-aid="${a.id}"`;return `<div class="recording-item clip"><div class="clip-info"><div class="thumb" style="background:linear-gradient(90deg,#f59e0b,#ef4444)">♪</div><div><strong>${esc(a.name)}</strong><small>${effDur(a).toFixed(1)} s</small></div></div><div class="clip-ctl"><label>Start (s)<input type="number" min="0" step="0.1" value="${a.start.toFixed(1)}" ${d} data-k="start"></label><label>Volume %<input type="number" min="0" max="300" step="10" value="${a.vol}" ${d} data-k="vol"></label><label>Voice<select ${d} data-k="voice">${opt(VOICES,a.voice)}</select></label><button class="mini-btn" data-aact="del" ${d}>✕</button></div></div>`}).join("");renderTL();}
+  $("audioList").addEventListener("change",e=>{const t=e.target,a=audios.find(x=>x.id==t.dataset.aid),k=t.dataset.k;if(!a||!k)return;
+    if(k==="voice")a.voice=t.value;else a[k]=Math.max(0,Number(t.value)||0);renderAudio();});
+  $("audioList").addEventListener("click",e=>{const b=e.target.closest("[data-aact]");if(!b)return;const i=audios.findIndex(x=>x.id==b.dataset.aid);if(i>=0){audios.splice(i,1);renderAudio();}});
+  $("addAudio").addEventListener("change",async e=>{for(const f of e.target.files){const b=await decode(f);if(b)addAudio(b,f.name,0);else exStatus("Could not read audio from "+f.name,"error")}e.target.value="";});
+  function renderTL(){
+    const T=Math.max(totalLen(),...audios.map(a=>a.start+effDur(a)),1);curTotal=T;const col={video:"#2f56d4",image:"#0f9f93"};
+    let h=`<div class="tl-row"><span class="tl-lab">Video</span><div class="tl-track">${clips.map(c=>{const l=c.type==="video"?Math.max(0,c.end-c.start):c.show;return `<div class="tl-blk" style="width:${l/T*100}%;background:${col[c.type]||"#7954d8"}" title="${esc(c.name)}">${esc(c.name)}</div>`}).join("")}</div></div>`;
+    audios.forEach((a,i)=>{h+=`<div class="tl-row"><span class="tl-lab">Audio ${i+1}</span><div class="tl-track"><div class="tl-blk tl-aud" style="left:${a.start/T*100}%;width:${effDur(a)/T*100}%" title="${esc(a.name)}">${esc(a.name)}</div></div></div>`});
+    $("tlRows").innerHTML=h;movePlayhead(0);
+  }
+  function movePlayhead(t){$("tlPlay").style.left=`calc(62px + (100% - 70px) * ${Math.min(1,t/curTotal)})`;$("pvTime").textContent=t.toFixed(1)+" / "+curTotal.toFixed(1)+" s";}
+  function startAudio(ac,out,a){
+    const src=ac.createBufferSource();src.buffer=a.buf;src.playbackRate.value=RATE[a.voice]||1;const gn=ac.createGain();gn.gain.value=a.vol/100;
+    if(a.voice==="robot"){const o=ac.createOscillator();o.frequency.value=55;const rg=ac.createGain();rg.gain.value=0;o.connect(rg.gain);src.connect(rg);rg.connect(gn);o.start();src.onended=()=>{try{o.stop()}catch(e){}}}
+    else if(a.voice==="echo"){const d=ac.createDelay(1);d.delayTime.value=.25;const f=ac.createGain();f.gain.value=.45;src.connect(gn);src.connect(d);d.connect(f);f.connect(d);d.connect(gn)}
+    else src.connect(gn);
+    gn.connect(out);src.start();return{stop:()=>src.stop()};
+  }
+  async function renderTimeline(c,ac,out,onT){
+    const W=c.width,H=c.height,mk=()=>{const k=document.createElement("canvas");k.width=W;k.height=H;return k},nc=mk(),pc=mk(),g=c.getContext("2d"),ng=nc.getContext("2d"),pg=pc.getContext("2d");
+    for(const cl of clips)if(cl.type==="icon")cl.ico=await genIcon(cl);
+    const fit=(src,sw,sh)=>{ng.fillStyle="#000";ng.fillRect(0,0,W,H);const k=Math.min(W/sw,H/sh);ng.drawImage(src,(W-sw*k)/2,(H-sh*k)/2,sw*k,sh*k)};
+    const tk=makeTicker(),total=totalLen(),aEnd=audios.reduce((m,a)=>Math.max(m,a.start+effDur(a)),0),live=[],pend=audios.map(a=>({a,done:false}));
+    let hasPrev=false,t0=0,tr="none",acc=0;const curT=()=>acc+(performance.now()-t0)/1000;
+    const fire=()=>{const t=curT();pend.forEach(q=>{if(!q.done&&t>=q.a.start){q.done=true;live.push(startAudio(ac,out,q.a))}});onT&&onT(Math.min(t,Math.max(total,aEnd)))};
+    const present=()=>{const p=Math.min(1,(performance.now()-t0)/800);if(!hasPrev||tr==="none"||p>=1)g.drawImage(nc,0,0);else runFx(tr,g,pc,nc,p,W,H)};
+    try{
+      for(let i=0;i<clips.length&&!stopFlag;i++){const cl=clips[i];tr=cl.trans||"none";
+        if(cl.type!=="video"){await new Promise(r=>{t0=performance.now();tk.start(33,()=>{if(cl.type==="image")fit(cl.img,cl.img.naturalWidth,cl.img.naturalHeight);else drawSlide(ng,cl,W,H);present();fire();if(stopFlag||performance.now()-t0>=cl.show*1000)r()})});acc+=cl.show;}
+        else{const v=document.createElement("video");v.src=cl.url;v.playsInline=true;await new Promise(r=>{v.onloadedmetadata=r});
+          if(cl.start>.01){v.currentTime=cl.start;await new Promise(r=>{v.onseeked=r})}
+          const node=ac.createMediaElementSource(v),gv=ac.createGain();gv.gain.value=(cl.vol??100)/100;node.connect(gv);gv.connect(out);await v.play();t0=performance.now();
+          await new Promise(r=>{v.onended=r;tk.start(33,()=>{if(v.videoWidth){fit(v,v.videoWidth,v.videoHeight);present()}fire();if(stopFlag||v.currentTime>=cl.end)r()})});v.pause();node.disconnect();acc+=Math.max(0,cl.end-cl.start);}
+        pg.drawImage(c,0,0);hasPrev=true;
+      }
+      if(!stopFlag&&aEnd>acc)await new Promise(r=>{t0=performance.now();tk.start(33,()=>{g.drawImage(pc,0,0);fire();if(stopFlag||curT()>=aEnd)r()})});
+    }finally{tk.stop();live.forEach(l=>{try{l.stop()}catch(e){}})}
+  }
+  async function runPreview(){
+    if(busy||!clips.length)return;busy=true;stopFlag=false;$("pvPlay").disabled=true;$("pvStop").disabled=false;$("exportBtn").disabled=true;
+    const ac=new AC();try{await ac.resume();await renderTimeline($("pvCanvas"),ac,ac.destination,movePlayhead)}catch(e){exStatus("Preview failed: "+e.message,"error")}
+    ac.close().catch(()=>{});busy=false;$("pvPlay").disabled=false;$("pvStop").disabled=true;$("exportBtn").disabled=!clips.length;movePlayhead(0);
+  }
+  $("pvPlay").addEventListener("click",runPreview);$("pvStop").addEventListener("click",()=>{stopFlag=true});
+  $("voBtn").addEventListener("click",async()=>{
+    if(vo){vo.stop();return;}
+    try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}),mr=new MediaRecorder(st),ch=[];
+      mr.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
+      mr.onstop=async()=>{st.getTracks().forEach(t=>t.stop());vo=null;stopFlag=true;$("voBtn").textContent="● Record voice-over";const b=await decode(new Blob(ch,{type:mr.mimeType}));
+        if(b){addAudio(b,"Voice-over "+(++voN),0);$("voInfo").textContent="Voice-over added at 0 s. Change its start, volume or voice below.";}else $("voInfo").textContent="Could not read the recording.";};
+      vo={stop:()=>mr.stop()};mr.start();$("voBtn").textContent="■ Stop voice-over";$("voInfo").textContent="Recording… the preview is playing so you can narrate in sync.";
+      if(clips.length)runPreview();
+    }catch(e){$("voInfo").textContent="Microphone not available: "+(e.message||e.name);}
+  });
+  $("exportBtn").addEventListener("click",async()=>{
+    if(busy||!clips.length||!window.MediaRecorder)return;busy=true;stopFlag=false;
+    const H=Number($("exSize").value),W=Math.round(H*16/9/2)*2,c=document.createElement("canvas");c.width=W;c.height=H;
+    const ac=new AC(),dest=ac.createMediaStreamDestination(),stream=new MediaStream([...c.captureStream(30).getVideoTracks(),...dest.stream.getAudioTracks()]);
+    const mime=chooseMimeType(),chunks=[],rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:Number($("bitrate").value)||6000000});
+    rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    $("exportBtn").disabled=true;$("pvPlay").disabled=true;$("exDownload").style.display="none";rec.start(1000);let ok=true;
+    try{await ac.resume();await renderTimeline(c,ac,dest,t=>exStatus(`Exporting… ${t.toFixed(1)} of ${curTotal.toFixed(1)} s. Keep this tab open.`))}catch(err){ok=false;exStatus("Export failed: "+err.message,"error")}
+    await new Promise(r=>setTimeout(r,250));await new Promise(r=>{rec.onstop=r;rec.stop()});ac.close().catch(()=>{});
+    busy=false;$("exportBtn").disabled=false;$("pvPlay").disabled=false;if(!ok)return;
+    const blob=new Blob(chunks,{type:rec.mimeType||mime}),url=URL.createObjectURL(blob),x=/mp4/.test(blob.type)?"mp4":"webm";
+    const v=$("exVideo");v.src=url;v.style.display="block";const a=$("exDownload");a.href=url;
+    a.download=(($("fileName").value.trim()||"SevaSphere")+"-edited").replace(/[\\/:*?"<>|]+/g,"-")+"."+x;a.style.display="inline-flex";
+    exStatus(`Done · ${(blob.size/1048576).toFixed(2)} MB · ${x.toUpperCase()}${fallbackNote?" · "+fallbackNote:""}`,"good");
+  });
+  renderTL();
+  let loadedBlob=null;
+  function playRecording(){
+    if(!recordingUrl)return;preview.srcObject=null;if(preview.getAttribute("src")!==recordingUrl)preview.src=recordingUrl;
+    preview.controls=true;preview.muted=false;emptyState.style.display="none";preview.currentTime=0;
+    preview.scrollIntoView({behavior:"smooth",block:"center"});preview.play().catch(()=>setStatus("Press the play button on the video to start.","warn"));
+  }
+  async function editRecording(){
+    if(!recordingBlob)return;
+    if(loadedBlob!==recordingBlob){loadedBlob=recordingBlob;await addVideoClip(recordingBlob,"Recording."+ext());}
+    exStatus("Recording loaded in the editor. Set cut points, add more clips or images, then export.","good");
+    $("editorPanel").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  $("playBtn").addEventListener("click",playRecording);$("editBtn").addEventListener("click",editRecording);
+  startBtn.addEventListener("click",startRecording);
+  pauseBtn.addEventListener("click",pauseRecording);
+  stopBtn.addEventListener("click",stopRecording);
+  downloadBtn.addEventListener("click",downloadRecording);
+  if(navigator.mediaDevices?.addEventListener) navigator.mediaDevices.addEventListener("devicechange",populateMicrophones);
+  window.addEventListener("beforeunload",()=>{stopTimer();cleanupTracks();if(recordingUrl)URL.revokeObjectURL(recordingUrl);});
+  if(!window.isSecureContext) setStatus("For screen recording, open this page on HTTPS or http://localhost. Browsers block screen capture on most ordinary HTTP pages.","warn");
+})();
+</script>
+</body>
+</html>

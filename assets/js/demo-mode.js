@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS universal practice demo — safe, client-side only. */
+/* SevaSphere universal practice demo — safe, client-side only. */
 (function(){
   'use strict';
   if (window.__cscvleDemoInstalled) return;
@@ -22,8 +22,8 @@
     @media(max-width:520px){#ss-demo-launch{left:8px;bottom:8px}#ss-demo-panel{left:8px;bottom:56px}#ss-demo-notice{left:8px;bottom:120px}}
   `;
   document.head.appendChild(style);
-  var panel=document.createElement('section'); panel.id='ss-demo-panel'; panel.setAttribute('aria-label','CSC VLE TOOLS Demo Mode');
-  panel.innerHTML='<button id="ss-demo-close" type="button" aria-label="Close demo panel">×</button><strong>CSC VLE TOOLS Demo Mode</strong><p>Load example values into this tool to practise. Your original field values can be restored with Reset Demo. Nothing is uploaded or sent.</p><div class="ss-demo-actions"><button id="ss-demo-load" type="button">Load Sample Data</button><button id="ss-demo-reset" type="button">Reset Demo</button></div><p id="ss-demo-help" style="font-size:12px;color:#466b5a;margin:10px 0 0">After loading, use the tool’s own Calculate, Preview, or Generate button.</p>';
+  var panel=document.createElement('section'); panel.id='ss-demo-panel'; panel.setAttribute('aria-label','SevaSphere Demo Mode');
+  panel.innerHTML='<button id="ss-demo-close" type="button" aria-label="Close demo panel">×</button><strong>SevaSphere Demo Mode</strong><p>Load example values into this tool to practise. Your original field values can be restored with Reset Demo. Nothing is uploaded or sent.</p><div class="ss-demo-actions"><button id="ss-demo-load" type="button">Load Sample Data</button><button id="ss-demo-reset" type="button">Reset Demo</button></div><p id="ss-demo-help" style="font-size:12px;color:#466b5a;margin:10px 0 0">After loading, use the tool’s own Calculate, Preview, or Generate button.</p>';
   var launch=document.createElement('button'); launch.id='ss-demo-launch'; launch.type='button'; launch.textContent='▶ Try Demo'; launch.setAttribute('aria-haspopup','dialog');
   var notice=document.createElement('div'); notice.id='ss-demo-notice'; notice.setAttribute('role','status');
   function attach(){if(!document.body||document.getElementById('ss-demo-launch'))return;document.body.append(launch,panel,notice);}
@@ -45,7 +45,7 @@
     if(/state/.test(t))return 'Haryana';
     if(/district|city|town/.test(t))return 'Rohtak';
     if(/address|location/.test(t))return 'Model Town, Rohtak, Haryana';
-    if(/shop|business|company|organization|organisation|firm/.test(t))return 'CSC VLE TOOLS Demo Store';
+    if(/shop|business|company|organization|organisation|firm/.test(t))return 'SevaSphere Demo Store';
     if(/father|guardian/.test(t))return 'Amit Sharma';
     if(/surname|last name/.test(t))return 'Sharma';
     if(/first name|applicant|customer|student|candidate|person name|full name|\bname\b/.test(t))return 'Rahul Sharma';

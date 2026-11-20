@@ -1,0 +1,125 @@
+/* CSC VLE TOOLS v41: Candy 3D buttons and group cards.
+   Loaded on every page after the other stylesheets. It only adds depth (edge, gloss, lift, press-down),
+   so each page keeps its own button colours. Group cards (.gc) are used on the home page. */
+
+:root{
+  --cd-edge:rgba(8,20,60,.34);
+  --cd-lift:cubic-bezier(.3,1.5,.5,1);
+}
+
+/* ---------- buttons ---------- */
+body .btn,body .btn-accent,body .btn-line,body .btn-ghost,body .btn-w,body .up-s,body .tc .go,body .gc .go{
+  position:relative;
+  box-shadow:0 4px 0 var(--cd-edge),0 9px 14px -7px rgba(8,20,60,.4),inset 0 1px 0 rgba(255,255,255,.55);
+  transition:transform .16s var(--cd-lift),box-shadow .16s,filter .16s,background-color .16s;
+  -webkit-tap-highlight-color:transparent;
+}
+/* gloss layer (does not change the page's own colours) */
+body .btn::after,body .btn-accent::after,body .btn-line::after,body .btn-ghost::after,body .btn-w::after,body .up-s::after,body .tc .go::after,body .gc .go::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 52%,rgba(0,0,0,.09));
+}
+body .btn:hover,body .btn-accent:hover,body .btn-line:hover,body .btn-ghost:hover,body .btn-w:hover,body .up-s:hover,body .tc:hover .go,body .gc:hover .go{
+  transform:translateY(-3px);filter:saturate(1.12) brightness(1.04);
+  box-shadow:0 7px 0 var(--cd-edge),0 15px 20px -8px rgba(8,20,60,.45),inset 0 1px 0 rgba(255,255,255,.6);
+}
+body .btn:active,body .btn-accent:active,body .btn-line:active,body .btn-ghost:active,body .btn-w:active,body .up-s:active{
+  transform:translateY(3px);filter:none;
+  box-shadow:0 1px 0 var(--cd-edge),0 2px 5px rgba(8,20,60,.35),inset 0 2px 4px rgba(0,0,0,.22);
+}
+body .btn.sm,body .btn.small{box-shadow:0 3px 0 var(--cd-edge),0 6px 10px -6px rgba(8,20,60,.4),inset 0 1px 0 rgba(255,255,255,.5)}
+body .btn.sm:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--cd-edge),0 10px 14px -7px rgba(8,20,60,.45)}
+/* light buttons get a tinted edge instead of a dark one */
+body .btn.s,body .btn.alt,body .btn.g,body .btn-line{--cd-edge:color-mix(in srgb,var(--brand,#1a3fa6) 38%,#fff)}
+body .btn.dng,body .btn.danger{--cd-edge:color-mix(in srgb,#b3261e 40%,#fff)}
+body .btn-accent{--cd-edge:var(--accent-strong,#c26a00)}
+body .btn-wa{--cd-edge:#128c4a}
+body .btn:disabled,body .btn[aria-disabled="true"],body .btn.disabled{transform:none;filter:none;box-shadow:0 2px 0 var(--cd-edge)}
+body .btn:disabled:hover{transform:none}
+body .btn:focus-visible,body .btn-accent:focus-visible,body .btn-line:focus-visible,body .btn-ghost:focus-visible,body .gc:focus-visible{outline:3px solid #ffc928;outline-offset:3px}
+
+/* click ripple (added by candy3d.js) */
+.cd-rip{overflow:hidden!important}
+.cd-ring{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.6);transform:scale(0);animation:cd-ring .6s ease-out forwards}
+@keyframes cd-ring{to{transform:scale(1);opacity:0}}
+
+/* header menu links and the sidebar suggest link get the same depth */
+.hdr nav a,.hdr .hn{transition:transform .16s var(--cd-lift),background .16s,box-shadow .16s}
+.hdr nav a:hover{transform:translateY(-2px);box-shadow:0 4px 0 rgba(0,0,0,.28)}
+.hdr nav a:active{transform:translateY(2px);box-shadow:none}
+
+/* ---------- home: group cards ---------- */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:26px 22px;perspective:1000px;margin:6px 0 26px;padding-right:14px}
+.gc{
+  --c:#1a3fa6;--c2:color-mix(in srgb,var(--c) 60%,#000);
+  position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;
+  padding:18px 16px 16px;border-radius:20px;text-decoration:none;color:var(--text,#1b2430);
+  background:linear-gradient(160deg,#fff 40%,color-mix(in srgb,var(--c) 9%,#fff));
+  border:1px solid color-mix(in srgb,var(--c) 28%,#fff);
+  /* two sheets peek out behind the card: this card opens a page with many tools */
+  box-shadow:
+    7px 7px 0 -1px color-mix(in srgb,var(--c) 12%,#fff),7px 7px 0 0 color-mix(in srgb,var(--c) 34%,#fff),
+    14px 14px 0 -1px color-mix(in srgb,var(--c) 8%,#fff),14px 14px 0 0 color-mix(in srgb,var(--c) 24%,#fff),
+    0 24px 26px -14px rgba(20,40,110,.45);
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .18s ease-out,box-shadow .2s;will-change:transform;
+}
+.gc:hover{transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translate(-3px,-6px);color:var(--text,#1b2430);
+  box-shadow:
+    10px 10px 0 -1px color-mix(in srgb,var(--c) 12%,#fff),10px 10px 0 0 color-mix(in srgb,var(--c) 40%,#fff),
+    20px 20px 0 -1px color-mix(in srgb,var(--c) 8%,#fff),20px 20px 0 0 color-mix(in srgb,var(--c) 28%,#fff),
+    0 32px 34px -14px rgba(20,40,110,.5),0 0 0 3px color-mix(in srgb,var(--c) 30%,transparent)}
+.gc:active{transform:translate(4px,4px);box-shadow:3px 3px 0 0 color-mix(in srgb,var(--c) 34%,#fff),0 6px 10px -6px rgba(20,40,110,.4)}
+.gc .gt{display:flex;align-items:center;gap:12px}
+.gc .ti{flex:none;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:1.6rem;color:#fff;
+  background:linear-gradient(145deg,var(--c),var(--c2));box-shadow:0 5px 0 rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.4);transition:transform .25s var(--cd-lift)}
+.gc:hover .ti{transform:translateY(-4px) rotate(-7deg) scale(1.1)}
+.gc b{display:block;font-size:1.1rem;line-height:1.2}
+.gc .gn{display:inline-block;margin-top:3px;font-size:.74rem;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent);padding:2px 10px;border-radius:99px}
+.gc .td{display:block;color:var(--muted,#5d6b7a);font-size:.85rem;line-height:1.4}
+.gc .gl{display:flex;flex-wrap:wrap;gap:5px}
+.gc .gl i{font-style:normal;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:8px;
+  background:#fff;border:1px solid color-mix(in srgb,var(--c) 26%,#fff);color:color-mix(in srgb,var(--c) 75%,#000)}
+.gc .go{align-self:flex-start;margin-top:auto;display:inline-flex;gap:7px;align-items:center;padding:8px 16px;border-radius:12px;font-weight:800;font-size:.84rem;color:#fff;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 70%,#fff),var(--c));--cd-edge:color-mix(in srgb,var(--c) 60%,#000);text-shadow:0 1px 0 rgba(0,0,0,.25)}
+/* single apps (not a group): one solid candy edge instead of stacked sheets */
+.gc.one{box-shadow:0 7px 0 color-mix(in srgb,var(--c) 62%,#000),0 20px 24px -12px rgba(20,40,110,.45)}
+.gc.one:hover{box-shadow:0 11px 0 color-mix(in srgb,var(--c) 62%,#000),0 28px 30px -12px rgba(20,40,110,.5),0 0 0 3px color-mix(in srgb,var(--c) 28%,transparent)}
+.gc.one:active{transform:translateY(6px);box-shadow:0 1px 0 color-mix(in srgb,var(--c) 62%,#000)}
+.gc.soon{background:linear-gradient(160deg,#fff 40%,#eef1f5);border-style:dashed}
+.gc.soon .ti{filter:saturate(.8)}
+.gc.soon .go{background:linear-gradient(180deg,#fcd34d,#f59e0b);color:#3b2400;text-shadow:none;--cd-edge:#b45309}
+.gc .ribbon{position:absolute;right:-8px;top:12px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:#3b2400;font-weight:800;font-size:.68rem;letter-spacing:.05em;
+  padding:3px 10px;border-radius:6px 0 0 6px;box-shadow:0 3px 0 #b45309}
+.gc.fresh .ribbon{background:linear-gradient(180deg,#34d399,#10b981);color:#04281c;box-shadow:0 3px 0 #047857}
+
+.gc .ribbon + .gt{padding-right:46px}
+
+/* ---------- home: popular tools open button (colour follows the card) ---------- */
+.tc.mu .go{grid-column:1/-1;justify-self:start;margin-top:10px;padding:6px 14px;font-size:.78rem;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.25);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 65%,#fff),var(--c));--cd-edge:color-mix(in srgb,var(--c) 60%,#000)}
+.tc.mu{padding-bottom:14px}
+
+/* ---------- group page: section headings ---------- */
+.gh{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-size:1.15rem;color:var(--ink-deep,#0a1a4a)}
+.gh i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;color:#fff;font-size:.95rem;
+  background:linear-gradient(145deg,var(--c,#1a3fa6),color-mix(in srgb,var(--c,#1a3fa6) 55%,#000));box-shadow:0 4px 0 rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.4)}
+.gh small{font-weight:600;color:var(--muted,#5d6b7a);font-size:.82rem}
+.tc.soon{border-style:dashed;--c:#64748b;--c2:#334155}
+.tc.soon .pill{color:#8a5a00;background:#fff1cf}
+
+/* ---------- right sidebar: coming soon items ---------- */
+.cn-a.rn.soon em{background:#fde68a;color:#5c3a00}
+
+@media (max-width:560px){
+  .ggrid{padding-right:12px;grid-template-columns:minmax(0,1fr)}
+}
+@media print{
+  body .btn,body .btn-accent,body .btn-line,body .btn-ghost,body .btn-w{box-shadow:none!important;transform:none!important}
+  body .btn::after,body .btn-accent::after,body .btn-line::after,body .btn-ghost::after,body .btn-w::after{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  body .btn,body .btn-accent,body .btn-line,body .btn-ghost,body .btn-w,.gc,.gc .ti,.hdr nav a{transition:none!important}
+  body .btn:hover,body .btn-accent:hover,body .btn-line:hover,body .btn-ghost:hover,.gc:hover{transform:none}
+  .cd-ring{display:none}
+}

@@ -1,4 +1,4 @@
-/* SevaSphere – CSC VLE Tools: shared site script (header, footer, tool registry, home page, helpers) */
+/* SevaSphere: shared site script (header, footer, tool registry, home page, helpers) */
 (function () {
   'use strict';
 
@@ -13,6 +13,9 @@
     { id: 'cards', name: 'Cards, Stamps & Stickers', icon: 'fa-stamp' },
     { id: 'govt', name: 'Govt Applications & Affidavits', icon: 'fa-landmark' },
     { id: 'docs', name: 'Resume, Documents & Text', icon: 'fa-file-lines' },
+    { id: 'ai', name: 'AI & Writing Tools', icon: 'fa-wand-magic-sparkles' },
+    { id: 'webgen', name: 'Website Tools', icon: 'fa-globe' },
+    { id: 'ledger', name: 'Ledger & Khata Books', icon: 'fa-book-open' },
     { id: 'bill', name: 'Receipts & Billing', icon: 'fa-receipt' },
     { id: 'calc', name: 'Calculators', icon: 'fa-calculator' },
     { id: 'exam', name: 'Exam & Education', icon: 'fa-graduation-cap' },
@@ -40,7 +43,7 @@
     ['tools_image_text_extractor', 'Image Text Extractor (OCR)', 'Read text from an image in English or Hindi and copy it.', 'photo', 'fa-font'],
     ['tools_handwriting_converter', 'Handwriting to Word, PDF & Text', 'Upload photos of handwritten pages and save them as Word, PDF or a Notepad text file. English and Hindi.', 'docs', 'fa-pen-fancy'],
     ['web-search', 'Web Search', 'Search Google, Bing, YouTube or Maps, or open any website. Results open in a new tab.', 'util', 'fa-magnifying-glass'],
-    ['tools_whatsapp_scan_print', 'WhatsApp Photo Scan & Print', 'Crop WhatsApp photos and documents, straighten pages, clean shadows and print clearly.', 'photo', 'fa-camera-retro'],
+    ['tools_whatsapp_image_print', 'WhatsApp Image Print', 'Enhance and print many images on A4 pages in a grid.', 'photo', 'fa-print'],
     // ID cards and print
     ['tools_admit_card_holder', 'Admit Card Holder', 'Printable admit card holder layouts.', 'id', 'fa-ticket'],
     // PDF
@@ -67,6 +70,8 @@
     ['book-shop-ledger', 'Book Shop Ledger', 'Books and stationery stock, buying with trade discount, selling bills, transport expense, GST and party dues.', 'bill', 'fa-book'],
     ['sweet-shop-ledger', 'Sweet Shop Ledger', 'Sweet names dropdown, sell by weight and price, stock, raw material buying, employee salary records and daily to yearly reports.', 'bill', 'fa-cookie-bite'],
     ['kirana-store-ledger', 'Kirana Store Ledger', 'Items by weight and price, stock, buying, udhaar customers, employee salary records and daily to yearly reports.', 'bill', 'fa-basket-shopping'],
+    ['garment-store-ledger', 'Garment Store Ledger', 'Readymade garments with size-wise stock, colour and brand, billing, returns, udhaar khata, staff salary and reports.', 'bill', 'fa-shirt'],
+    ['cloth-shop-ledger', 'Cloth Shop Ledger', 'Sell fabric by meter with quick cuts, than and roll purchase, udhaar khata, staff salary and daily to yearly reports.', 'bill', 'fa-scroll'],
     // Billing
     ['tools_bill_receipt_generator', 'Bill & Receipt Generator', 'Receipts for utility, recharge and other payments.', 'bill', 'fa-receipt'],
     // Calculators
@@ -76,6 +81,8 @@
     ['tools_loan_emi_calculator', 'Loan EMI Calculator', 'EMI, total interest and repayment schedule.', 'calc', 'fa-indian-rupee-sign'],
     ['tools_cgpa_calculator', 'CGPA Calculator', 'CGPA and SGPA to percentage and back.', 'calc', 'fa-chart-simple'],
     ['tools_gold_silver_rate', 'Gold & Silver Value Calculator', 'Enter today\'s rate and get value by weight and purity.', 'calc', 'fa-coins'],
+    ['tools_margin_calculator', 'Margin Calculator', 'Find profit, margin %, markup % and selling price from cost, with GST and quantity.', 'calc', 'fa-sack-dollar'],
+    ['tools_simple_calculator', 'Simple Calculator', 'A clean calculator with percent, brackets, history and keyboard support.', 'calc', 'fa-calculator'],
     // Exam
     ['tools_typing_test', 'Typing Test & Lessons', 'Learn typing with a keyboard guide, finger colours and lessons, then test your speed. English and Hindi (Inscript).', 'exam', 'fa-keyboard'],
     // Kids
@@ -83,6 +90,8 @@
     // Utilities
     ['tools_qr_code_generator', 'QR Code Generator', 'QR codes for text, links, UPI and WhatsApp.', 'util', 'fa-qrcode'],
     ['tools_whatsapp_ultimate', 'WhatsApp Direct Message', 'Open a WhatsApp chat with any number without saving it.', 'util', 'fa-whatsapp'],
+    ['tools_rgb_hex_converter', 'RGB to HEX Converter', 'Convert RGB, HEX and HSL colour codes, pick a colour and check text contrast.', 'util', 'fa-palette'],
+    ['tools_stopwatch', 'Stop Watch', 'Online stop watch with laps, keyboard keys and CSV download.', 'util', 'fa-stopwatch'],
     ['tools_pvc_id_print', 'PVC ID Card Print', 'Crop front and back of an ID and print them at card size on A4.', 'id', 'fa-credit-card'],
     ['tools_pan_aadhaar_print', 'PAN & Aadhaar Print', 'Print PAN, Aadhaar and similar cards at actual size, front and back.', 'id', 'fa-address-card'],
     ['tools_student_id_creator', 'Student ID Card Creator', 'Create school and college ID cards and print many per sheet.', 'id', 'fa-user-graduate'],
@@ -104,6 +113,9 @@
     ['tools_photo_name_joiner', 'Photo Name Joiner', 'Add name and date below a photo (same tool as Name & Date on Photo).', 'photo', 'fa-calendar-day'],
     ['tools_passport_photo_sheet', 'Passport Photo Sheet', 'Passport photo sheets with cut lines (same tool as Passport & Stamp Photo Studio).', 'photo', 'fa-user-large'],
     ['tools_resume_builder', 'Resume Builder (shortcut)', 'Opens the Resume Builder with several templates.', 'docs', 'fa-id-badge'],
+    ['tools_privacy_policy_generator', 'Privacy Policy Generator', 'Create a privacy policy for your website from simple questions. Copy, download or print.', 'docs', 'fa-user-shield'],
+    ['tools_disclaimer_generator', 'Disclaimer Generator', 'Create a website disclaimer in minutes. Choose what you need, then copy, download or print.', 'docs', 'fa-scale-balanced'],
+    ['tools_about_us_generator', 'About Us Generator', 'Write an About Us page for your shop, CSC or website. Answer a few questions and copy the text.', 'docs', 'fa-circle-info'],
     ['tools_student_id_card', 'Student ID Card', 'Student ID card with photo, front and back, 85.6 × 54 mm.', 'id', 'fa-id-card'],
     ['tools_id_card_print', 'ID Card Print', 'General ID card for staff or members, front and back.', 'id', 'fa-id-card'],
     ['tools_ai_couple_photo', 'AI Couple Photo Creator', 'Make a wedding or couple photo frame from two photos. Heart, arch and round layouts, 8 border styles, AI cut-out.', 'studio', 'fa-heart-circle-check'],
@@ -113,11 +125,18 @@
     ['tools_mobile_cam_scanner', 'Mobile Cam Scanner', 'Scan papers with your phone camera: straighten, clean and save as PDF or JPG.', 'studio', 'fa-camera'],
     ['tools_ai_marriage_biodata', 'AI Marriage Biodata Creator', 'Matrimonial bio-data in English or Hindi with 8 border styles, 4 templates, photo and smart intro line.', 'studio', 'fa-ring'],
     ['tools_multiple_id_card_print', 'Multiple ID Card Print', 'Paste a list and photos to print many ID cards, 10 per A4 page.', 'id', 'fa-people-group'],
+    ['tools_translator', 'Translator (Hindi, Haryanvi, Punjabi, Bhojpuri)', 'Translate between English, Hindi, Haryanvi, Punjabi and Bhojpuri in any direction. Copy, download or listen.', 'ai', 'fa-language'],
+    ['tools_prompt_generator', 'AI Prompt Generator', 'Pick a category, fill a few details and get a ready-to-paste prompt for ChatGPT, Claude, Gemini, Copilot and more.', 'ai', 'fa-wand-magic-sparkles'],
+    ['tools_ai_voice_generator', 'AI Voice Studio', 'Turn Hindi, English or Hinglish text into speech. Preview with your device voice, record it, or make MP3 and WAV with your own AI key.', 'ai', 'fa-microphone'],
+    ['tools_smart_notebook', 'Smart Notebook', 'Write notes with formatting, word and sentence helpers and spell check. Saved in your browser. Export TXT, Word, HTML or PDF.', 'ai', 'fa-book-open-reader'],
+    ['tools_website_planner', 'Website Planner', 'Lay out your website pages on a canvas with text, images and buttons, then download a ready index.html.', 'webgen', 'fa-diagram-project'],
+    ['tools_website_studio', 'Free Website Studio', 'Design a multi-page website on a canvas with 3D buttons, sliders and images. Preview on computer, tablet and phone, then download as ZIP.', 'webgen', 'fa-laptop-code'],
+    ['tools_screen_recorder', 'Screen Recorder', 'Record a tab, window or the whole screen in your browser, then play, edit and download the video. No API key needed.', 'util', 'fa-video'],
   ].map(function (t) { return { file: t[0], name: t[1], desc: t[2], cat: t[3], icon: t[4] }; });
   /* v23: shorter categories; duplicates and Kids Corner are not listed in All Tools (their pages still work) */
-  var NEWCAT = { tools_photo_resizer: 'resize', tools_sign_resizer: 'resize', tools_thumb_resizer: 'resize', tools_image_compressor: 'resize', tools_image_converter_pro: 'resize', tools_jpg_png_converter: 'resize', tools_image_crop: 'resize',
+  var NEWCAT = { 'shop-ledger': 'ledger', 'kirana-store-ledger': 'ledger', 'medical-store-ledger': 'ledger', 'sweet-shop-ledger': 'ledger', 'cloth-shop-ledger': 'ledger', 'garment-store-ledger': 'ledger', 'book-shop-ledger': 'ledger', 'insurance-ledger': 'ledger', 'stock-ledger': 'ledger', 'house-expense': 'ledger', tools_privacy_policy_generator: 'webgen', tools_disclaimer_generator: 'webgen', tools_about_us_generator: 'webgen', tools_photo_resizer: 'resize', tools_sign_resizer: 'resize', tools_thumb_resizer: 'resize', tools_image_compressor: 'resize', tools_image_converter_pro: 'resize', tools_jpg_png_converter: 'resize', tools_image_crop: 'resize',
     tools_bg_remover: 'edit', tools_bg_remover_pro: 'edit', tools_ai_bg_remover: 'edit', tools_name_date_photo: 'edit', tools_photo_sign_joiner: 'edit', tools_image_merger: 'edit',
-    tools_ai_passport_studio: 'sheets', tools_whatsapp_scan_print: 'sheets', 'pro-studio': 'sheets', tools_image_text_extractor: 'docs',
+    tools_ai_passport_studio: 'sheets', tools_whatsapp_image_print: 'sheets', 'pro-studio': 'sheets', tools_image_text_extractor: 'docs',
     tools_pvc_id_print: 'idprint', tools_pan_aadhaar_print: 'idprint', tools_id_card_print: 'idprint', tools_multiple_id_card_print: 'idprint', tools_admit_card_holder: 'idprint',
     tools_student_id_creator: 'idmake', tools_student_id_card: 'idmake', tools_farmer_id_maker: 'idmake',
     tools_visiting_card_maker: 'cards', tools_notebook_sticker: 'cards', tools_csc_stamp_maker: 'cards' };
@@ -158,9 +177,9 @@
      the Contact page and the Feedback page as soon as you fill them in.
      ===================================================================== */
   var SITE = {
-    name: 'SevaSphere – CSC VLE Tools',
-    url: 'https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/',
-    tagline: 'Digital Seva • Smart Tools • Better Tomorrow',
+    name: 'SevaSphere',
+    url: 'https://cschelpdesk.github.io/',
+    tagline: 'Free online tools for CSC & VLE centres',
     location: 'Rohtak, Haryana, India',
     hours: 'Mon - Sat, 9:00 AM - 7:00 PM',
     email: '',            // e.g. 'yourname@gmail.com'
@@ -175,7 +194,7 @@
       youtube: '',        // https://youtube.com/@yourchannel
       x: '',              // https://x.com/yourid
       linkedin: '',       // https://linkedin.com/in/yourid
-      github: 'https://github.com/csc-vle-tools-desk/CSC-VLE-TOOLS',
+      github: 'https://github.com/CSCHelpDesk/cschelpdesk.github.io',
       claude: 'https://claude.ai'   // Claude (Anthropic)
     }
   };
@@ -211,7 +230,7 @@
   CSC.palette = PALETTE; CSC.toolIndex = toolIndex;
 
   /* ---------- Site theme (whole page: header, buttons, cards, background) ---------- */
-  var THEMES = [['Royal Blue', '#1a3fa6'], ['Saffron', '#c2570c'], ['Green', '#0b5c3b'], ['Teal', '#0f766e'], ['Purple', '#6b3fa0'], ['Maroon', '#8b1e3f'], ['Slate', '#374151']];
+  var THEMES = [['Dynamic Blue', '#1d4fd8'], ['Electric Cyan', '#0a8fb3'], ['Royal Violet', '#6d3fd1'], ['Emerald', '#0b8a5b'], ['Vibrant Orange', '#d9570c'], ['Bright Pink', '#d4245f']];
   var CARDS = [['Auto (each different)', ''], ['Blue', '#1a3fa6'], ['Purple', '#7c3aed'], ['Pink', '#db2777'], ['Red', '#dc2626'], ['Orange', '#ea580c'], ['Green', '#059669'], ['Teal', '#0d9488'], ['Slate', '#374151']];
   var SIDES = [['Auto (default)', ''], ['Cyan', '#0891b2'], ['Blue', '#1a3fa6'], ['Purple', '#7c3aed'], ['Pink', '#db2777'], ['Green', '#059669'], ['Orange', '#ea580c'], ['Maroon', '#8b1e3f'], ['Slate', '#374151']];
   var BGS = [['Auto', ''], ['White', '#ffffff'], ['Cream', '#fbf6e9'], ['Sky', '#e8f1fb'], ['Mint', '#e6f5ec'], ['Rose', '#fbeaee'], ['Lilac', '#efe9fa'], ['Grey', '#e6e9ed']];
@@ -221,9 +240,7 @@
     var s1 = mix(c, '#ffffff', 0.4), s3 = mix(c, '#000000', 0.38), dk = mix(c, '#000000', 0.5), rgb = hex2rgb(c),
         light = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255 > 0.72, tx = light ? '#1b2430' : '#ffffff', grad = 'linear-gradient(180deg,' + s1 + ' 0%,' + c + ' 45%,' + s3 + ' 100%)';
     return '.catnav,.n-home .catnav{background:' + grad + ' !important;border-color:rgba(255,255,255,.45) !important}' +
-      '.catnav .cn-t,.n-home .cn-t{color:' + tx + ' !important;text-shadow:none !important}' +
-      '.catnav .cn-a:not(.on),.n-home .catnav .cn-a:not(.on){color:' + tx + ' !important;text-shadow:none !important;box-shadow:0 5px 0 ' + dk + ',0 9px 14px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.5) !important}' +
-      '.catnav .cn-a:not(.on):hover,.n-home .catnav .cn-a:not(.on):hover{box-shadow:0 7px 0 ' + dk + ',0 12px 16px rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.6) !important}';
+      '.catnav .cn-t,.n-home .cn-t{color:' + tx + ' !important;text-shadow:none !important}';
   }
   function rightCss(c) {
     var s1 = mix(c, '#ffffff', 0.4), s3 = mix(c, '#000000', 0.38), rgb = hex2rgb(c),
@@ -342,11 +359,11 @@
     if (h && !h.firstChild) {
       var here = location.pathname.split('/').pop() || 'index.html';
       var cur = function (f) { return here === f ? ' aria-current="page"' : ''; };
-      h.innerHTML = '<div class="hdr"><a class="logo" href="index.html"><img src="favicon.svg" alt="" width="36" height="36"><span class="ss-brand-lockup"><strong>Seva<span>Sphere</span></strong><small>Digital Seva • Smart Tools • Better Tomorrow</small></span></a>' +
+      h.innerHTML = '<div class="hdr"><a class="logo" href="index.html"><img src="favicon.svg" alt="" width="36" height="36"><span class="logo-t">Seva<b>Sphere</b></span></a>' +
         (here === 'index.html' ? '' : '<span class="hdr-nav"><a class="hn" href="index.html" title="Go to the main home page"><b aria-hidden="true">&#127968;</b><span>Home</span></a><button class="hn" type="button" onclick="CSC.goBack()" title="Go back to the previous page"><b aria-hidden="true">&larr;</b><span>Back</span></button></span>') +
         '<button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="main-nav">&#9776;</button>' +
         '<nav id="main-nav" aria-label="Main"><a href="index.html"' + cur('index.html') + '>Home</a>' +
-        '<a href="index.html#tools">All Tools</a><a href="index.html#quick-categories-title">Categories</a><a class="nav-daily" href="index.html#daily-use"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Ledger Templates</a><a href="pro-studio.html">Pro Studio</a><a href="my-step-guides.html">Guides &amp; Help</a><a href="prompt-studio.html"' + cur('prompt-studio.html') + '><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Prompt Studio</a><a class="nav-kids" href="kids-corner.html"' + cur('kids-corner.html') + '><i class="fa-solid fa-child-reaching" aria-hidden="true"></i> Kids Corner</a><a href="web-search.html"' + cur('web-search.html') + '><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Web Search</a><a href="index.html#links">Portal Links</a>' +
+        '<a href="index.html#tools">Tools</a><a class="nav-daily" href="index.html#daily-use"><i class="fa-solid fa-star" aria-hidden="true"></i> Daily Use App</a><a href="prompt-studio.html"' + cur('prompt-studio.html') + '><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Prompt Studio</a><a class="nav-kids" href="kids-corner.html"' + cur('kids-corner.html') + '><i class="fa-solid fa-child-reaching" aria-hidden="true"></i> Kids Corner</a><a href="web-search.html"' + cur('web-search.html') + '><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Web Search</a><a href="index.html#links">Portal Links</a>' +
         '<a href="feedback.html"' + cur('feedback.html') + '>Feedback</a><a href="contact.html"' + cur('contact.html') + '>Contact</a></nav></div>';
       themePicker(h);
       var tg = h.querySelector('.nav-toggle'), nv = h.querySelector('nav');
@@ -357,14 +374,14 @@
     if (f && !f.firstChild) {
       var yr = new Date().getFullYear();
       f.innerHTML = '<div class="ftr2"><div class="ftr-grid">' +
-        '<div class="ftr-brand"><a class="logo" href="index.html"><img src="favicon.svg" alt="" width="36" height="36"><span class="ss-brand-lockup"><strong>Seva<span>Sphere</span></strong><small>Digital Seva • Smart Tools • Better Tomorrow</small></span></a>' +
-        '<p>Free online tools for CSC VLEs, digital service centres, cyber cafes and students: photo and signature resizer, ID card and passport photo print, PDF tools, resumes, applications and calculators.</p>' +
+        '<div class="ftr-brand"><a class="logo" href="index.html"><img src="favicon.svg" alt="" width="36" height="36"><span class="logo-t">Seva<b>Sphere</b></span></a>' +
+        '<p>Free, fast online tools for CSC and VLE centres, cyber cafes and students: photo and signature resizer, ID card and passport photo print, PDF tools, resumes, applications and calculators.</p>' +
         '<div class="soc" aria-label="Social links">' + socialHTML() + '</div></div>' +
         '<div><h4>Explore</h4><a href="index.html">Home</a><a href="index.html#tools">All Tools</a><a href="index.html#links">Portal Links</a><a href="pro-studio.html">Pro Studio</a><a href="shop-ledger.html">Shop Ledger</a><a href="stock-ledger.html">Stock Ledger</a><a href="house-expense.html">House Expense</a><a href="kids-corner.html">Kids Corner</a><a href="prompt-studio.html">Prompt Studio</a><a href="my-step-guides.html">Step Guides</a><a href="web-search.html">Web Search</a><a href="tools_handwriting_converter.html">Handwriting Converter</a></div>' +
         '<div><h4>Popular Tools</h4><a href="tools_photo_resizer.html">Photo Resizer</a><a href="tools_pdf_merger.html">PDF Merger</a><a href="tools_ai_passport_studio.html">Passport Photo Studio</a><a href="haryana-resume-generator.html">Resume Builder</a><a href="tools_loan_emi_calculator.html">Loan EMI Calculator</a></div>' +
         '<div><h4>Support</h4><a href="feedback.html">Send Feedback</a><a href="contact.html">Contact Us</a><a href="about.html">About Us</a><a href="disclaimer.html">Disclaimer</a><a href="privacy.html">Privacy Policy</a></div>' +
-        '</div><div class="ftr-bar"><span>&copy; ' + yr + ' SevaSphere – CSC VLE Tools. All rights reserved.</span><span>Made with <span class="heart" aria-label="love">&#10084;</span> in Rohtak, Haryana</span></div>' +
-        '<p class="ftr-note">SevaSphere – CSC VLE Tools is an independent project. It is not affiliated with, endorsed by or connected to CSC e-Governance Services India Ltd, UIDAI, or any government department. <a href="disclaimer.html">Read the full disclaimer</a>.</p></div>';
+        '</div><div class="ftr-bar"><span>&copy; ' + yr + ' SevaSphere. All rights reserved.</span><span>Made with <span class="heart" aria-label="love">&#10084;</span> in Rohtak, Haryana</span></div>' +
+        '<p class="ftr-note">SevaSphere is an independent project. It is not affiliated with, endorsed by or connected to CSC e-Governance Services India Ltd, UIDAI, or any government department. <a href="disclaimer.html">Read the full disclaimer</a>.</p></div>';
       var tt = document.createElement('button'); tt.type = 'button'; tt.id = 'to-top'; tt.className = 'to-top no-print'; tt.setAttribute('aria-label', 'Back to top'); tt.innerHTML = '&uarr;'; tt.hidden = true;
       tt.onclick = function () { window.scrollTo({ top: 0, behavior: 'smooth' }); };
       document.body.appendChild(tt);
@@ -388,7 +405,8 @@
     var cats = $('#cats'), side = $('#category-list'), q = $('#tool-search');
     var active = 'all';
     var count = function (id) { return LIST.filter(function (t) { return id === 'all' || t.cat === id; }).length; };
-    var tc = $('#tool-count'); if (tc) tc.textContent = LIST.length; var tcc = $('#tool-count-copy'); if (tcc) tcc.textContent = LIST.length + '+';
+    var tc = $('#tool-count'); if (tc) tc.textContent = LIST.length;
+    var hc = $('#hero-count'); if (hc) hc.textContent = LIST.length;
 
     function chips() {
       if (!cats) return;
@@ -653,7 +671,7 @@
     f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
     document.body.appendChild(f);
     var d = f.contentWindow.document; d.open();
-    d.write('<!doctype html><html><head><meta charset="utf-8"><title>SevaSphere – CSC VLE Tools</title><style>@page{size:A4;margin:0}body{margin:0;font-family:Arial,sans-serif}' + (css || '') + '</style></head><body>' + body + '</body></html>');
+    d.write('<!doctype html><html><head><meta charset="utf-8"><title>SevaSphere</title><style>@page{size:A4;margin:0}body{margin:0;font-family:Arial,sans-serif}' + (css || '') + '</style></head><body>' + body + '</body></html>');
     d.close();
     var go = function () { f.contentWindow.focus(); f.contentWindow.print(); setTimeout(function () { f.remove(); }, 2000); };
     var imgs = [].slice.call(d.images), left = imgs.length;
@@ -664,7 +682,7 @@
   /* Mount a tool from the registry CSC.tools[name] into #tool-root.
      v28: if the tool's script did not load (missing file, stale cache, blocked download) it is fetched again with a cache-buster,
      and if that still fails the page names the exact file that is missing so it can be uploaded. */
-  var TOOL_JS = ['assets/js/borders.js', 'assets/js/tools-album.js', 'assets/js/tools-scan.js', 'assets/js/tools-docs.js', 'assets/js/tools-calc.js', 'assets/js/tools-image.js', 'assets/js/tools-pdf.js'];
+  var TOOL_JS = ['assets/js/borders.js', 'assets/js/tools-album.js', 'assets/js/tools-scan.js', 'assets/js/tools-docs.js', 'assets/js/tools-calc.js', 'assets/js/tools-extra.js', 'assets/js/tools-image.js', 'assets/js/tools-pdf.js'];
   var jsErrs = [];
   window.addEventListener('error', function (e) { if (e && e.filename && /assets\/js\//.test(e.filename)) jsErrs.push((e.filename.split('/').pop().split('?')[0]) + ': ' + e.message); });
   function runTool(name, root, fn) {
@@ -750,7 +768,7 @@
   /* ---------- 3D hover tilt for cards (mouse only; off when the visitor prefers reduced motion) ---------- */
   function tilt() {
     if (!window.matchMedia || !matchMedia('(hover:hover)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    var SEL = '.tc,.qtile,.tool-card,.quick-card,.cat-item,.du-card,.topics a';
+    var SEL = '.tc,.gc,.qtile,.tool-card,.quick-card,.cat-item,.du-card,.topics a';
     function reset(el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); }
     document.addEventListener('mousemove', function (e) {
       var el = e.target.closest && e.target.closest(SEL); if (!el) return;

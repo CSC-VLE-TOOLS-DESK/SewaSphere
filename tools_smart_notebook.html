@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172554">
+<title>SevaSphere Smart Notebook</title>
+<style>
+:root{--bg:#f3f6ff;--paper:#fff;--ink:#17213b;--muted:#687493;--line:#e3e8f4;--blue:#4169e1;--purple:#7954d8;--teal:#14b8a6;--shadow:0 14px 40px #24386d12}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eef4ff,#f9f3ff 55%,#effcf9);font-family:Inter,system-ui,"Segoe UI",sans-serif;color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{max-width:1240px;width:calc(100% - 30px);margin:24px auto 40px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px}.logo{height:48px;width:48px;border-radius:15px;background:linear-gradient(135deg,#3b82f6,#8b5cf6,#14b8a6);display:grid;place-items:center;color:#fff;font-size:25px;box-shadow:0 8px 20px #5478dc40}
+h1{font-size:clamp(20px,3vw,27px);margin:0;letter-spacing:-.7px}.sub{color:var(--muted);font-size:12px;margin-top:3px}
+.header-actions{display:flex;gap:8px;align-items:center}.pill{border-radius:99px;padding:8px 12px;background:#e6fbf5;color:#087f69;font-size:11px;font-weight:700}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:750;transition:.15s}.btn:hover{transform:translateY(-1px)}.primary{background:linear-gradient(100deg,#4169e1,#7954d8);color:#fff;box-shadow:0 5px 15px #4169e133}.light{background:#eef2ff;color:#344b9a}.white{background:#fff;border:1px solid var(--line);color:#34405f}.green{background:#dcfce9;color:#087344}
+.workspace{display:grid;grid-template-columns:235px minmax(0,1fr);gap:16px;align-items:start}
+.side,.editor-card,.assist{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.side{padding:16px;position:sticky;top:15px}.side h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#7c87a5;margin:2px 0 12px}
+.new-note{width:100%;margin-bottom:17px}.note-list{display:grid;gap:7px}.note{padding:10px;border-radius:10px;background:#f6f8ff;border:1px solid transparent;text-align:left;color:#35405f;width:100%}.note.active{background:#eef2ff;border-color:#cbd5ff;color:#304ca7}.note strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.note small{font-size:10px;color:#8791aa;display:block;margin-top:3px}
+.side-tip{font-size:10px;line-height:1.6;color:#7d88a3;margin-top:18px;padding:11px;background:#f7f9ff;border-radius:10px}
+.editor-card{overflow:hidden}.doc-head{padding:17px 20px 12px;border-bottom:1px solid var(--line)}.title-input{width:100%;border:0;outline:0;font-size:23px;font-weight:800;color:#202b49;padding:3px 0}.meta{font-size:11px;color:#8993aa;margin-top:6px}
+.toolbar{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:#fbfcff}.tool{height:32px;min-width:32px;padding:0 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:#46516e;font-size:12px;font-weight:700}.tool:hover,.tool.active{background:#edf1ff;border-color:#dce3ff;color:#344eb0}.toolbar .sep{width:1px;height:21px;background:var(--line);margin:0 3px}
+select,.font-size{border:1px solid var(--line);border-radius:7px;padding:7px;background:#fff;color:#46516e;font-size:11px}
+.editor-area{padding:24px 30px 35px;min-height:510px;position:relative}
+#editor{min-height:450px;outline:0;font-family:Georgia,serif;font-size:17px;line-height:1.85;color:#29334e;overflow-wrap:anywhere}
+#editor:empty:before{content:"Start writing your notes here...";color:#b3bbce;pointer-events:none}
+#editor h1,#editor h2,#editor h3{font-family:Inter,system-ui,sans-serif;line-height:1.3}
+#editor ul,#editor ol{padding-left:28px}
+.footerbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 18px;border-top:1px solid var(--line);background:#fbfcff;color:#7d88a3;font-size:11px}
+.right-tools{display:grid;gap:12px}.assist{padding:15px}.assist h3{font-size:13px;margin:0 0 5px}.assist p{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 11px}
+.suggest-box{background:#f7f8ff;border:1px solid #e8eaff;border-radius:10px;padding:10px;font-size:11px;line-height:1.6;color:#4d5877;min-height:48px}
+.suggest-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.chip{border:1px solid #dce3ff;background:#fff;color:#435bb0;border-radius:99px;padding:6px 9px;font-size:10px}
+.word-row{display:flex;gap:7px}.word-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;padding:9px;font-size:11px;outline:0}.word-row input:focus{border-color:#8296ed}
+.export-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.export-grid button{padding:9px 7px;font-size:10px}
+.status{font-size:10px;color:#8a94aa;margin-top:9px;line-height:1.5}
+#suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.side{position:static}.side .note-list{grid-template-columns:repeat(2,minmax(0,1fr))}.right-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.editor-area{padding:20px;}}
+@media(max-width:560px){.app{width:calc(100% - 18px);margin-top:14px}header{align-items:flex-start}.header-actions .pill{display:none}.side .note-list,.right-tools{grid-template-columns:1fr}.editor-area{padding:16px;min-height:400px}#editor{min-height:350px}.title-input{font-size:20px}.toolbar{gap:3px;padding:8px}.tool{min-width:29px;padding:0 7px}}
+</style>
+<style>.ss-bar{position:relative;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:8px 14px;background:linear-gradient(180deg,#14306f,#0d1b3d);color:#fff;font:700 13px/1.2 "Nunito","Segoe UI",system-ui,sans-serif;box-shadow:0 3px 0 #06102a}.ss-bar a{color:#fff;text-decoration:none;padding:5px 11px;border-radius:9px;background:rgba(255,255,255,.12)}.ss-bar a:hover,.ss-bar a:focus-visible{background:#ffc928;color:#2b1d00;outline:0}.ss-bar b{margin-right:auto;font-weight:800;letter-spacing:.2px}@media print{.ss-bar{display:none}}</style><link rel="icon" href="favicon.svg?v=42" type="image/svg+xml"><link rel="icon" href="favicon-32.png?v=42" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=42">
+</head>
+<body>
+<nav class="ss-bar" aria-label="SevaSphere navigation"><b>SevaSphere</b><a href="index.html">&larr; Home</a><a href="cat-ai.html">AI &amp; Writing Tools</a><a href="index.html#tools">All tools</a></nav>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">✎</div><div><h1>SevaSphere <span style="color:#7055d7">Smart Notebook</span></h1><div class="sub">Write • Improve • Organize • Export</div></div></div>
+ <div class="header-actions"><span class="pill">● Auto-save in this browser</span><button class="btn primary" id="downloadTop">Export note ↓</button></div>
+</header>
+<div class="workspace">
+ <aside class="side">
+  <button class="btn primary new-note" id="newNote">＋ New note</button>
+  <h3>Your notes</h3><div class="note-list" id="noteList"></div>
+  <div class="side-tip"><b>Writing tip</b><br>Browser spell-check can underline possible spelling mistakes. Right-click an underlined word to see suggestions. Available languages depend on your browser.</div>
+ </aside>
+ <main class="editor-card">
+  <div class="doc-head"><input class="title-input" id="noteTitle" value="Untitled note" aria-label="Note title"><div class="meta" id="saveMeta">New document · Saved locally</div></div>
+  <div class="toolbar" aria-label="Formatting toolbar">
+   <select id="blockType" aria-label="Text style"><option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option><option value="blockquote">Quote</option></select>
+   <select id="fontSize" aria-label="Font size"><option value="3">Normal</option><option value="2">Small</option><option value="4">Large</option><option value="5">Extra large</option></select>
+   <span class="sep"></span>
+   <button class="tool" data-cmd="bold" title="Bold"><b>B</b></button><button class="tool" data-cmd="italic" title="Italic"><i>I</i></button><button class="tool" data-cmd="underline" title="Underline"><u>U</u></button><button class="tool" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+   <span class="sep"></span>
+   <button class="tool" data-cmd="insertUnorderedList" title="Bulleted list">☷ List</button><button class="tool" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+   <button class="tool" data-cmd="justifyLeft" title="Align left">≡</button><button class="tool" data-cmd="justifyCenter" title="Center">☰</button>
+   <button class="tool" data-cmd="undo" title="Undo">↶</button><button class="tool" data-cmd="redo" title="Redo">↷</button>
+   <span class="sep"></span><button class="tool" id="clearFormat" title="Clear formatting">Tx</button>
+  </div>
+  <div class="editor-area"><div id="editor" contenteditable="true" spellcheck="true" lang="en" aria-label="Notebook writing area"></div></div>
+  <div class="footerbar"><span id="counts">0 words · 0 characters</span><span id="spellStatus">Spell-check: browser supported</span><span id="saveStatus">All changes saved</span></div>
+ </main>
+ <aside class="right-tools">
+  <section class="assist">
+   <h3>✦ Word completion</h3><p>Type a word below to get suggestions from a small built-in English word list. This is a helper, not a full AI predictor.</p>
+   <div class="word-row"><input id="wordInput" placeholder="Start typing (e.g. beau)"><button class="btn light" id="suggestWord">Suggest</button></div>
+   <div id="suggestions"></div>
+  </section>
+  <section class="assist">
+   <h3>✦ Sentence helper</h3><p>Choose a sentence starter to insert it at your cursor. Edit it to match your meaning.</p>
+   <div class="suggest-box" id="sentencePreview">Select a starter below to see a sentence idea.</div>
+   <div class="suggest-row" id="sentenceChips">
+    <button class="chip" data-sentence="In conclusion, ">In conclusion</button>
+    <button class="chip" data-sentence="For example, ">For example</button>
+    <button class="chip" data-sentence="The main reason is that ">Give a reason</button>
+    <button class="chip" data-sentence="One important point to remember is that ">Important point</button>
+    <button class="chip" data-sentence="As a result, ">As a result</button>
+    <button class="chip" data-sentence="I would like to explain that ">Explain</button>
+   </div>
+  </section>
+  <section class="assist">
+   <h3>✓ Spelling & writing check</h3><p>Spelling suggestions are provided by your browser. Click inside the document and right-click an underlined word. This page does not send your writing to a server.</p>
+   <button class="btn light" id="checkSpell">Check spelling support</button><div class="status" id="spellMessage">Spell-check is enabled in the editor.</div>
+  </section>
+  <section class="assist">
+   <h3>⇩ Save in a format</h3><p>Export the current note. PDF uses your browser's Print / Save as PDF option.</p>
+   <div class="export-grid">
+    <button class="btn light" data-export="txt">TXT</button><button class="btn light" data-export="html">HTML</button>
+    <button class="btn light" data-export="md">Markdown</button><button class="btn light" data-export="json">JSON</button>
+    <button class="btn light" data-export="rtf">RTF</button><button class="btn light" data-export="doc">Word DOC</button>
+    <button class="btn green" id="printPdf">Print / PDF</button><button class="btn white" id="copyText">Copy text</button>
+   </div>
+   <div class="status">DOC is an HTML-compatible Word document. For DOCX, use Word or LibreOffice to open the DOC and save it as DOCX.</div>
+  </section>
+ </aside>
+</div>
+</div>
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id), editor=$("editor"), title=$("noteTitle");
+const STORAGE="sevasphere-smart-notebook-v1";
+let notes=[],activeId=null,saveTimer=null,selectionRange=null;
+const words=("about above accept account across action actually add address after again against age agree air all allow almost along already also although always amazing amount an and animal another answer any anyone anything appear apple application are area around art article as ask at audio available away awesome baby back balance bank beautiful because become before begin believe best better between big book both browser business but by call camera can capital car care carry case change check child choose city class clear close code color come common complete computer connect continue control correct could country create current customer daily data date day decide describe design different difficult digital do document down download each early easy education effect efficient effort email end enjoy enough enter equal error every example excellent explain export extra face fact family feature feel few file find first follow for form format free from full function game get give go good great group grow guide had hand happen happy have he head health help here high history home hope how however html idea important improve include information input install into introduce is it item job just keep key kind know language large last learn leave left less let life like line list little local long look love main make many market may me mean meaning measure media meet memory might mobile more most move much music must my name national natural need new next nice night no note number of offer office often old on once one only open option or order other our out over page paper paragraph part people personal phone photo place plan play please point popular possible power practice prepare present pretty problem process product project provide publish quality question quick quote read ready reason record recording reference regular remember report request result review right save school screen search second see sentence set share short should show simple since site small smart so some something sound source special spell spelling start state stay still stop story strong student study style subject success suggestion support system table take teach team tell text than that the their them then there these they thing think this those time title to today together tool top topic try turn two type under understand until up update use user useful using value video view voice want was way we web website week well were what when where which while who why will with word work world write writing year yes you your").split(/\s+/);
+const unique=[...new Set(words)];
+function makeId(){return "n"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function current(){return notes.find(n=>n.id===activeId)}
+function save(){
+ if(!current())return;
+ const n=current();n.title=title.value;n.html=editor.innerHTML;n.updated=Date.now();
+ try{localStorage.setItem(STORAGE,JSON.stringify(notes));$("saveStatus").textContent="All changes saved";$("saveMeta").textContent="Saved locally · "+new Date(n.updated).toLocaleString();}
+ catch(e){$("saveStatus").textContent="Browser storage is full; export your note to keep a copy."}
+ renderNotes();updateCounts();
+}
+function scheduleSave(){$("saveStatus").textContent="Saving…";clearTimeout(saveTimer);saveTimer=setTimeout(save,350)}
+function renderNotes(){
+ const list=$("noteList");list.innerHTML="";
+ notes.slice().sort((a,b)=>b.updated-a.updated).forEach(n=>{
+  const b=document.createElement("button");b.className="note"+(n.id===activeId?" active":"");
+  const strong=document.createElement("strong");strong.textContent=n.title||"Untitled note";
+  const small=document.createElement("small");small.textContent=new Date(n.updated).toLocaleDateString();
+  b.append(strong,small);b.addEventListener("click",()=>openNote(n.id));list.appendChild(b);
+ });
+}
+function openNote(id){save();activeId=id;const n=current();title.value=n.title;editor.innerHTML=n.html;$("saveMeta").textContent="Saved locally · "+new Date(n.updated).toLocaleString();renderNotes();updateCounts();}
+function newNote(){
+ save();const n={id:makeId(),title:"Untitled note",html:"",updated:Date.now()};notes.push(n);activeId=n.id;title.value=n.title;editor.innerHTML="";renderNotes();updateCounts();editor.focus();scheduleSave();
+}
+function updateCounts(){const text=editor.innerText||"";const count=text.trim()?text.trim().split(/\s+/).length:0;$("counts").textContent=`${count} words · ${text.length} characters`;}
+function getPlain(){return editor.innerText||""}
+function safeName(){return (title.value.trim()||"notebook-note").replace(/[\\/:*?"<>|]+/g,"-")}
+function download(content,name,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200)}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function markdownFromHtml(root){
+ const clone=root.cloneNode(true);
+ const walk=node=>{
+  if(node.nodeType===3)return node.nodeValue;
+  if(node.nodeType!==1)return "";
+  const tag=node.tagName.toLowerCase(),inner=[...node.childNodes].map(walk).join("");
+  if(tag==="br")return "\n";
+  if(tag==="b"||tag==="strong")return "**"+inner+"**";
+  if(tag==="i"||tag==="em")return "*"+inner+"*";
+  if(tag==="u")return "<u>"+inner+"</u>";
+  if(/^h[1-6]$/.test(tag))return "#".repeat(Number(tag[1]))+" "+inner+"\n\n";
+  if(tag==="li")return "- "+inner+"\n";
+  if(tag==="blockquote")return "> "+inner+"\n\n";
+  if(tag==="p"||tag==="div")return inner+"\n\n";
+  return inner;
+ };
+ return [...clone.childNodes].map(walk).join("").replace(/\n{3,}/g,"\n\n").trim();
+}
+function exportAs(format){
+ save();const plain=getPlain(),base=safeName();let content,type,ext;
+ switch(format){
+  case"txt":content=plain;type="text/plain;charset=utf-8";ext="txt";break;
+  case"html":content=`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title.value)}</title></head><body><h1>${escapeHtml(title.value)}</h1>${editor.innerHTML}</body></html>`;type="text/html;charset=utf-8";ext="html";break;
+  case"md":content="# "+title.value+"\n\n"+markdownFromHtml(editor);type="text/markdown;charset=utf-8";ext="md";break;
+  case"json":content=JSON.stringify({title:title.value,content:plain,html:editor.innerHTML,updated:new Date().toISOString()},null,2);type="application/json;charset=utf-8";ext="json";break;
+  case"rtf":content="{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 Arial;}}\\f0\\fs24 "+escapeRtf(title.value)+"\\par\\par "+plain.split(/\n/).map(escapeRtf).join("\\par ")+"}";type="application/rtf";ext="rtf";break;
+  case"doc":content=`<html><head><meta charset="utf-8"></head><body><h1>${escapeHtml(title.value)}</h1>${editor.innerHTML}</body></html>`;type="application/msword";ext="doc";break;
+  default:return;
+ }
+ download(content,base+"."+ext,type);
+}
+function escapeRtf(s){return s.replace(/\\/g,"\\\\").replace(/{/g,"\\{").replace(/}/g,"\\}").replace(/\n/g,"\\line ").replace(/[^\x00-\x7F]/g,c=>"\\u"+c.charCodeAt(0)+"?");}
+function rememberSelection(){const sel=getSelection();if(sel&&sel.rangeCount)selectionRange=sel.getRangeAt(0).cloneRange();}
+function insertAtCursor(text){
+ editor.focus();const sel=getSelection();
+ if(selectionRange){sel.removeAllRanges();sel.addRange(selectionRange);}
+ if(sel&&sel.rangeCount){const range=sel.getRangeAt(0);range.deleteContents();const node=document.createTextNode(text);range.insertNode(node);range.setStartAfter(node);range.collapse(true);sel.removeAllRanges();sel.addRange(range);selectionRange=range.cloneRange();}
+ else editor.append(document.createTextNode(text));
+ scheduleSave();
+}
+document.querySelectorAll("[data-cmd]").forEach(b=>b.addEventListener("click",()=>{editor.focus();document.execCommand(b.dataset.cmd,false,null);scheduleSave();}));
+$("blockType").addEventListener("change",e=>{editor.focus();document.execCommand("formatBlock",false,e.target.value);scheduleSave();});
+$("fontSize").addEventListener("change",e=>{editor.focus();document.execCommand("fontSize",false,e.target.value);scheduleSave();});
+$("clearFormat").addEventListener("click",()=>{editor.focus();document.execCommand("removeFormat",false,null);scheduleSave();});
+editor.addEventListener("keyup",()=>{rememberSelection();updateCounts();scheduleSave()});
+editor.addEventListener("mouseup",rememberSelection);editor.addEventListener("input",()=>{rememberSelection();updateCounts();scheduleSave()});
+title.addEventListener("input",scheduleSave);$("newNote").addEventListener("click",newNote);
+$("downloadTop").addEventListener("click",()=>exportAs("doc"));
+document.querySelectorAll("[data-export]").forEach(b=>b.addEventListener("click",()=>exportAs(b.dataset.export)));
+$("printPdf").addEventListener("click",()=>{save();const w=window.open("","_blank");if(!w){alert("Please allow pop-ups to use Print / Save as PDF.");return;}w.document.write(`<!doctype html><html><head><title>${escapeHtml(title.value)}</title><style>body{font:16px/1.7 Georgia,serif;max-width:800px;margin:50px auto;color:#222}h1{font: bold 28px Arial}</style></head><body><h1>${escapeHtml(title.value)}</h1>${editor.innerHTML}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),350);});
+$("copyText").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(getPlain());$("saveStatus").textContent="Text copied to clipboard";}catch(e){$("saveStatus").textContent="Clipboard access unavailable in this browser."}});
+$("checkSpell").addEventListener("click",()=>{$("spellMessage").textContent=editor.spellcheck?"Spell-check is enabled. Right-click a red-underlined word for browser suggestions.":"Spell-check is disabled.";editor.focus();});
+document.querySelectorAll("[data-sentence]").forEach(b=>b.addEventListener("click",()=>{$("sentencePreview").textContent=b.dataset.sentence.trim();rememberSelection();insertAtCursor(b.dataset.sentence);}));
+function suggestWords(prefix){
+ prefix=prefix.toLowerCase().trim();if(!prefix)return [];
+ return unique.filter(w=>w.startsWith(prefix)&&w!==prefix).sort((a,b)=>a.length-b.length).slice(0,8);
+}
+$("suggestWord").addEventListener("click",()=>{
+ const value=$("wordInput").value;const box=$("suggestions");box.innerHTML="";
+ const found=suggestWords(value);
+ if(!found.length){const s=document.createElement("span");s.className="status";s.textContent="No match in the small built-in word list. Try a shorter prefix.";box.appendChild(s);return;}
+ found.forEach(word=>{const b=document.createElement("button");b.className="chip";b.textContent=word;b.addEventListener("click",()=>{insertAtCursor(word);$("wordInput").value=word;});box.appendChild(b);});
+});
+$("wordInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("suggestWord").click()});
+try{notes=JSON.parse(localStorage.getItem(STORAGE)||"[]");if(!Array.isArray(notes))notes=[];}catch(e){notes=[]}
+if(notes.length){notes.sort((a,b)=>b.updated-a.updated);activeId=notes[0].id;title.value=notes[0].title||"Untitled note";editor.innerHTML=notes[0].html||"";}
+else{const n={id:makeId(),title:"My first note",html:"<p>Welcome to SevaSphere Smart Notebook. Start writing here.</p>",updated:Date.now()};notes=[n];activeId=n.id;title.value=n.title;editor.innerHTML=n.html;}
+renderNotes();updateCounts();save();
+})();
+</script>
+</body>
+</html>

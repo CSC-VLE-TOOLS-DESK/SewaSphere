@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS: photo and image tools */
+/* SevaSphere: photo and image tools */
 (function () {
   'use strict';
   var CSC = window.CSC, T = CSC.tools, h = CSC.h, esc = CSC.esc;
@@ -99,11 +99,27 @@
   }
 
   /* ================= Resizer family ================= */
+  /* Turn a grey / dull paper background into a clean colour. The paper tone is read from the picture edges. */
+  function hex2rgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+  function bgFix(src, strength, color) {
+    var w = src.width, hh = src.height, c = document.createElement('canvas'); c.width = w; c.height = hh; var x = c.getContext('2d'); x.drawImage(src, 0, 0);
+    var id = x.getImageData(0, 0, w, hh), d = id.data, lum = function (i) { return 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; }, vals = [], i, step = Math.max(1, Math.floor(Math.min(w, hh) / 40));
+    for (i = 0; i < w; i += step) { vals.push(lum(i * 4)); vals.push(lum(((hh - 1) * w + i) * 4)); }
+    for (i = 0; i < hh; i += step) { vals.push(lum(i * w * 4)); vals.push(lum((i * w + w - 1) * 4)); }
+    vals.sort(function (a, b) { return a - b; });
+    var paper = vals[Math.floor(vals.length * 0.75)] || 220, tol = strength * 0.9, lo = paper - tol * 2, hi = paper - tol * 0.5, rgb = hex2rgb(color || '#ffffff'), t, L;
+    for (i = 0; i < d.length; i += 4) {
+      L = lum(i); t = (L - lo) / (hi - lo); t = t < 0 ? 0 : t > 1 ? 1 : t; t = t * t * (3 - 2 * t);
+      d[i] = d[i] + (rgb[0] - d[i]) * t; d[i + 1] = d[i + 1] + (rgb[1] - d[i + 1]) * t; d[i + 2] = d[i + 2] + (rgb[2] - d[i + 2]) * t;
+    }
+    x.putImageData(id, 0, 0); return c;
+  }
   function resizer(cfg) {
     return function (root) {
       var frameHtml = cfg.frame ? '<div class="field"><label><input type="checkbox" id="fr"> Add a frame (border)</label></div><div class="row2" id="frBox" style="display:none"><div class="field"><label>Frame width: <span id="fwv">2</span> px</label><input type="range" id="fw" min="1" max="5" value="2"></div><div class="field"><label>Frame colour</label><input type="color" id="fc" value="#000000"></div></div>' : '';
       var signHtml = cfg.sign ? '<div class="field"><label><input type="checkbox" id="sbr"> Remove paper background</label></div><div id="sbBox" style="display:none"><div class="row2"><div class="field"><label>Removal strength: <span id="sbv">35</span></label><input type="range" id="sbt" min="5" max="90" value="35"></div><div class="field"><label>After removing</label><select id="sbg"><option value="white">White background (JPG)</option><option value="transparent">Transparent (PNG)</option></select></div></div></div>' +
         '<div class="field"><label><input type="checkbox" id="sic"> Change signature colour</label></div><div id="siBox" style="display:none"><div class="field"><label>Signature colour</label><input type="color" id="sc" value="#0b2a8a"></div></div>' : '';
+      var bgfixHtml = cfg.bgfix ? '<div class="field"><label><input type="checkbox" id="bfx"> Clean / change background (fixes grey paper from mobile camera)</label></div><div id="bfBox" style="display:none"><div class="row2"><div class="field"><label>Background colour</label><select id="bfc"><option value="#ffffff">White</option><option value="#eaf3ff">Light blue</option><option value="#fff7e0">Cream</option><option value="custom">Custom colour</option></select></div><div class="field"><label>Strength: <span id="bfv">40</span></label><input type="range" id="bft" min="10" max="90" value="40"></div></div><div class="field" id="bfcu" style="display:none"><label>Custom colour</label><input type="color" id="bfcc" value="#ffffff"></div><p class="hint">Make the strength higher if grey is still visible. Lower it if the thumb print gets faint.</p></div>' : '';
       root.innerHTML =
         '<div class="t-grid3"><div class="card no-print opt"><div id="dz"></div><div id="opts" style="display:none;margin-top:14px">' +
         '<div class="field"><label>Preset size</label><select id="pre">' + cfg.presets.map(function (p, i) { return '<option value="' + i + '">' + esc(p.n) + '</option>'; }).join('') + '<option value="custom">Custom</option></select></div>' +
@@ -111,7 +127,7 @@
         '<div class="row2"><div class="field"><label>Unit</label><select id="u"><option value="px">pixels</option><option value="mm">mm</option><option value="cm">cm</option><option value="in">inch</option></select></div>' +
         '<div class="field" id="dpiBox" style="display:none"><label>DPI</label><input type="number" id="dpi" value="300" min="72"></div></div>' +
         '<div class="row2"><div class="field"><label>Maximum size (KB)</label><input type="number" id="kb" min="2"></div><div class="field"><label>Format</label><select id="fmt"><option value="jpg">JPG (smaller)</option><option value="png">PNG</option></select></div></div>' +
-        frameHtml + signHtml +
+        frameHtml + signHtml + bgfixHtml +
         '<p class="hint">Drag the corner or side handles to size the crop box, or drag inside it to move it. The box keeps the shape of the size you choose. Always check the size rules on your own form.</p>' +
         '<div class="t-actions"><button class="btn" id="go"><i class="fa-solid fa-gear"></i> Crop &amp; Resize</button></div></div></div>' +
         '<div class="card" id="cropCard"><h3 class="pane-t">1. Crop</h3><div id="cropHost" style="text-align:center"><p class="hint">Choose a photo to start.</p></div></div>' +
@@ -130,7 +146,9 @@
       }
       function aspect() { if (cr) { var w = parseFloat($('#w').value), hh = parseFloat($('#hh').value); if (w > 0 && hh > 0) cr.setAspect(w / hh); } }
       function tog(chk, box) { var c = $(chk), b = $(box); if (c && b) c.onchange = function () { b.style.display = c.checked ? '' : 'none'; }; }
-      tog('#fr', '#frBox'); tog('#sbr', '#sbBox'); tog('#sic', '#siBox');
+      tog('#fr', '#frBox'); tog('#sbr', '#sbBox'); tog('#sic', '#siBox'); tog('#bfx', '#bfBox');
+      if ($('#bft')) $('#bft').oninput = function () { $('#bfv').textContent = this.value; };
+      if ($('#bfc')) $('#bfc').onchange = function () { $('#bfcu').style.display = this.value === 'custom' ? '' : 'none'; };
       if ($('#fw')) $('#fw').oninput = function () { $('#fwv').textContent = this.value; };
       if ($('#sbt')) $('#sbt').oninput = function () { $('#sbv').textContent = this.value; };
       $('#pre').onchange = applyPreset;
@@ -157,6 +175,7 @@
           var rm = $('#sbr').checked, rc = $('#sic').checked; transparent = rm && $('#sbg').value === 'transparent';
           if (rm || rc) c = signFx(c, { rm: rm, tol: +$('#sbt').value, recolor: rc, color: $('#sc').value, transparent: transparent });
         }
+        if (cfg.bgfix && $('#bfx') && $('#bfx').checked) c = bgFix(c, +$('#bft').value, $('#bfc').value === 'custom' ? $('#bfcc').value : $('#bfc').value);
         if (cfg.frame && $('#fr').checked) CSC.addFrame(c, +$('#fw').value, $('#fc').value);
         if (transparent) png = true;
         if (kb > 0) blob = png ? await CSC.canvasBlob(c, 'image/png') : await CSC.fitToKB(c, kb, 0, { keepDims: true });
@@ -166,7 +185,7 @@
         if (cur) URL.revokeObjectURL(cur); cur = URL.createObjectURL(blob);
         $('#pv').innerHTML = '<img alt="Result" src="' + cur + '">';
         var ok = !(kb > 0) || blob.size <= kb * 1024;
-        $('#stats').innerHTML = '<span class="t-stat">' + c.width + ' Ã— ' + c.height + ' px</span><span class="t-stat">' + CSC.fmtBytes(blob.size) + '</span>' + (ok ? '' : '<span class="err"> Still above ' + kb + ' KB</span>');
+        $('#stats').innerHTML = '<span class="t-stat">' + c.width + ' × ' + c.height + ' px</span><span class="t-stat">' + CSC.fmtBytes(blob.size) + '</span>' + (ok ? '' : '<span class="err"> Still above ' + kb + ' KB</span>');
         $('#dl').disabled = false;
       };
       $('#dl').onclick = function () { if (out) CSC.download(out.blob, srcName + '_' + (cfg.suffix || 'resized') + '.' + out.ext); };
@@ -175,24 +194,24 @@
   }
   T.photo_resizer = resizer({
     suffix: 'photo', frame: true, presets: [
-      { n: 'Passport photo 35 Ã— 45 mm, max 100 KB', w: 35, h: 45, u: 'mm', kb: 100 },
-      { n: 'Photo 100 Ã— 120 px, max 50 KB', w: 100, h: 120, kb: 50 },
-      { n: 'Photo 200 Ã— 230 px, max 100 KB', w: 200, h: 230, kb: 100 },
-      { n: 'Photo 3.5 Ã— 4.5 cm, max 200 KB', w: 3.5, h: 4.5, u: 'cm', kb: 200 },
-      { n: 'Square 350 Ã— 350 px, max 200 KB', w: 350, h: 350, kb: 200 }]
+      { n: 'Passport photo 35 × 45 mm, max 100 KB', w: 35, h: 45, u: 'mm', kb: 100 },
+      { n: 'Photo 100 × 120 px, max 50 KB', w: 100, h: 120, kb: 50 },
+      { n: 'Photo 200 × 230 px, max 100 KB', w: 200, h: 230, kb: 100 },
+      { n: 'Photo 3.5 × 4.5 cm, max 200 KB', w: 3.5, h: 4.5, u: 'cm', kb: 200 },
+      { n: 'Square 350 × 350 px, max 200 KB', w: 350, h: 350, kb: 200 }]
   });
   T.sign_resizer = resizer({
     suffix: 'sign', sign: true, label: 'Choose the signature image', presets: [
-      { n: 'Signature 140 Ã— 60 px, max 20 KB', w: 140, h: 60, kb: 20 },
-      { n: 'Signature 140 Ã— 60 px, max 10 KB', w: 140, h: 60, kb: 10 },
-      { n: 'Signature 200 Ã— 80 px, max 30 KB', w: 200, h: 80, kb: 30 },
-      { n: 'Signature 4 Ã— 2 cm, max 50 KB', w: 4, h: 2, u: 'cm', kb: 50 }]
+      { n: 'Signature 140 × 60 px, max 20 KB', w: 140, h: 60, kb: 20 },
+      { n: 'Signature 140 × 60 px, max 10 KB', w: 140, h: 60, kb: 10 },
+      { n: 'Signature 200 × 80 px, max 30 KB', w: 200, h: 80, kb: 30 },
+      { n: 'Signature 4 × 2 cm, max 50 KB', w: 4, h: 2, u: 'cm', kb: 50 }]
   });
   T.thumb_resizer = resizer({
-    suffix: 'thumb', label: 'Choose the thumb impression image', presets: [
-      { n: 'Thumb 240 Ã— 240 px, max 50 KB', w: 240, h: 240, kb: 50 },
-      { n: 'Thumb 200 Ã— 230 px, max 50 KB', w: 200, h: 230, kb: 50 },
-      { n: 'Thumb 3 Ã— 2.5 cm, max 50 KB', w: 3, h: 2.5, u: 'cm', kb: 50 }]
+    suffix: 'thumb', bgfix: true, label: 'Choose the thumb impression image', presets: [
+      { n: 'Thumb 240 × 240 px, max 50 KB', w: 240, h: 240, kb: 50 },
+      { n: 'Thumb 200 × 230 px, max 50 KB', w: 200, h: 230, kb: 50 },
+      { n: 'Thumb 3 × 2.5 cm, max 50 KB', w: 3, h: 2.5, u: 'cm', kb: 50 }]
   });
 
   /* ================= Image Crop ================= */
@@ -211,8 +230,8 @@
     function preview() {
       if (!cr) return; var o = outSize(), k = Math.min(1, 260 / o.w, 220 / o.h), pc = cr.getCanvas(Math.max(1, Math.round(o.w * k)), Math.max(1, Math.round(o.h * k)));
       pc.style.maxWidth = '100%'; pc.style.height = 'auto'; $('#pvc').innerHTML = ''; $('#pvc').appendChild(pc); $('#pvw').style.display = '';
-      $('#pvs').innerHTML = '<span class="t-stat">' + o.w + ' Ã— ' + o.h + ' px</span><span class="t-stat" id="pve">size: â€¦</span>';
-      clearTimeout(pvTimer); pvTimer = setTimeout(async function () { try { var type = $('#f').value, b = await CSC.canvasBlob(paint(cr.getCanvas(o.w, o.h), type), type, 0.92), e = $('#pve'); if (e) e.textContent = 'size â‰ˆ ' + CSC.fmtBytes(b.size); } catch (e) {} }, 450);
+      $('#pvs').innerHTML = '<span class="t-stat">' + o.w + ' × ' + o.h + ' px</span><span class="t-stat" id="pve">size: …</span>';
+      clearTimeout(pvTimer); pvTimer = setTimeout(async function () { try { var type = $('#f').value, b = await CSC.canvasBlob(paint(cr.getCanvas(o.w, o.h), type), type, 0.92), e = $('#pve'); if (e) e.textContent = 'size ≈ ' + CSC.fmtBytes(b.size); } catch (e) {} }, 450);
     }
     $('#dz').appendChild(CSC.dropzone({
       accept: 'image/*', icon: 'fa-image', label: 'Choose an image', onFiles: async function (f) {
@@ -225,7 +244,7 @@
       if (!cr) return; var r = cr.rect(), ow = parseInt($('#ow').value, 10), w = ow > 0 ? ow : Math.round(r.w), hh = Math.round(w * r.h / r.w);
       var type = $('#f').value, c = cr.getCanvas(w, hh);
       if (type === 'image/jpeg') { var f = document.createElement('canvas'); f.width = c.width; f.height = c.height; var x = f.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, f.width, f.height); x.drawImage(c, 0, 0); c = f; }
-      var b = await CSC.canvasBlob(c, type, 0.92); $('#stats').innerHTML = '<span class="t-stat">' + w + ' Ã— ' + hh + ' px</span><span class="t-stat">' + CSC.fmtBytes(b.size) + '</span>';
+      var b = await CSC.canvasBlob(c, type, 0.92); $('#stats').innerHTML = '<span class="t-stat">' + w + ' × ' + hh + ' px</span><span class="t-stat">' + CSC.fmtBytes(b.size) + '</span>';
       CSC.download(b, name + '_crop.' + (type === 'image/jpeg' ? 'jpg' : type.split('/')[1]));
     };
   };
@@ -233,7 +252,7 @@
   /* ================= Image Compressor ================= */
   T.image_compressor = function (root) {
     root.innerHTML = '<div class="t-grid"><div class="card no-print"><div id="dz"></div><div style="margin-top:14px"><div class="row2"><div class="field"><label>Target size (KB)</label><input type="number" id="kb" value="100" min="2"></div>' +
-      '<div class="field"><label>Shrink width to (px, optional)</label><select id="mws"><option value="">Keep original width</option><option value="320">320 px</option><option value="480">480 px</option><option value="640">640 px</option><option value="800">800 px</option><option value="1024">1024 px</option><option value="1280">1280 px</option><option value="1600">1600 px</option><option value="1920">1920 px (Full HD)</option><option value="2560">2560 px</option><option value="custom">Customâ€¦</option></select><input type="number" id="mw" min="1" placeholder="Type width in px" style="display:none;margin-top:6px"></div></div>' +
+      '<div class="field"><label>Shrink width to (px, optional)</label><select id="mws"><option value="">Keep original width</option><option value="320">320 px</option><option value="480">480 px</option><option value="640">640 px</option><option value="800">800 px</option><option value="1024">1024 px</option><option value="1280">1280 px</option><option value="1600">1600 px</option><option value="1920">1920 px (Full HD)</option><option value="2560">2560 px</option><option value="custom">Custom…</option></select><input type="number" id="mw" min="1" placeholder="Type width in px" style="display:none;margin-top:6px"></div></div>' +
       '<div class="field"><label>Compression style</label><select id="md"><option value="clear">Best clarity (recommended)</option><option value="keep">Keep exact pixel size</option></select></div>' +
       '<p class="hint"><b>Best clarity</b> keeps the picture sharp: it lowers JPG quality only a little and, if the target is still not reached, shrinks the pixels slightly. <b>Keep exact pixel size</b> never changes width and height but can look soft at very small targets. Changing a setting re-compresses your pictures.</p></div></div>' +
       '<div class="card"><div id="pv" style="display:none;margin-bottom:12px"><b>Preview</b> <span class="hint">(click a picture in the list to preview it)</span><div id="pvg" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px"></div></div><ul class="t-list" id="ls"><li class="hint">No images yet.</li></ul><div class="t-actions"><button class="btn" id="all" disabled><i class="fa-solid fa-file-zipper"></i> Download all (ZIP)</button></div></div></div>';
@@ -242,15 +261,15 @@
       pvUrls.forEach(function (u) { URL.revokeObjectURL(u); }); pvUrls = []; var r = results[sel]; if (!r) { $('#pv').style.display = 'none'; return; }
       var u1 = URL.createObjectURL(r.f), u2 = URL.createObjectURL(r.b); pvUrls = [u1, u2];
       var box = 'style="background:repeating-conic-gradient(#e5e7eb 0% 25%,#fff 0% 50%) 0 0/16px 16px;border:1px solid var(--line,#d9dee8);border-radius:8px;padding:4px;text-align:center"', im = 'style="max-width:100%;max-height:240px;object-fit:contain"';
-      $('#pvg').innerHTML = '<div><div ' + box + '><img ' + im + ' alt="Original" src="' + u1 + '"></div><div style="margin-top:4px"><b>Original</b><br><span class="t-stat">' + CSC.fmtBytes(r.f.size) + '</span><span class="t-stat">' + r.ow + 'Ã—' + r.oh + '</span></div></div>' +
-        '<div><div ' + box + '><img ' + im + ' alt="Compressed" src="' + u2 + '"></div><div style="margin-top:4px"><b>Compressed</b><br><span class="t-stat">' + CSC.fmtBytes(r.b.size) + '</span><span class="t-stat">' + r.cw + 'Ã—' + r.ch + '</span><span class="t-stat">' + (r.f.size ? Math.max(0, Math.round(100 - r.b.size * 100 / r.f.size)) : 0) + '% smaller</span></div></div>';
+      $('#pvg').innerHTML = '<div><div ' + box + '><img ' + im + ' alt="Original" src="' + u1 + '"></div><div style="margin-top:4px"><b>Original</b><br><span class="t-stat">' + CSC.fmtBytes(r.f.size) + '</span><span class="t-stat">' + r.ow + '×' + r.oh + '</span></div></div>' +
+        '<div><div ' + box + '><img ' + im + ' alt="Compressed" src="' + u2 + '"></div><div style="margin-top:4px"><b>Compressed</b><br><span class="t-stat">' + CSC.fmtBytes(r.b.size) + '</span><span class="t-stat">' + r.cw + '×' + r.ch + '</span><span class="t-stat">' + (r.f.size ? Math.max(0, Math.round(100 - r.b.size * 100 / r.f.size)) : 0) + '% smaller</span></div></div>';
       $('#pv').style.display = '';
     }
     async function run() {
       if (!files.length) return; var my = ++token, kb = parseFloat($('#kb').value) || 100, mw = parseInt($('#mw').value, 10), keep = $('#md').value === 'keep';
       $('#ls').innerHTML = ''; results = []; $('#all').disabled = true; if (sel >= files.length) sel = 0;
       for (var i = 0; i < files.length; i++) {
-        var f = files[i], li = h('li', {}, [h('span', { class: 'nm' }, f.name + ' â€¦')]); $('#ls').appendChild(li);
+        var f = files[i], li = h('li', {}, [h('span', { class: 'nm' }, f.name + ' …')]); $('#ls').appendChild(li);
         try {
           var img = await CSC.fileToImage(f), c = document.createElement('canvas'), W = img.naturalWidth, H = img.naturalHeight;
           if (mw > 0 && W > mw) { H = Math.round(H * mw / W); W = mw; }
@@ -258,7 +277,7 @@
           var b = await CSC.fitToKB(c, kb, 0, { keepDims: keep }); if (my !== token) return;
           var nm = f.name.replace(/\.[^.]+$/, '') + '_compressed.jpg'; results.push({ b: b, nm: nm });
           var ok = b.size <= kb * 1024, dm = await CSC.fileToImage(b); results[results.length - 1].f = f; results[results.length - 1].ow = img.naturalWidth; results[results.length - 1].oh = img.naturalHeight; results[results.length - 1].cw = dm.naturalWidth; results[results.length - 1].ch = dm.naturalHeight;
-          li.innerHTML = '<span class="nm">' + esc(f.name) + '</span><span class="t-stat">' + CSC.fmtBytes(f.size) + ' â†’ ' + CSC.fmtBytes(b.size) + '</span><span class="t-stat">' + dm.naturalWidth + 'Ã—' + dm.naturalHeight + '</span>' + (ok ? '' : '<span class="err"> above ' + kb + ' KB</span>');
+          li.innerHTML = '<span class="nm">' + esc(f.name) + '</span><span class="t-stat">' + CSC.fmtBytes(f.size) + ' → ' + CSC.fmtBytes(b.size) + '</span><span class="t-stat">' + dm.naturalWidth + '×' + dm.naturalHeight + '</span>' + (ok ? '' : '<span class="err"> above ' + kb + ' KB</span>');
           li.appendChild(h('button', { title: 'Download', 'aria-label': 'Download', onclick: (function (r) { return function () { CSC.download(r.b, r.nm); }; })(results[results.length - 1]) }, [h('i', { class: 'fa-solid fa-download' })]));
           li.style.cursor = 'pointer'; li.title = 'Click to preview'; li.onclick = (function (k) { return function (e) { if (e.target.closest('button')) return; sel = k; showPreview(); [].forEach.call($('#ls').children, function (x, j) { x.style.outline = j === k ? '2px solid #1a3fa6' : ''; }); }; })(results.length - 1); if (results.length - 1 === sel) { li.style.outline = '2px solid #1a3fa6'; showPreview(); }
         } catch (e) { li.innerHTML = '<span class="nm err">' + esc(f.name) + ': ' + esc(e.message) + '</span>'; }
@@ -276,20 +295,24 @@
   T.image_converter_pro = function (root) {
     root.innerHTML = '<div class="t-grid"><div class="card no-print"><div id="dz"></div><div style="margin-top:14px"><div class="field"><label>Convert to (you can change this after choosing your pictures)</label><select id="f"><option value="image/jpeg|jpg">JPG</option><option value="image/png|png">PNG</option><option value="image/webp|webp">WebP</option></select></div>' +
       '<div class="field" id="qb"><label>Quality (JPG/WebP): <span id="qv">90</span>%</label><input type="range" id="q" value="90" min="10" max="100"></div><p class="hint">Transparent areas become white when converting to JPG. Pictures convert again automatically when you change the format or quality.</p></div></div>' +
-      '<div class="card"><ul class="t-list" id="ls"><li class="hint">No images yet.</li></ul><div class="t-actions"><button class="btn" id="all" disabled><i class="fa-solid fa-file-zipper"></i> Download all (ZIP)</button></div></div></div>';
+      '<div class="card"><h3 class="pane-t">Preview</h3><div class="t-preview" id="pvb" style="margin-bottom:10px"><p class="hint">Your converted picture shows here. Click a small picture in the list to see it.</p></div><div id="pvi" class="hint" style="margin-bottom:10px"></div><ul class="t-list" id="ls"><li class="hint">No images yet.</li></ul><div class="t-actions"><button class="btn" id="all" disabled><i class="fa-solid fa-file-zipper"></i> Download all (ZIP)</button></div></div></div>';
     var $ = function (s) { return root.querySelector(s); }, items = [], res = [], timer, token = 0;
     function fmtUI() { var p = $('#f').value.split('|'); $('#qb').style.display = p[1] === 'png' ? 'none' : ''; $('#qv').textContent = $('#q').value; }
     async function run() {
       if (!items.length) return; var my = ++token, p = $('#f').value.split('|'), q = (parseInt($('#q').value, 10) || 90) / 100; $('#ls').innerHTML = ''; res = []; $('#all').disabled = true;
       for (var i = 0; i < items.length; i++) {
         var it = items[i], li = h('li', {}, h('span', { class: 'nm' }, it.name)); $('#ls').appendChild(li);
+        if (i === 0) { $('#pvb').innerHTML = '<p class="hint">Converting…</p>'; $('#pvi').textContent = ''; }
         try {
           var im = it.im, c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; var x = c.getContext('2d');
           if (p[0] === 'image/jpeg') { x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); } x.drawImage(im, 0, 0);
           var b = await CSC.canvasBlob(c, p[0], q); if (my !== token) return;
           if (!b || b.type !== p[0]) throw new Error('Your browser cannot save ' + p[1].toUpperCase());
           var nm = it.name.replace(/\.[^.]+$/, '') + '.' + p[1]; res.push({ b: b, nm: nm });
-          li.appendChild(h('span', { class: 't-stat' }, p[1].toUpperCase() + ' Â· ' + CSC.fmtBytes(b.size)));
+          var pu = URL.createObjectURL(b), show = (function (u, o, n) { return function () { $('#pvb').innerHTML = '<img alt="Converted picture" src="' + u + '" style="max-height:340px">'; $('#pvi').textContent = n + ': ' + (o.size ? CSC.fmtBytes(o.size) : '')  + ' → ' + CSC.fmtBytes(b.size) + ' (' + it.im.naturalWidth + ' × ' + it.im.naturalHeight + ' px)'; }; })(pu, it, it.name);
+          li.insertBefore(h('img', { src: pu, alt: 'Preview', title: 'Click to preview', style: 'width:44px;height:44px;object-fit:cover;border-radius:6px;cursor:zoom-in;margin-right:8px;flex:none', onclick: show }), li.firstChild);
+          if (i === 0 || !$('#pvb').querySelector('img')) show();
+          li.appendChild(h('span', { class: 't-stat' }, p[1].toUpperCase() + ' · ' + CSC.fmtBytes(b.size)));
           li.appendChild(h('button', { 'aria-label': 'Download', onclick: (function (r) { return function () { CSC.download(r.b, r.nm); }; })(res[res.length - 1]) }, h('i', { class: 'fa-solid fa-download' })));
         } catch (e) { li.appendChild(h('span', { class: 'err' }, e.message)); }
       }
@@ -299,8 +322,8 @@
     $('#q').oninput = function () { fmtUI(); clearTimeout(timer); timer = setTimeout(run, 300); };
     $('#dz').appendChild(CSC.dropzone({
       accept: 'image/*', multiple: true, icon: 'fa-right-left', label: 'Choose images to convert', onFiles: async function (files) {
-        items = []; $('#ls').innerHTML = '<li class="hint">Loadingâ€¦</li>';
-        for (var i = 0; i < files.length; i++) { try { items.push({ name: files[i].name, im: await CSC.fileToImage(files[i]) }); } catch (e) { CSC.toast(files[i].name + ': ' + e.message, true); } }
+        items = []; $('#ls').innerHTML = '<li class="hint">Loading…</li>';
+        for (var i = 0; i < files.length; i++) { try { items.push({ name: files[i].name, size: files[i].size, im: await CSC.fileToImage(files[i]) }); } catch (e) { CSC.toast(files[i].name + ': ' + e.message, true); } }
         run();
       }
     }));
@@ -348,7 +371,7 @@
     }
     function run() {
       if (!src) return;
-      if (ai()) { if (aiRaw) { cut = refineAlpha(aiRaw, +$('#sh').value, +$('#so').value); show(); } else { $('#pv').innerHTML = '<p class="hint">Press â€œRun AI cut-outâ€.</p>'; } return; }
+      if (ai()) { if (aiRaw) { cut = refineAlpha(aiRaw, +$('#sh').value, +$('#so').value); show(); } else { $('#pv').innerHTML = '<p class="hint">Press “Run AI cut-out”.</p>'; } return; }
       cut = CSC.removeBg(src, hexToRgb($('#key').value), +$('#tol').value, $('#sm').checked, +$('#rf').value); show();
     }
     function show() {
@@ -357,7 +380,7 @@
     }
     $('#mode').onchange = function () { $('#plainBox').style.display = ai() ? 'none' : ''; $('#aiBox').style.display = ai() ? '' : 'none'; run(); };
     $('#aiGo').onclick = async function () {
-      if (!src) return; var st = $('#aiSt'), btn = this; btn.disabled = true; st.textContent = 'Loading AI modelâ€¦ please wait.';
+      if (!src) return; var st = $('#aiSt'), btn = this; btn.disabled = true; st.textContent = 'Loading AI model… please wait.';
       try {
         var mod = await import(AI_URL), fn = mod.removeBackground || mod.default;
         var blob = await CSC.canvasBlob(src, 'image/png');
@@ -392,18 +415,22 @@
 
   /* ================= Passport & stamp photo studio ================= */
   T.ai_passport_studio = function (root) {
-    var SIZES = [['Passport 35 Ã— 45 mm', 35, 45], ['Stamp 25 Ã— 35 mm', 25, 35], ['Small stamp 20 Ã— 25 mm', 20, 25], ['Square 51 Ã— 51 mm (2 Ã— 2 in)', 51, 51], ['Visa 33 Ã— 48 mm', 33, 48], ['Custom', 0, 0]];
-    var SHEETS = [['A4 (210 Ã— 297 mm)', 210, 297], ['4 Ã— 6 inch (102 Ã— 152 mm)', 102, 152], ['A5 (148 Ã— 210 mm)', 148, 210], ['5 Ã— 7 inch (127 Ã— 178 mm)', 127, 178]];
+    var SIZES = [['Passport 35 × 45 mm', 35, 45], ['Stamp 25 × 35 mm', 25, 35], ['Small stamp 20 × 25 mm', 20, 25], ['Square 51 × 51 mm (2 × 2 in)', 51, 51], ['Visa 33 × 48 mm', 33, 48], ['Custom', 0, 0]];
+    var SHEETS = [['A4 (210 × 297 mm)', 210, 297], ['4 × 6 inch (102 × 152 mm)', 102, 152], ['A5 (148 × 210 mm)', 148, 210], ['5 × 7 inch (127 × 178 mm)', 127, 178]];
     root.innerHTML = '<div class="t-grid3"><div class="card no-print opt"><div id="dz"></div><div id="o" style="display:none;margin-top:14px">' +
       '<div class="field"><label>Photo size</label><select id="sz">' + SIZES.map(function (s, i) { return '<option value="' + i + '">' + s[0] + '</option>'; }).join('') + '</select></div>' +
       '<div class="row2" id="cust" style="display:none"><div class="field"><label>Width (mm)</label><input type="number" id="cw" value="35"></div><div class="field"><label>Height (mm)</label><input type="number" id="ch" value="45"></div></div>' +
-      '<div class="row2"><div class="field"><label>Paper</label><select id="sh">' + SHEETS.map(function (s, i) { return '<option value="' + i + '">' + s[0] + '</option>'; }).join('') + '</select></div><div class="field"><label>Copies</label><select id="n"><option value="5" selected>5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="full">Full A4 Sheet</option></select></div></div>' +
+      '<div class="row2"><div class="field"><label>Paper</label><select id="sh">' + SHEETS.map(function (s, i) { return '<option value="' + i + '">' + s[0] + '</option>'; }).join('') + '</select></div><div class="field"><label>Copies</label><select id="n"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="8">8</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="full">Full A4 Sheet</option></select></div></div>' +
+      '<div class="field"><label>Sheet type</label><select id="mode"><option value="one">One customer - same photo repeated</option><option value="many">Many customers - each customer on a new line</option></select></div>' +
+      '<div id="manyBox" style="display:none"><p class="hint">For each customer: choose the photo, crop it, pick Copies (for example 5 or 10), press <b>Add customer to sheet</b>. Every customer starts on a new line of the sheet.</p><div id="grp"></div><div class="t-actions"><button class="btn" id="add" type="button"><i class="fa-solid fa-user-plus"></i> Add customer to sheet</button><button class="btn alt" id="clrAll" type="button" style="color:#b3261e"><i class="fa-solid fa-broom"></i> Clear all customers</button></div></div>' +
+      '<div class="row2"><div class="field"><label>Brightness: <span id="brv">0</span></label><input type="range" id="br" min="-60" max="60" value="0"></div><div class="field"><label>Contrast: <span id="ctv">0</span></label><input type="range" id="ct" min="-60" max="60" value="0"></div></div>' +
+      '<div class="t-actions"><button class="btn alt" id="ae" type="button" aria-pressed="false">&#10024; Auto enhance: OFF</button><button class="btn alt" id="aer" type="button">Reset</button></div><p class="hint">Auto enhance stretches dull, dark or washed-out photos to a clear range. Brightness and contrast are applied to the photo before the sheet is made.</p>' +
       '<div class="row2"><div class="field"><label>Background</label><select id="bg"><option value="keep">Keep original</option><option value="#ffffff">White</option><option value="#1e66d0">Blue</option><option value="#d12b2b">Red</option><option value="#e8e8e8">Light grey</option></select></div><div class="field"><label>Remove colour strength</label><input type="range" id="tol" min="10" max="100" value="40"></div></div>' +
       '<p class="hint">To change the background, pick a colour above. The plain wall colour in the photo corners is replaced. Use a photo with an even background.</p>' +
       '<div class="field"><label><input type="checkbox" id="fr"> Add a frame around each photo</label></div><div class="row2" id="frBox" style="display:none"><div class="field"><label>Frame width: <span id="fwv">0.6</span> mm</label><input type="range" id="fw" min="3" max="20" value="6"></div><div class="field"><label>Frame colour</label><input type="color" id="fc" value="#000000"></div></div>' +
       '<label><input type="checkbox" id="ln" checked> Thin cut lines</label>' +
       '<p class="hint" style="margin-top:8px">Drag the crop box over the face first. Then press Make sheet.</p>' +
-      '<div class="t-actions"><button class="btn" id="go"><i class="fa-solid fa-table-cells"></i> Make sheet</button></div></div></div>' +
+      '<div class="t-actions"><button class="btn" id="go"><i class="fa-solid fa-table-cells"></i> Make sheet</button><button class="btn alt" id="clr" type="button" title="Remove this photo and start again" style="color:#b3261e"><i class="fa-solid fa-trash"></i> Remove image</button></div></div></div>' +
       '<div class="card" id="cc"><h3 class="pane-t">1. Crop</h3><div id="host" style="text-align:center"><p class="hint">Choose a photo to start.</p></div></div>' +
       '<div class="card" id="oc"><h3 class="pane-t">2. Photo sheet</h3><div id="st"></div><div class="t-preview" id="pv" style="margin-top:8px"><p class="hint">Your photo sheet will show here, next to the crop.</p></div><div class="t-actions"><button class="btn" id="dlj"><i class="fa-solid fa-image"></i> Download JPG</button><button class="btn alt" id="dlp"><i class="fa-solid fa-file-pdf"></i> Download PDF</button><button class="btn alt" id="pr"><i class="fa-solid fa-print"></i> Print</button></div></div></div>';
     var $ = function (s) { return root.querySelector(s); }, cr, sheet, DPI = 300;
@@ -415,22 +442,103 @@
     ['cw', 'ch'].forEach(function (i) { $('#' + i).oninput = asp; });
     $('#dz').appendChild(CSC.dropzone({
       accept: 'image/*', icon: 'fa-user-large', label: 'Choose a photo', onFiles: async function (f) {
-        try { var im = await CSC.fileToImage(f[0]); $('#o').style.display = ''; $('#pv').innerHTML = '<p class="hint">Press Make sheet. The result will show here, next to the crop.</p>'; $('#st').innerHTML = ''; var hst = $('#host'); hst.innerHTML = ''; var s = size(); cr = CSC.cropper(im, { aspect: s.w / s.h, maxWidth: 420 }); hst.appendChild(cr.el); } catch (e) { CSC.toast(e.message, true); }
+        try { var im = await CSC.fileToImage(f[0]); $('#o').style.display = ''; if ($('#mode').value === 'one') { $('#pv').innerHTML = '<p class="hint">Press Make sheet. The result will show here, next to the crop.</p>'; $('#st').innerHTML = ''; } var hst = $('#host'); hst.innerHTML = ''; var s = size(); cr = CSC.cropper(im, { aspect: s.w / s.h, maxWidth: 420 }); hst.appendChild(cr.el); } catch (e) { CSC.toast(e.message, true); }
       }
     }));
-    $('#go').onclick = function () {
-      if (!cr) return; var s = size(), pw = MM(s.w, DPI), ph = MM(s.h, DPI), sh = SHEETS[+$('#sh').value], SW = MM(sh[1], DPI), SH = MM(sh[2], DPI);
-      var one = cr.getCanvas(pw, ph), bg = $('#bg').value;
-      if (bg !== 'keep') { var cut = CSC.removeBg(one, cornerColor(one), +$('#tol').value, true, 60), f = document.createElement('canvas'); f.width = pw; f.height = ph; var fx = f.getContext('2d'); fx.fillStyle = bg; fx.fillRect(0, 0, pw, ph); fx.drawImage(cut, 0, 0); one = f; }
-      var gap = MM(2, DPI), margin = MM(6, DPI), cols = Math.max(1, Math.floor((SW - 2 * margin + gap) / (pw + gap))), rows = Math.max(1, Math.floor((SH - 2 * margin + gap) / (ph + gap)));
-      var cap = cols * rows, n = $('#n').value === 'full' ? cap : (parseInt($('#n').value, 10) || 5); if (n <= 0 || n > cap) n = cap;
-      sheet = document.createElement('canvas'); sheet.width = SW; sheet.height = SH; var x = sheet.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, SW, SH);
-      var used = Math.min(cols, n), gridW = used * pw + (used - 1) * gap, x0 = Math.round((SW - gridW) / 2);
-      for (var i = 0; i < n; i++) { var cx = x0 + (i % cols) * (pw + gap), cy = margin + Math.floor(i / cols) * (ph + gap); x.drawImage(one, cx, cy); if ($('#fr').checked) { var fpx = Math.max(3, Math.round(+$('#fw').value / 10 / 25.4 * DPI)); x.fillStyle = $('#fc').value; x.fillRect(cx, cy, pw, fpx); x.fillRect(cx, cy + ph - fpx, pw, fpx); x.fillRect(cx, cy, fpx, ph); x.fillRect(cx + pw - fpx, cy, fpx, ph); } if ($('#ln').checked) { x.strokeStyle = '#888'; x.lineWidth = 1; x.strokeRect(cx - 0.5, cy - 0.5, pw + 1, ph + 1); } }
-      $('#pv').innerHTML = ''; $('#pv').appendChild(sheet); sheet.style.maxHeight = '620px'; sheet.style.width = 'auto';
-      $('#st').innerHTML = '<span class="t-stat">' + n + ' photos</span><span class="t-stat">' + s.w + ' Ã— ' + s.h + ' mm</span><span class="t-stat">' + sh[0] + '</span>' + (n === cap ? '<span class="t-stat">Page full</span>' : '<span class="t-stat">' + cap + ' fit on this paper</span>');
-
+    $('#clr').onclick = function () {
+      cr = null; if ($('#mode').value === 'one') { sheet = null; $('#o').style.display = 'none'; }
+      $('#host').innerHTML = '<p class="hint">Choose a photo to start.</p>';
+      if ($('#mode').value === 'one') { $('#pv').innerHTML = '<p class="hint">Your photo sheet will show here, next to the crop.</p>'; $('#st').innerHTML = ''; }
+      CSC.toast('Image removed. Choose a new photo.');
     };
+    /* ---- photo enhance (brightness, contrast, auto levels) ---- */
+    var autoOn = false;
+    function enhance(c) {
+      var b = +$('#br').value, k = +$('#ct').value;
+      if (!autoOn && !b && !k) return c;
+      var x = c.getContext('2d'), id = x.getImageData(0, 0, c.width, c.height), d = id.data, i, n = d.length;
+      var lo = 0, hi = 255;
+      if (autoOn) {
+        var h = new Uint32Array(256), tot = 0;
+        for (i = 0; i < n; i += 4) { h[Math.round(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2])]++; tot++; }
+        var acc = 0, p1 = tot * 0.01, p99 = tot * 0.99;
+        for (i = 0; i < 256; i++) { acc += h[i]; if (acc >= p1) { lo = i; break; } }
+        acc = 0; for (i = 0; i < 256; i++) { acc += h[i]; if (acc >= p99) { hi = i; break; } }
+        if (hi - lo < 60) { var mid = (hi + lo) / 2; lo = Math.max(0, mid - 30); hi = Math.min(255, mid + 30); }
+      }
+      var sc = 255 / (hi - lo), cc = k * 2.55, f = (259 * (cc + 255)) / (255 * (259 - cc)), add = b * 1.7;
+      var lut = new Uint8ClampedArray(256);
+      for (i = 0; i < 256; i++) { var v = autoOn ? (i - lo) * sc : i; if (autoOn) v = 255 * Math.pow(Math.max(0, Math.min(1, v / 255)), 0.92); v = f * (v - 128) + 128 + add; lut[i] = v; }
+      for (i = 0; i < n; i += 4) { d[i] = lut[d[i]]; d[i + 1] = lut[d[i + 1]]; d[i + 2] = lut[d[i + 2]]; }
+      x.putImageData(id, 0, 0); return c;
+    }
+    function processOne() {
+      var s = size(), pw = MM(s.w, DPI), ph = MM(s.h, DPI), one = enhance(cr.getCanvas(pw, ph)), bg = $('#bg').value;
+      if (bg !== 'keep') { var cut = CSC.removeBg(one, cornerColor(one), +$('#tol').value, true, 60), f = document.createElement('canvas'); f.width = pw; f.height = ph; var fx = f.getContext('2d'); fx.fillStyle = bg; fx.fillRect(0, 0, pw, ph); fx.drawImage(cut, 0, 0); one = f; }
+      return { c: one, w: s.w, h: s.h };
+    }
+    /* groups: [{c, w, h, n}]. Every group starts on a new line. Returns {canvas, ok, lines} */
+    function layout(groups, sh) {
+      var SW = MM(sh[1], DPI), SH = MM(sh[2], DPI), gap = MM(2, DPI), margin = MM(6, DPI), cv = document.createElement('canvas');
+      cv.width = SW; cv.height = SH; var x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, SW, SH);
+      var y = margin, ok = true, lines = 0, fpx = Math.max(3, Math.round(+$('#fw').value / 10 / 25.4 * DPI));
+      groups.forEach(function (g) {
+        if (!ok) return;
+        var pw = g.c.width, ph = g.c.height, cols = Math.max(1, Math.floor((SW - 2 * margin + gap) / (pw + gap))), left = g.n, j;
+        while (left > 0) {
+          if (y + ph > SH - margin + 1) { ok = false; return; }
+          var used = Math.min(cols, left), gridW = used * pw + (used - 1) * gap, x0 = Math.round((SW - gridW) / 2);
+          for (j = 0; j < used; j++) {
+            var cx = x0 + j * (pw + gap), cy = y; x.drawImage(g.c, cx, cy);
+            if ($('#fr').checked) { x.fillStyle = $('#fc').value; x.fillRect(cx, cy, pw, fpx); x.fillRect(cx, cy + ph - fpx, pw, fpx); x.fillRect(cx, cy, fpx, ph); x.fillRect(cx + pw - fpx, cy, fpx, ph); }
+            if ($('#ln').checked) { x.strokeStyle = '#888'; x.lineWidth = 1; x.strokeRect(cx - 0.5, cy - 0.5, pw + 1, ph + 1); }
+          }
+          left -= used; y += ph + gap; lines++;
+        }
+      });
+      return { canvas: cv, ok: ok, lines: lines };
+    }
+    function showSheet(cv, html) { sheet = cv; $('#pv').innerHTML = ''; $('#pv').appendChild(sheet); sheet.style.maxHeight = '620px'; sheet.style.width = 'auto'; $('#st').innerHTML = html; }
+    function copiesVal() { var v = $('#n').value; return v === 'full' ? 'full' : (parseInt(v, 10) || 5); }
+    $('#go').onclick = function () {
+      if (!cr) return; var o = processOne(), sh = SHEETS[+$('#sh').value], SW = MM(sh[1], DPI), SH = MM(sh[2], DPI), pw = o.c.width, ph = o.c.height;
+      var gap = MM(2, DPI), margin = MM(6, DPI), cols = Math.max(1, Math.floor((SW - 2 * margin + gap) / (pw + gap))), rows = Math.max(1, Math.floor((SH - 2 * margin + gap) / (ph + gap))), cap = cols * rows;
+      var c = copiesVal(), n = c === 'full' ? cap : c; if (n <= 0 || n > cap) n = cap;
+      var r = layout([{ c: o.c, w: o.w, h: o.h, n: n }], sh);
+      showSheet(r.canvas, '<span class="t-stat">' + n + ' photos</span><span class="t-stat">' + o.w + ' × ' + o.h + ' mm</span><span class="t-stat">' + sh[0] + '</span>' + (n === cap ? '<span class="t-stat">Page full</span>' : '<span class="t-stat">' + cap + ' fit on this paper</span>'));
+    };
+    /* ---- many customers on one sheet ---- */
+    var groups = [];
+    function renderMany() {
+      var sh = SHEETS[+$('#sh').value];
+      $('#grp').innerHTML = groups.length ? groups.map(function (g, i) { return '<div style="display:flex;gap:8px;align-items:center;margin:4px 0"><span class="t-stat">Line ' + (i + 1) + '</span><span style="flex:1">Customer ' + (i + 1) + ': ' + g.n + ' photos (' + g.w + ' × ' + g.h + ' mm)</span><button class="btn alt" type="button" data-rm="' + i + '" title="Remove this customer" style="color:#b3261e">✖</button></div>'; }).join('') : '<p class="hint">No customers added yet.</p>';
+      if (!groups.length) { sheet = null; $('#pv').innerHTML = '<p class="hint">Your photo sheet will show here, next to the crop.</p>'; $('#st').innerHTML = ''; return; }
+      var r = layout(groups, sh), tot = groups.reduce(function (a, g) { return a + g.n; }, 0);
+      showSheet(r.canvas, '<span class="t-stat">' + groups.length + ' customers</span><span class="t-stat">' + tot + ' photos</span><span class="t-stat">' + r.lines + ' lines used</span><span class="t-stat">' + sh[0] + '</span>' + (r.ok ? '' : '<span class="t-stat" style="color:#b3261e">Sheet is full - remove a customer</span>'));
+    }
+    $('#mode').onchange = function () {
+      var many = this.value === 'many'; $('#manyBox').style.display = many ? '' : 'none'; $('#go').style.display = many ? 'none' : '';
+      if (many) renderMany(); else { sheet = null; $('#pv').innerHTML = '<p class="hint">Press Make sheet. The result will show here, next to the crop.</p>'; $('#st').innerHTML = ''; }
+    };
+    $('#add').onclick = function () {
+      if (!cr) return CSC.toast('Choose and crop a customer photo first', true);
+      var o = processOne(), sh = SHEETS[+$('#sh').value], SW = MM(sh[1], DPI), gap = MM(2, DPI), margin = MM(6, DPI);
+      var cols = Math.max(1, Math.floor((SW - 2 * margin + gap) / (o.c.width + gap)));
+      var c = copiesVal(), n = c === 'full' ? cols : c; if (n < 1) n = 1;
+      groups.push({ c: o.c, w: o.w, h: o.h, n: n });
+      if (!layout(groups, sh).ok) { groups.pop(); return CSC.toast('No space left on this sheet for ' + n + ' more photos. Try fewer copies or a bigger paper.', true); }
+      renderMany(); cr = null; $('#host').innerHTML = '<p class="hint">Customer ' + groups.length + ' added. Choose the next customer\'s photo.</p>';
+      CSC.toast('Customer ' + groups.length + ' added');
+    };
+    $('#grp').addEventListener('click', function (e) { var b = e.target.closest('[data-rm]'); if (!b) return; groups.splice(+b.dataset.rm, 1); renderMany(); });
+    $('#clrAll').onclick = function () { groups = []; renderMany(); };
+    $('#sh').addEventListener('change', function () { if ($('#mode').value === 'many') { var sh = SHEETS[+this.value]; if (groups.length && !layout(groups, sh).ok) CSC.toast('These customers do not fit on this paper. Remove one or choose a bigger paper.', true); renderMany(); } });
+    /* brightness / contrast / auto enhance: redraw the single-customer sheet at once */
+    var tm; function again() { if ($('#mode').value === 'one' && cr && sheet) { clearTimeout(tm); tm = setTimeout($('#go').onclick, 180); } }
+    $('#br').oninput = function () { $('#brv').textContent = this.value; again(); };
+    $('#ct').oninput = function () { $('#ctv').textContent = this.value; again(); };
+    $('#ae').onclick = function () { autoOn = !autoOn; this.setAttribute('aria-pressed', autoOn); this.innerHTML = '&#10024; Auto enhance: ' + (autoOn ? 'ON' : 'OFF'); again(); };
+    $('#aer').onclick = function () { $('#br').value = 0; $('#ct').value = 0; $('#brv').textContent = '0'; $('#ctv').textContent = '0'; autoOn = false; var a = $('#ae'); a.setAttribute('aria-pressed', 'false'); a.innerHTML = '&#10024; Auto enhance: OFF'; again(); };
     function jpg() { return CSC.canvasBlob(sheet, 'image/jpeg', 0.95); }
     $('#dlj').onclick = async function () { if (sheet) CSC.download(await jpg(), 'photo_sheet.jpg'); };
     $('#dlp').onclick = async function () {
@@ -494,7 +602,7 @@
       c = document.createElement('canvas'); c.width = W; c.height = H; var x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, W, H); x.fillStyle = '#fff';
       if (v) { x.fillRect(bd, bd, W - 2 * bd, ph); x.drawImage(a, bd + (W - 2 * bd - pw) / 2, bd, pw, ph); x.fillRect(bd, ph + 2 * bd, W - 2 * bd, sh); x.drawImage(b, bd + (W - 2 * bd - sw) / 2, ph + 2 * bd, sw, sh); }
       else { x.fillRect(bd, bd, pw, H - 2 * bd); x.drawImage(a, bd, bd, pw, ph); x.fillRect(pw + 2 * bd, bd, sw, H - 2 * bd); x.drawImage(b, pw + 2 * bd, bd, sw, sh); }
-      $('#pv').innerHTML = ''; $('#pv').appendChild(c); $('#st').innerHTML = '<span class="t-stat">' + W + ' Ã— ' + H + ' px</span>';
+      $('#pv').innerHTML = ''; $('#pv').appendChild(c); $('#st').innerHTML = '<span class="t-stat">' + W + ' × ' + H + ' px</span>';
     }
     $('#d1').appendChild(CSC.dropzone({ accept: 'image/*', icon: 'fa-user', label: 'Choose photo', onFiles: async function (f) { try { a = await CSC.fileToImage(f[0]); draw(); } catch (e) { CSC.toast(e.message, true); } } }));
     $('#d2').appendChild(CSC.dropzone({ accept: 'image/*', icon: 'fa-signature', label: 'Choose signature', onFiles: async function (f) { try { b = await CSC.fileToImage(f[0]); draw(); } catch (e) { CSC.toast(e.message, true); } } }));
@@ -511,7 +619,7 @@
     $('#dz').appendChild(CSC.dropzone({
       accept: 'image/*', icon: 'fa-font', label: 'Choose an image with text', onFiles: async function (f) {
         try {
-          $('#pg').textContent = 'Loading readerâ€¦'; await CSC.loadScript(CSC.libs.tesseract);
+          $('#pg').textContent = 'Loading reader…'; await CSC.loadScript(CSC.libs.tesseract);
           var r = await Tesseract.recognize(f[0], $('#lg').value, { logger: function (m) { if (m.status) $('#pg').textContent = m.status + (m.progress ? ' ' + Math.round(m.progress * 100) + '%' : ''); } });
           $('#tx').value = r.data.text.trim(); $('#pg').textContent = 'Done.';
         } catch (e) { $('#pg').textContent = ''; CSC.toast(e.message || 'Could not read the image', true); }

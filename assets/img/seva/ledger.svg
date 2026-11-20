@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 170"><defs><filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#04321f" flood-opacity=".32"/></filter></defs>
+<g filter="url(#sh)"><path d="M40 40q55-14 110 8v96q-55-22-110-8z" fill="#fff"/><path d="M260 40q-55-14-110 8v96q55-22 110-8z" fill="#f5f9ff"/></g>
+<path d="M150 48v96" stroke="#c4cfe3" stroke-width="3"/>
+<g stroke="#c9d6ee" stroke-width="2" fill="none"><path d="M54 70q40-9 82 4M54 88q40-9 82 4M54 106q40-9 82 4M54 124q40-9 82 4"/><path d="M164 74q42-13 82-4M164 92q42-13 82-4M164 110q42-13 82-4M164 128q42-13 82-4"/><path d="M110 60v76M214 60v76" opacity=".7"/></g>
+<g fill="#10b981"><rect x="62" y="64" width="30" height="6" rx="3" transform="rotate(-4 77 67)"/><rect x="176" y="68" width="30" height="6" rx="3" transform="rotate(-4 191 71)"/></g><g fill="#e53935"><rect x="172" y="104" width="38" height="6" rx="3" transform="rotate(-4 191 107)"/></g>
+<g filter="url(#sh)"><circle cx="232" cy="38" r="26" fill="#ffc928"/><circle cx="232" cy="38" r="20" fill="none" stroke="#e0a300" stroke-width="2"/></g><text x="232" y="48" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="28" text-anchor="middle" fill="#7a4a00">₹</text></svg>

@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Prompt Studio | CSC VLE TOOLS</title>
+  <title>Prompt Studio | SevaSphere</title>
   <meta name="description" content="Prompt Studio: ready-made AI photo prompts in English and Hindi. Copy, search, save favourites, add your own prompts, and import or export a JSON backup.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="theme-color" content="#1a3fa6">
-  <link rel="canonical" href="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/prompt-studio.html">
-  <meta property="og:type" content="website"><meta property="og:site_name" content="CSC VLE TOOLS"><meta property="og:title" content="Prompt Studio | CSC VLE TOOLS"><meta property="og:description" content="Prompt Studio: ready-made AI photo prompts in English and Hindi. Copy, search, save favourites, add your own prompts, and import or export a JSON backup."><meta property="og:url" content="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/prompt-studio.html"><meta property="og:image" content="https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/og-image.png">
+  <link rel="canonical" href="https://cschelpdesk.github.io/prompt-studio.html">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="SevaSphere"><meta property="og:title" content="Prompt Studio | SevaSphere"><meta property="og:description" content="Prompt Studio: ready-made AI photo prompts in English and Hindi. Copy, search, save favourites, add your own prompts, and import or export a JSON backup."><meta property="og:url" content="https://cschelpdesk.github.io/prompt-studio.html"><meta property="og:image" content="https://cschelpdesk.github.io/og-image.png">
   <link rel="icon" href="favicon.ico?v=3" sizes="any"><link rel="icon" href="favicon.svg?v=3" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=3"><link rel="manifest" href="site.webmanifest">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/portal.css?v=36">
-  <link rel="stylesheet" href="assets/css/csc-system.css?v=36">
-  <link rel="stylesheet" href="assets/css/layout3d.css?v=36">
+  <link rel="stylesheet" href="assets/css/portal.css?v=41">
+  <link rel="stylesheet" href="assets/css/csc-system.css?v=41">
+  <link rel="stylesheet" href="assets/css/layout3d.css?v=41">
 <style>
 #ps{--green:#087b50;--dark:#075b3d;--bg:#f3f7f5;--line:#dce8e1;color:#18352a;margin:0 0 24px}
 #ps *{box-sizing:border-box}
@@ -57,11 +57,12 @@
 #toast-ps{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#18352a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;max-width:90vw;white-space:pre-line;box-shadow:0 6px 20px #0004;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
 #ps #toast.show{opacity:1}
 </style>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/"},{"@type":"ListItem","position":2,"name":"Prompt Studio","item":"https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/prompt-studio.html"}]}</script>
-  <script src="assets/js/site.js?v=38" defer></script>
-  <script src="assets/js/chatbot-data.js?v=36" defer></script>
-  <script src="assets/js/chatbot.js?v=36" defer></script>
-  <link rel="stylesheet" href="assets/css/sevasphere-theme.css?v=38">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cschelpdesk.github.io/"},{"@type":"ListItem","position":2,"name":"Prompt Studio","item":"https://cschelpdesk.github.io/prompt-studio.html"}]}</script>
+  <script src="assets/js/site.js?v=41" defer></script>
+  <script src="assets/js/chatbot-data.js?v=41" defer></script>
+  <script src="assets/js/chatbot.js?v=41" defer></script>
+  <link rel="stylesheet" href="assets/css/candy3d.css?v=41">
+  <script src="assets/js/candy3d.js?v=41" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -76,13 +77,13 @@
 
 <div class="ps-top">
  <div>
-  <h2 style="margin:0;font-size:1.3rem;color:#fff">ðŸŒ¿ <span data-i18n="title">Prompt Studio</span></h2>
+  <h2 style="margin:0;font-size:1.3rem;color:#fff">🌿 <span data-i18n="title">Prompt Studio</span></h2>
   <p data-i18n="tagline">Create, save, search and reuse AI prompts</p>
  </div>
  <div class="row" style="flex:0 1 auto;max-width:100%">
-  <div class="lang noflex" role="group" aria-label="Language / à¤­à¤¾à¤·à¤¾">
+  <div class="lang noflex" role="group" aria-label="Language / भाषा">
    <button type="button" id="langEn" data-lang="en">English</button>
-   <button type="button" id="langHi" data-lang="hi">à¤¹à¤¿à¤¨à¥à¤¦à¥€</button>
+   <button type="button" id="langHi" data-lang="hi">हिन्दी</button>
   </div>
   <button class="secondary noflex" id="btnExport" data-i18n="export">Export Backup</button>
   <button class="secondary noflex" id="btnImport" data-i18n="import">Import Backup</button>
@@ -93,7 +94,7 @@
 
  <section class="panel">
   <div class="row">
-   <input id="search" data-i18n-ph="search" placeholder="ðŸ”Ž Search prompts..." aria-label="Search">
+   <input id="search" data-i18n-ph="search" placeholder="🔎 Search prompts..." aria-label="Search">
    <button class="noflex" id="btnCreate" data-i18n="create">+ Create Prompt</button>
   </div>
  </section>
@@ -118,10 +119,10 @@
    <label for="nEn" style="margin-top:10px" data-i18n="pneg">Negative prompt (optional)</label><input id="nEn" placeholder="blurry, distorted face, ...">
   </div>
   <div class="sub">
-   <h4>à¤¹à¤¿à¤¨à¥à¤¦à¥€</h4>
-   <label for="tHi">à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤¶à¥€à¤°à¥à¤·à¤•</label><input id="tHi" placeholder="à¤‰à¤¦à¤¾à¤¹à¤°à¤£: à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤ªà¤¾à¤°à¤¿à¤µà¤¾à¤°à¤¿à¤• à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤¬à¤¹à¤¾à¤² à¤•à¤°à¥‡à¤‚">
-   <label for="pHi" style="margin-top:10px">à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤ªà¤¾à¤ </label><textarea id="pHi" placeholder="à¤…à¤ªà¤¨à¤¾ AI à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¯à¤¹à¤¾à¤ à¤²à¤¿à¤–à¥‡à¤‚..."></textarea>
-   <label for="nHi" style="margin-top:10px">à¤¨à¤•à¤¾à¤°à¤¾à¤¤à¥à¤®à¤• à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ (à¤µà¥ˆà¤•à¤²à¥à¤ªà¤¿à¤•)</label><input id="nHi" placeholder="à¤§à¥à¤‚à¤§à¤²à¤¾, à¤¬à¤¿à¤—à¤¡à¤¼à¤¾ à¤šà¥‡à¤¹à¤°à¤¾, ...">
+   <h4>हिन्दी</h4>
+   <label for="tHi">प्रॉम्प्ट का शीर्षक</label><input id="tHi" placeholder="उदाहरण: पुरानी पारिवारिक फोटो को बहाल करें">
+   <label for="pHi" style="margin-top:10px">प्रॉम्प्ट का पाठ</label><textarea id="pHi" placeholder="अपना AI प्रॉम्प्ट यहाँ लिखें..."></textarea>
+   <label for="nHi" style="margin-top:10px">नकारात्मक प्रॉम्प्ट (वैकल्पिक)</label><input id="nHi" placeholder="धुंधला, बिगड़ा चेहरा, ...">
   </div>
   <div class="row">
    <button id="btnSave" data-i18n="save">Save Prompt</button>
@@ -133,23 +134,23 @@
  <section class="panel">
   <div class="row">
    <h2 id="listTitle" style="margin:0">All Prompts</h2>
-   <button class="secondary noflex" id="btnFav" data-i18n="favs">â˜… Favourites</button>
+   <button class="secondary noflex" id="btnFav" data-i18n="favs">★ Favourites</button>
    <button class="secondary noflex" id="btnAll" data-i18n="showAll">Show All</button>
    <button class="secondary noflex" id="btnRestore" data-i18n="restore">Restore Built-in Prompts</button>
   </div>
   <div id="promptList"></div>
  </section>
 
-<p class="muted" style="text-align:center" data-i18n="footer">Prompt Studio Â· Your prompts are saved in this browser</p>
+<p class="muted" style="text-align:center" data-i18n="footer">Prompt Studio · Your prompts are saved in this browser</p>
 <div id="toast-ps" role="status" aria-live="polite"></div>
 
 
     </div>
-    <section class="cabout"><h2>About Prompt Studio</h2><p>These are the prompts CSC and VLE centres ask for most: restoring old photos, couple and family photos, passport photos, backgrounds and professional portraits. Every prompt has an English and a Hindi version, and works with any AI image tool. Your own prompts are saved only in this browser, so use Export Backup to keep a copy. Always check the result before you give it to a customer, and keep the customerâ€™s permission for using their photo.</p><p><a href="index.html#tools">&larr; Back to all categories</a></p></section>
+    <section class="cabout"><h2>About Prompt Studio</h2><p>These are the prompts CSC and VLE centres ask for most: restoring old photos, couple and family photos, passport photos, backgrounds and professional portraits. Every prompt has an English and a Hindi version, and works with any AI image tool. Your own prompts are saved only in this browser, so use Export Backup to keep a copy. Always check the result before you give it to a customer, and keep the customer’s permission for using their photo.</p><p><a href="index.html#tools">&larr; Back to all categories</a></p></section>
   </main>
   <footer id="site-footer"></footer>
-<script src="assets/js/prompts-packs.js?v=36"></script>
-<script src="assets/js/prompts-extra.js?v=36"></script>
+<script src="assets/js/prompts-packs.js?v=41"></script>
+<script src="assets/js/prompts-extra.js?v=41"></script>
 <script>
 (function(){
 "use strict";
@@ -157,29 +158,29 @@
 /* ---------- Static data ---------- */
 var OTHER="Other / My Category";
 var CATS=[
- ["Old Photo Restoration","à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¹à¤¾à¤²à¥€"],
- ["Photo Enhancement","à¤«à¥‹à¤Ÿà¥‹ à¤¸à¥à¤§à¤¾à¤°"],
- ["Photo Editing & Retouching","à¤«à¥‹à¤Ÿà¥‹ à¤à¤¡à¤¿à¤Ÿà¤¿à¤‚à¤— à¤”à¤° à¤°à¥€à¤Ÿà¤šà¤¿à¤‚à¤—"],
- ["Background & Passport Photo","à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡ à¤”à¤° à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ à¤«à¥‹à¤Ÿà¥‹"],
- ["Travel & Couple Photography","à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤”à¤° à¤•à¤ªà¤² à¤«à¥‹à¤Ÿà¥‹à¤—à¥à¤°à¤¾à¤«à¥€"],
- ["Portrait & Studio","à¤ªà¥‹à¤°à¥à¤Ÿà¥à¤°à¥‡à¤Ÿ à¤”à¤° à¤¸à¥à¤Ÿà¥‚à¤¡à¤¿à¤¯à¥‹"],
- ["Product & Business","à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤Ÿ à¤”à¤° à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸"],
- ["Document & Design","à¤¦à¤¸à¥à¤¤à¤¾à¤µà¥‡à¤œà¤¼ à¤”à¤° à¤¡à¤¿à¤œà¤¼à¤¾à¤‡à¤¨"],
- ["Creative Images & Art","à¤•à¥à¤°à¤¿à¤à¤Ÿà¤¿à¤µ à¤‡à¤®à¥‡à¤œ à¤”à¤° à¤†à¤°à¥à¤Ÿ"],
- ["Writing & Social Media","à¤²à¥‡à¤–à¤¨ à¤”à¤° à¤¸à¥‹à¤¶à¤² à¤®à¥€à¤¡à¤¿à¤¯à¤¾"],
- [OTHER,"à¤…à¤¨à¥à¤¯ / à¤®à¥‡à¤°à¥€ à¤¶à¥à¤°à¥‡à¤£à¥€"]
+ ["Old Photo Restoration","पुरानी फोटो बहाली"],
+ ["Photo Enhancement","फोटो सुधार"],
+ ["Photo Editing & Retouching","फोटो एडिटिंग और रीटचिंग"],
+ ["Background & Passport Photo","बैकग्राउंड और पासपोर्ट फोटो"],
+ ["Travel & Couple Photography","ट्रैवल और कपल फोटोग्राफी"],
+ ["Portrait & Studio","पोर्ट्रेट और स्टूडियो"],
+ ["Product & Business","प्रोडक्ट और बिज़नेस"],
+ ["Document & Design","दस्तावेज़ और डिज़ाइन"],
+ ["Creative Images & Art","क्रिएटिव इमेज और आर्ट"],
+ ["Writing & Social Media","लेखन और सोशल मीडिया"],
+ [OTHER,"अन्य / मेरी श्रेणी"]
 ];
 var CAT_NAMES=CATS.map(function(c){return c[0]});
 
 var UI={
  en:{title:"Prompt Studio",tagline:"Create, save, search and reuse AI prompts",export:"Export Backup",import:"Import Backup",
-  search:"ðŸ”Ž Search prompts...",create:"+ Create Prompt",browse:"Browse Categories",category:"Category",
+  search:"🔎 Search prompts...",create:"+ Create Prompt",browse:"Browse Categories",category:"Category",
   editorHelp:"Fill in English, Hindi, or both. In each language, a title and the prompt text go together.",
   ptitle:"Prompt title",ptext:"Prompt text",pneg:"Negative prompt (optional)",save:"Save Prompt",clear:"Clear",close:"Close",
-  favs:"â˜… Favourites",showAll:"Show All",restore:"Restore Built-in Prompts",
-  footer:"Prompt Studio Â· Your prompts are saved in this browser",
+  favs:"★ Favourites",showAll:"Show All",restore:"Restore Built-in Prompts",
+  footer:"Prompt Studio · Your prompts are saved in this browser",
   all:"All",allPrompts:"All Prompts",favPrompts:"Favourite Prompts",saved:"saved prompts",
-  none:"No prompts found. Create a new prompt to get started.",fav:"â˜† Favourite",faved:"â˜… Saved",
+  none:"No prompts found. Create a new prompt to get started.",fav:"☆ Favourite",faved:"★ Saved",
   copy:"Copy Prompt",edit:"Edit",del:"Delete",createTitle:"Create Your Prompt",editTitle:"Edit Prompt",
   negLabel:"Negative prompt",noHindi:"Hindi version not added",noEnglish:"English version not added",
   needText:"Please add a title and prompt text in at least one language (English or Hindi).",
@@ -189,85 +190,85 @@ var UI={
   importDone:"Import completed!\n\nNew prompts added: {a}\nDuplicates skipped: {s}\nTotal prompts: {t}",
   restored:"Built-in prompts restored: {n} added.",restoredNone:"All built-in prompts are already here.",
   exported:"Backup saved ({n} prompts)."},
- hi:{title:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¸à¥à¤Ÿà¥‚à¤¡à¤¿à¤¯à¥‹",tagline:"AI à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¤¨à¤¾à¤à¤‚, à¤¸à¤¹à¥‡à¤œà¥‡à¤‚, à¤–à¥‹à¤œà¥‡à¤‚ à¤”à¤° à¤¦à¥‹à¤¬à¤¾à¤°à¤¾ à¤‡à¤¸à¥à¤¤à¥‡à¤®à¤¾à¤² à¤•à¤°à¥‡à¤‚",export:"à¤¬à¥ˆà¤•à¤…à¤ª à¤¨à¤¿à¤°à¥à¤¯à¤¾à¤¤ à¤•à¤°à¥‡à¤‚",import:"à¤¬à¥ˆà¤•à¤…à¤ª à¤†à¤¯à¤¾à¤¤ à¤•à¤°à¥‡à¤‚",
-  search:"ðŸ”Ž à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤–à¥‹à¤œà¥‡à¤‚...",create:"+ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¤¨à¤¾à¤à¤‚",browse:"à¤¶à¥à¤°à¥‡à¤£à¤¿à¤¯à¤¾à¤‚ à¤¦à¥‡à¤–à¥‡à¤‚",category:"à¤¶à¥à¤°à¥‡à¤£à¥€",
-  editorHelp:"à¤…à¤‚à¤—à¥à¤°à¥‡à¤œà¤¼à¥€, à¤¹à¤¿à¤¨à¥à¤¦à¥€ à¤¯à¤¾ à¤¦à¥‹à¤¨à¥‹à¤‚ à¤­à¤°à¥‡à¤‚à¥¤ à¤¹à¤° à¤­à¤¾à¤·à¤¾ à¤®à¥‡à¤‚ à¤¶à¥€à¤°à¥à¤·à¤• à¤”à¤° à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤ªà¤¾à¤  à¤¸à¤¾à¤¥-à¤¸à¤¾à¤¥ à¤šà¤¾à¤¹à¤¿à¤à¥¤",
-  ptitle:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤¶à¥€à¤°à¥à¤·à¤•",ptext:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤ªà¤¾à¤ ",pneg:"à¤¨à¤•à¤¾à¤°à¤¾à¤¤à¥à¤®à¤• à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ (à¤µà¥ˆà¤•à¤²à¥à¤ªà¤¿à¤•)",save:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¸à¤¹à¥‡à¤œà¥‡à¤‚",clear:"à¤¸à¤¾à¤«à¤¼ à¤•à¤°à¥‡à¤‚",close:"à¤¬à¤‚à¤¦ à¤•à¤°à¥‡à¤‚",
-  favs:"â˜… à¤ªà¤¸à¤‚à¤¦à¥€à¤¦à¤¾",showAll:"à¤¸à¤­à¥€ à¤¦à¤¿à¤–à¤¾à¤à¤‚",restore:"à¤¬à¤¿à¤²à¥à¤Ÿ-à¤‡à¤¨ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤µà¤¾à¤ªà¤¸ à¤²à¤¾à¤à¤‚",
-  footer:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¸à¥à¤Ÿà¥‚à¤¡à¤¿à¤¯à¥‹ Â· à¤†à¤ªà¤•à¥‡ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤‡à¤¸à¥€ à¤¬à¥à¤°à¤¾à¤‰à¤œà¤¼à¤° à¤®à¥‡à¤‚ à¤¸à¤¹à¥‡à¤œà¥‡ à¤œà¤¾à¤¤à¥‡ à¤¹à¥ˆà¤‚",
-  all:"à¤¸à¤­à¥€",allPrompts:"à¤¸à¤­à¥€ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ",favPrompts:"à¤ªà¤¸à¤‚à¤¦à¥€à¤¦à¤¾ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ",saved:"à¤¸à¤¹à¥‡à¤œà¥‡ à¤—à¤ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ",
-  none:"à¤•à¥‹à¤ˆ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾à¥¤ à¤¶à¥à¤°à¥‚ à¤•à¤°à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤¨à¤¯à¤¾ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¤¨à¤¾à¤à¤‚à¥¤",fav:"â˜† à¤ªà¤¸à¤‚à¤¦à¥€à¤¦à¤¾",faved:"â˜… à¤¸à¤¹à¥‡à¤œà¤¾ à¤—à¤¯à¤¾",
-  copy:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¥‰à¤ªà¥€ à¤•à¤°à¥‡à¤‚",edit:"à¤¸à¤‚à¤ªà¤¾à¤¦à¤¿à¤¤ à¤•à¤°à¥‡à¤‚",del:"à¤¹à¤Ÿà¤¾à¤à¤‚",createTitle:"à¤…à¤ªà¤¨à¤¾ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¤¨à¤¾à¤à¤‚",editTitle:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¸à¤‚à¤ªà¤¾à¤¦à¤¿à¤¤ à¤•à¤°à¥‡à¤‚",
-  negLabel:"à¤¨à¤•à¤¾à¤°à¤¾à¤¤à¥à¤®à¤• à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ",noHindi:"à¤¹à¤¿à¤¨à¥à¤¦à¥€ à¤¸à¤‚à¤¸à¥à¤•à¤°à¤£ à¤¨à¤¹à¥€à¤‚ à¤œà¥‹à¤¡à¤¼à¤¾ à¤—à¤¯à¤¾",noEnglish:"à¤…à¤‚à¤—à¥à¤°à¥‡à¤œà¤¼à¥€ à¤¸à¤‚à¤¸à¥à¤•à¤°à¤£ à¤¨à¤¹à¥€à¤‚ à¤œà¥‹à¤¡à¤¼à¤¾ à¤—à¤¯à¤¾",
-  needText:"à¤•à¥ƒà¤ªà¤¯à¤¾ à¤•à¤® à¤¸à¥‡ à¤•à¤® à¤à¤• à¤­à¤¾à¤·à¤¾ (à¤…à¤‚à¤—à¥à¤°à¥‡à¤œà¤¼à¥€ à¤¯à¤¾ à¤¹à¤¿à¤¨à¥à¤¦à¥€) à¤®à¥‡à¤‚ à¤¶à¥€à¤°à¥à¤·à¤• à¤”à¤° à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤ªà¤¾à¤  à¤­à¤°à¥‡à¤‚à¥¤",
-  copied:"à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¥‰à¤ªà¥€ à¤¹à¥‹ à¤—à¤¯à¤¾!",copyFail:"à¤¬à¥à¤°à¤¾à¤‰à¤œà¤¼à¤° à¤¨à¥‡ à¤•à¥‰à¤ªà¥€ à¤°à¥‹à¤• à¤¦à¥€à¥¤ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤•à¤¾ à¤ªà¤¾à¤  à¤šà¥à¤¨à¤•à¤° à¤–à¥à¤¦ à¤•à¥‰à¤ªà¥€ à¤•à¤°à¥‡à¤‚à¥¤",
-  confirmDel:"à¤•à¥à¤¯à¤¾ à¤¯à¤¹ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¹à¤Ÿà¤¾à¤¨à¤¾ à¤¹à¥ˆ?",saveFail:"à¤‡à¤¸ à¤¬à¥à¤°à¤¾à¤‰à¤œà¤¼à¤° à¤®à¥‡à¤‚ à¤¸à¤¹à¥‡à¤œà¤¾ à¤¨à¤¹à¥€à¤‚ à¤œà¤¾ à¤¸à¤•à¤¾ (à¤¸à¥à¤Ÿà¥‹à¤°à¥‡à¤œ à¤¬à¤‚à¤¦ à¤¹à¥ˆ)à¥¤ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¤šà¤¾à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤¬à¥ˆà¤•à¤…à¤ª à¤¨à¤¿à¤°à¥à¤¯à¤¾à¤¤ à¤•à¤°à¥‡à¤‚à¥¤",
-  badFile:"à¤…à¤®à¤¾à¤¨à¥à¤¯ JSON à¤«à¤¼à¤¾à¤‡à¤²à¥¤ à¤•à¥ƒà¤ªà¤¯à¤¾ à¤¸à¤¹à¥€ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤¬à¥ˆà¤•à¤…à¤ª à¤šà¥à¤¨à¥‡à¤‚à¥¤",
-  importDone:"à¤†à¤¯à¤¾à¤¤ à¤ªà¥‚à¤°à¤¾ à¤¹à¥à¤†!\n\nà¤¨à¤ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤œà¥à¤¡à¤¼à¥‡: {a}\nà¤¦à¥‹à¤¹à¤°à¤¾à¤ à¤—à¤ à¤›à¥‹à¤¡à¤¼à¥‡ à¤—à¤: {s}\nà¤•à¥à¤² à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ: {t}",
-  restored:"à¤¬à¤¿à¤²à¥à¤Ÿ-à¤‡à¤¨ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤µà¤¾à¤ªà¤¸ à¤†à¤: {n} à¤œà¥‹à¤¡à¤¼à¥‡ à¤—à¤à¥¤",restoredNone:"à¤¸à¤­à¥€ à¤¬à¤¿à¤²à¥à¤Ÿ-à¤‡à¤¨ à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ à¤ªà¤¹à¤²à¥‡ à¤¸à¥‡ à¤®à¥Œà¤œà¥‚à¤¦ à¤¹à¥ˆà¤‚à¥¤",
-  exported:"à¤¬à¥ˆà¤•à¤…à¤ª à¤¸à¤¹à¥‡à¤œà¤¾ à¤—à¤¯à¤¾ ({n} à¤ªà¥à¤°à¥‰à¤®à¥à¤ªà¥à¤Ÿ)à¥¤"}
+ hi:{title:"प्रॉम्प्ट स्टूडियो",tagline:"AI प्रॉम्प्ट बनाएं, सहेजें, खोजें और दोबारा इस्तेमाल करें",export:"बैकअप निर्यात करें",import:"बैकअप आयात करें",
+  search:"🔎 प्रॉम्प्ट खोजें...",create:"+ प्रॉम्प्ट बनाएं",browse:"श्रेणियां देखें",category:"श्रेणी",
+  editorHelp:"अंग्रेज़ी, हिन्दी या दोनों भरें। हर भाषा में शीर्षक और प्रॉम्प्ट का पाठ साथ-साथ चाहिए।",
+  ptitle:"प्रॉम्प्ट का शीर्षक",ptext:"प्रॉम्प्ट का पाठ",pneg:"नकारात्मक प्रॉम्प्ट (वैकल्पिक)",save:"प्रॉम्प्ट सहेजें",clear:"साफ़ करें",close:"बंद करें",
+  favs:"★ पसंदीदा",showAll:"सभी दिखाएं",restore:"बिल्ट-इन प्रॉम्प्ट वापस लाएं",
+  footer:"प्रॉम्प्ट स्टूडियो · आपके प्रॉम्प्ट इसी ब्राउज़र में सहेजे जाते हैं",
+  all:"सभी",allPrompts:"सभी प्रॉम्प्ट",favPrompts:"पसंदीदा प्रॉम्प्ट",saved:"सहेजे गए प्रॉम्प्ट",
+  none:"कोई प्रॉम्प्ट नहीं मिला। शुरू करने के लिए नया प्रॉम्प्ट बनाएं।",fav:"☆ पसंदीदा",faved:"★ सहेजा गया",
+  copy:"प्रॉम्प्ट कॉपी करें",edit:"संपादित करें",del:"हटाएं",createTitle:"अपना प्रॉम्प्ट बनाएं",editTitle:"प्रॉम्प्ट संपादित करें",
+  negLabel:"नकारात्मक प्रॉम्प्ट",noHindi:"हिन्दी संस्करण नहीं जोड़ा गया",noEnglish:"अंग्रेज़ी संस्करण नहीं जोड़ा गया",
+  needText:"कृपया कम से कम एक भाषा (अंग्रेज़ी या हिन्दी) में शीर्षक और प्रॉम्प्ट का पाठ भरें।",
+  copied:"प्रॉम्प्ट कॉपी हो गया!",copyFail:"ब्राउज़र ने कॉपी रोक दी। प्रॉम्प्ट का पाठ चुनकर खुद कॉपी करें।",
+  confirmDel:"क्या यह प्रॉम्प्ट हटाना है?",saveFail:"इस ब्राउज़र में सहेजा नहीं जा सका (स्टोरेज बंद है)। प्रॉम्प्ट बचाने के लिए बैकअप निर्यात करें।",
+  badFile:"अमान्य JSON फ़ाइल। कृपया सही प्रॉम्प्ट बैकअप चुनें।",
+  importDone:"आयात पूरा हुआ!\n\nनए प्रॉम्प्ट जुड़े: {a}\nदोहराए गए छोड़े गए: {s}\nकुल प्रॉम्प्ट: {t}",
+  restored:"बिल्ट-इन प्रॉम्प्ट वापस आए: {n} जोड़े गए।",restoredNone:"सभी बिल्ट-इन प्रॉम्प्ट पहले से मौजूद हैं।",
+  exported:"बैकअप सहेजा गया ({n} प्रॉम्प्ट)।"}
 };
 
 /* Negative prompts shared by several prompts */
 var NEG_TRAVEL={en:"morphed faces, bad anatomy, deformed hands, artificial lighting, cartoonish, low quality.",
- hi:"à¤¬à¤¿à¤—à¤¡à¤¼à¥‡ à¤¹à¥à¤ à¤šà¥‡à¤¹à¤°à¥‡, à¤—à¤¼à¤²à¤¤ à¤¶à¤¾à¤°à¥€à¤°à¤¿à¤• à¤¬à¤¨à¤¾à¤µà¤Ÿ, à¤¬à¤¿à¤—à¤¡à¤¼à¥‡ à¤¹à¤¾à¤¥, à¤•à¥ƒà¤¤à¥à¤°à¤¿à¤® à¤°à¥‹à¤¶à¤¨à¥€, à¤•à¤¾à¤°à¥à¤Ÿà¥‚à¤¨ à¤œà¥ˆà¤¸à¤¾, à¤•à¤® à¤—à¥à¤£à¤µà¤¤à¥à¤¤à¤¾à¥¤"};
+ hi:"बिगड़े हुए चेहरे, ग़लत शारीरिक बनावट, बिगड़े हाथ, कृत्रिम रोशनी, कार्टून जैसा, कम गुणवत्ता।"};
 var NEG_PORTRAIT={en:"overexposed, harsh shadows, unnatural skin texture, blurry background edges.",
- hi:"à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤à¤•à¥à¤¸à¤ªà¥‹à¤œà¤¼à¤°, à¤•à¤ à¥‹à¤° à¤ªà¤°à¤›à¤¾à¤‡à¤¯à¤¾à¤‚, à¤…à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤¤à¥à¤µà¤šà¤¾ à¤•à¥€ à¤¬à¤¨à¤¾à¤µà¤Ÿ, à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡ à¤•à¥‡ à¤§à¥à¤‚à¤§à¤²à¥‡ à¤•à¤¿à¤¨à¤¾à¤°à¥‡à¥¤"};
+ hi:"ज़्यादा एक्सपोज़र, कठोर परछाइयां, अप्राकृतिक त्वचा की बनावट, बैकग्राउंड के धुंधले किनारे।"};
 
 function P(id,cat,tEn,tHi,pEn,pHi,neg){
  return {id:id,category:cat,title:{en:tEn,hi:tHi},text:{en:pEn,hi:pHi},negative:neg||{en:"",hi:""},favorite:false};
 }
 
 var BUILTIN=[
- P("b01","Old Photo Restoration","Restore an Old Family Photo","à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤ªà¤¾à¤°à¤¿à¤µà¤¾à¤°à¤¿à¤• à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤¬à¤¹à¤¾à¤² à¤•à¤°à¥‡à¤‚",
+ P("b01","Old Photo Restoration","Restore an Old Family Photo","पुरानी पारिवारिक फोटो को बहाल करें",
   "Restore this old photograph while preserving the original person's identity, facial features, expression, age and natural appearance. Repair scratches, fading, dust and damage. Improve clarity and tonal balance. Keep the result realistic and historically faithful. Do not change clothing, hairstyle or background unless requested.",
-  "à¤‡à¤¸ à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤¤à¤¸à¥à¤µà¥€à¤° à¤•à¥‹ à¤¬à¤¹à¤¾à¤² à¤•à¤°à¥‡à¤‚, à¤²à¥‡à¤•à¤¿à¤¨ à¤µà¥à¤¯à¤•à¥à¤¤à¤¿ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨, à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤¬à¤¨à¤¾à¤µà¤Ÿ, à¤­à¤¾à¤µ, à¤‰à¤®à¥à¤° à¤”à¤° à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤°à¥‚à¤ª à¤•à¥‹ à¤œà¤¸ à¤•à¤¾ à¤¤à¤¸ à¤°à¤–à¥‡à¤‚à¥¤ à¤–à¤°à¥‹à¤‚à¤š, à¤«à¥€à¤•à¤¾à¤ªà¤¨, à¤§à¥‚à¤² à¤”à¤° à¤•à¥à¤·à¤¤à¤¿ à¤•à¥‹ à¤ à¥€à¤• à¤•à¤°à¥‡à¤‚à¥¤ à¤¸à¥à¤ªà¤·à¥à¤Ÿà¤¤à¤¾ à¤”à¤° à¤°à¤‚à¤—-à¤¸à¤‚à¤¤à¥à¤²à¤¨ à¤¸à¥à¤§à¤¾à¤°à¥‡à¤‚à¥¤ à¤¨à¤¤à¥€à¤œà¤¾ à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤”à¤° à¤®à¥‚à¤² à¤¤à¤¸à¥à¤µà¥€à¤° à¤•à¥‡ à¤ªà¥à¤°à¤¤à¤¿ à¤¸à¤šà¥à¤šà¤¾ à¤°à¤¹à¥‡à¥¤ à¤•à¤¹à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤•à¤ªà¤¡à¤¼à¥‡, à¤¹à¥‡à¤¯à¤°à¤¸à¥à¤Ÿà¤¾à¤‡à¤² à¤¯à¤¾ à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡ à¤¨ à¤¬à¤¦à¤²à¥‡à¤‚à¥¤"),
- P("b02","Old Photo Restoration","AI Photo Restoration & Enhancement","AI à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¹à¤¾à¤²à¥€ à¤”à¤° à¤¸à¥à¤§à¤¾à¤°",
+  "इस पुरानी तस्वीर को बहाल करें, लेकिन व्यक्ति की पहचान, चेहरे की बनावट, भाव, उम्र और प्राकृतिक रूप को जस का तस रखें। खरोंच, फीकापन, धूल और क्षति को ठीक करें। स्पष्टता और रंग-संतुलन सुधारें। नतीजा यथार्थवादी और मूल तस्वीर के प्रति सच्चा रहे। कहे बिना कपड़े, हेयरस्टाइल या बैकग्राउंड न बदलें।"),
+ P("b02","Old Photo Restoration","AI Photo Restoration & Enhancement","AI फोटो बहाली और सुधार",
   "Restore this old damaged family photograph. Fix scratches, dust spots, and tears. Enhance clarity, sharpness, and high-frequency facial details. Improve studio lighting naturally while preserving the exact facial identity and expression of the person. Grade colors realistically, 8k resolution, photorealistic.",
-  "à¤‡à¤¸ à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤•à¥à¤·à¤¤à¤¿à¤—à¥à¤°à¤¸à¥à¤¤ à¤ªà¤¾à¤°à¤¿à¤µà¤¾à¤°à¤¿à¤• à¤¤à¤¸à¥à¤µà¥€à¤° à¤•à¥‹ à¤ªà¥à¤¨à¤°à¥à¤¸à¥à¤¥à¤¾à¤ªà¤¿à¤¤ à¤•à¤°à¥‡à¤‚à¥¤ à¤–à¤°à¥‹à¤‚à¤š, à¤§à¥‚à¤² à¤•à¥‡ à¤§à¤¬à¥à¤¬à¥‡ à¤”à¤° à¤«à¤Ÿà¥‡ à¤¹à¥à¤ à¤¹à¤¿à¤¸à¥à¤¸à¥‹à¤‚ à¤•à¥‹ à¤ à¥€à¤• à¤•à¤°à¥‡à¤‚à¥¤ à¤¸à¥à¤ªà¤·à¥à¤Ÿà¤¤à¤¾, à¤¤à¥€à¤–à¤¾à¤ªà¤¨ à¤”à¤° à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥‡ à¤µà¤¿à¤µà¤°à¤£à¥‹à¤‚ à¤•à¥‹ à¤¬à¤¢à¤¼à¤¾à¤à¤‚à¥¤ à¤µà¥à¤¯à¤•à¥à¤¤à¤¿ à¤•à¥€ à¤¸à¤Ÿà¥€à¤• à¤ªà¤¹à¤šà¤¾à¤¨ à¤”à¤° à¤­à¤¾à¤µ à¤•à¥‹ à¤¬à¤¦à¤²à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤°à¥‚à¤ª à¤¸à¥‡ à¤²à¤¾à¤‡à¤Ÿà¤¿à¤‚à¤— à¤¸à¥à¤§à¤¾à¤°à¥‡à¤‚à¥¤ à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤°à¤‚à¤—, 8k à¤°à¤¿à¤œà¤¼à¥‰à¤²à¥à¤¯à¥‚à¤¶à¤¨, à¤«à¥‹à¤Ÿà¥‹à¤°à¤¿à¤¯à¤²à¤¿à¤¸à¥à¤Ÿà¤¿à¤•à¥¤",
+  "इस पुरानी क्षतिग्रस्त पारिवारिक तस्वीर को पुनर्स्थापित करें। खरोंच, धूल के धब्बे और फटे हुए हिस्सों को ठीक करें। स्पष्टता, तीखापन और चेहरे के विवरणों को बढ़ाएं। व्यक्ति की सटीक पहचान और भाव को बदले बिना प्राकृतिक रूप से लाइटिंग सुधारें। यथार्थवादी रंग, 8k रिज़ॉल्यूशन, फोटोरियलिस्टिक।",
   {en:"blurry, distorted face, oversaturated, plastic skin, painting effect, cartoon, noise, artifacts.",
-   hi:"à¤§à¥à¤‚à¤§à¤²à¤¾, à¤¬à¤¿à¤—à¤¡à¤¼à¤¾ à¤šà¥‡à¤¹à¤°à¤¾, à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤¸à¥ˆà¤šà¥à¤°à¥‡à¤Ÿà¥‡à¤¡ à¤°à¤‚à¤—, à¤ªà¥à¤²à¤¾à¤¸à¥à¤Ÿà¤¿à¤• à¤œà¥ˆà¤¸à¥€ à¤¤à¥à¤µà¤šà¤¾, à¤ªà¥‡à¤‚à¤Ÿà¤¿à¤‚à¤— à¤œà¥ˆà¤¸à¤¾ à¤…à¤¸à¤°, à¤•à¤¾à¤°à¥à¤Ÿà¥‚à¤¨, à¤¨à¥‰à¤‡à¤œà¤¼, à¤†à¤°à¥à¤Ÿà¤¿à¤«à¤¼à¥ˆà¤•à¥à¤Ÿà¥¤"}),
- P("b03","Photo Enhancement","Natural Photo Enhancement","à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤«à¥‹à¤Ÿà¥‹ à¤¸à¥à¤§à¤¾à¤°",
+   hi:"धुंधला, बिगड़ा चेहरा, ज़्यादा सैचुरेटेड रंग, प्लास्टिक जैसी त्वचा, पेंटिंग जैसा असर, कार्टून, नॉइज़, आर्टिफ़ैक्ट।"}),
+ P("b03","Photo Enhancement","Natural Photo Enhancement","प्राकृतिक फोटो सुधार",
   "Enhance this photograph with natural lighting, balanced exposure, realistic colours, improved sharpness and clear details. Reduce noise while preserving the original subject, face, expression and proportions. Avoid artificial skin smoothing or exaggerated effects.",
-  "à¤‡à¤¸ à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤°à¥‹à¤¶à¤¨à¥€, à¤¸à¤‚à¤¤à¥à¤²à¤¿à¤¤ à¤à¤•à¥à¤¸à¤ªà¥‹à¤œà¤¼à¤°, à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤°à¤‚à¤—, à¤¬à¥‡à¤¹à¤¤à¤° à¤¶à¤¾à¤°à¥à¤ªà¤¨à¥‡à¤¸ à¤”à¤° à¤¸à¤¾à¤«à¤¼ à¤µà¤¿à¤µà¤°à¤£ à¤•à¥‡ à¤¸à¤¾à¤¥ à¤¸à¥à¤§à¤¾à¤°à¥‡à¤‚à¥¤ à¤®à¥‚à¤² à¤µà¥à¤¯à¤•à¥à¤¤à¤¿, à¤šà¥‡à¤¹à¤°à¥‡, à¤­à¤¾à¤µ à¤”à¤° à¤…à¤¨à¥à¤ªà¤¾à¤¤ à¤•à¥‹ à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¤¤à¥‡ à¤¹à¥à¤ à¤¨à¥‰à¤‡à¤œà¤¼ à¤•à¤® à¤•à¤°à¥‡à¤‚à¥¤ à¤¤à¥à¤µà¤šà¤¾ à¤•à¥‹ à¤•à¥ƒà¤¤à¥à¤°à¤¿à¤® à¤°à¥‚à¤ª à¤¸à¥‡ à¤šà¤¿à¤•à¤¨à¤¾ à¤¨ à¤•à¤°à¥‡à¤‚ à¤”à¤° à¤œà¤¼à¤°à¥‚à¤°à¤¤ à¤¸à¥‡ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤‡à¤«à¤¼à¥‡à¤•à¥à¤Ÿ à¤¸à¥‡ à¤¬à¤šà¥‡à¤‚à¥¤"),
- P("b04","Photo Enhancement","Clean & Improve an Old Photo","à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤¸à¤¾à¤« à¤”à¤° à¤¬à¥‡à¤¹à¤¤à¤° à¤¬à¤¨à¤¾à¤à¤‚",
+  "इस फोटो को प्राकृतिक रोशनी, संतुलित एक्सपोज़र, यथार्थवादी रंग, बेहतर शार्पनेस और साफ़ विवरण के साथ सुधारें। मूल व्यक्ति, चेहरे, भाव और अनुपात को सुरक्षित रखते हुए नॉइज़ कम करें। त्वचा को कृत्रिम रूप से चिकना न करें और ज़रूरत से ज़्यादा इफ़ेक्ट से बचें।"),
+ P("b04","Photo Enhancement","Clean & Improve an Old Photo","पुरानी फोटो को साफ और बेहतर बनाएं",
   "Naturally clean up and improve this old photo. Fully preserve the face identity, age, expression and original look. Reduce blurriness, dust and old marks. Improve colour and lighting. Do not make unnecessary changes to the face or clothing.",
-  "à¤‡à¤¸ à¤ªà¥à¤°à¤¾à¤¨à¥€ à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤¤à¤°à¥€à¤•à¥‡ à¤¸à¥‡ à¤¸à¤¾à¤« à¤”à¤° à¤¬à¥‡à¤¹à¤¤à¤° à¤¬à¤¨à¤¾à¤à¤‚à¥¤ à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨, à¤‰à¤®à¥à¤°, à¤­à¤¾à¤µ à¤”à¤° à¤®à¥‚à¤² à¤°à¥‚à¤ª à¤¬à¤¿à¤²à¥à¤•à¥à¤² à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¥‡à¤‚à¥¤ à¤§à¥à¤‚à¤§à¤²à¤¾à¤ªà¤¨, à¤§à¥‚à¤² à¤”à¤° à¤ªà¥à¤°à¤¾à¤¨à¥‡ à¤¨à¤¿à¤¶à¤¾à¤¨ à¤•à¤® à¤•à¤°à¥‡à¤‚à¥¤ à¤°à¤‚à¤— à¤”à¤° à¤°à¥‹à¤¶à¤¨à¥€ à¤¸à¥à¤§à¤¾à¤°à¥‡à¤‚à¥¤ à¤šà¥‡à¤¹à¤°à¥‡ à¤¯à¤¾ à¤•à¤ªà¤¡à¤¼à¥‹à¤‚ à¤®à¥‡à¤‚ à¤…à¤¨à¤¾à¤µà¤¶à¥à¤¯à¤• à¤¬à¤¦à¤²à¤¾à¤µ à¤¨ à¤•à¤°à¥‡à¤‚à¥¤"),
- P("b05","Travel & Couple Photography","Couple at Leh Ladakh","à¤²à¥‡à¤¹ à¤²à¤¦à¥à¤¦à¤¾à¤– à¤®à¥‡à¤‚ à¤œà¥‹à¤¡à¤¼à¤¾",
+  "इस पुरानी फोटो को प्राकृतिक तरीके से साफ और बेहतर बनाएं। चेहरे की पहचान, उम्र, भाव और मूल रूप बिल्कुल सुरक्षित रखें। धुंधलापन, धूल और पुराने निशान कम करें। रंग और रोशनी सुधारें। चेहरे या कपड़ों में अनावश्यक बदलाव न करें।"),
+ P("b05","Travel & Couple Photography","Couple at Leh Ladakh","लेह लद्दाख में जोड़ा",
   "Create a realistic travel photograph using the provided couple as identity references. Show them enjoying a trip in Leh Ladakh, with a beautiful Himalayan mountain landscape in the background. Preserve both people's facial identities and natural features. Use realistic travel clothing, natural daylight and professional travel photography.",
-  "à¤¦à¤¿à¤ à¤—à¤ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥€ à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤ªà¤¹à¤šà¤¾à¤¨-à¤¸à¤‚à¤¦à¤°à¥à¤­ à¤®à¤¾à¤¨à¤•à¤° à¤à¤• à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¨à¤¾à¤à¤‚à¥¤ à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤²à¥‡à¤¹ à¤²à¤¦à¥à¤¦à¤¾à¤– à¤•à¥€ à¤¯à¤¾à¤¤à¥à¤°à¤¾ à¤•à¤¾ à¤†à¤¨à¤‚à¤¦ à¤²à¥‡à¤¤à¥‡ à¤¹à¥à¤ à¤¦à¤¿à¤–à¤¾à¤à¤‚, à¤ªà¥€à¤›à¥‡ à¤¹à¤¿à¤®à¤¾à¤²à¤¯ à¤•à¥‡ à¤¸à¥à¤‚à¤¦à¤° à¤ªà¤¹à¤¾à¤¡à¤¼à¥€ à¤¨à¤œà¤¼à¤¾à¤°à¥‡ à¤¹à¥‹à¤‚à¥¤ à¤¦à¥‹à¤¨à¥‹à¤‚ à¤•à¥‡ à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨ à¤”à¤° à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤µà¤¿à¤¶à¥‡à¤·à¤¤à¤¾à¤à¤‚ à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¥‡à¤‚à¥¤ à¤¯à¤¾à¤¤à¥à¤°à¤¾ à¤•à¥‡ à¤²à¤¿à¤ à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤•à¤ªà¤¡à¤¼à¥‡, à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤¦à¤¿à¤¨ à¤•à¥€ à¤°à¥‹à¤¶à¤¨à¥€ à¤”à¤° à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤«à¥‹à¤Ÿà¥‹à¤—à¥à¤°à¤¾à¤«à¥€ à¤•à¥€ à¤¶à¥ˆà¤²à¥€ à¤°à¤–à¥‡à¤‚à¥¤"),
- P("b06","Travel & Couple Photography","Couple at a Beautiful Lake","à¤¸à¥à¤‚à¤¦à¤° à¤à¥€à¤² à¤•à¥‡ à¤•à¤¿à¤¨à¤¾à¤°à¥‡ à¤œà¥‹à¤¡à¤¼à¤¾",
+  "दिए गए जोड़े की फोटो को पहचान-संदर्भ मानकर एक यथार्थवादी ट्रैवल फोटो बनाएं। उन्हें लेह लद्दाख की यात्रा का आनंद लेते हुए दिखाएं, पीछे हिमालय के सुंदर पहाड़ी नज़ारे हों। दोनों के चेहरे की पहचान और प्राकृतिक विशेषताएं सुरक्षित रखें। यात्रा के लिए यथार्थवादी कपड़े, प्राकृतिक दिन की रोशनी और पेशेवर ट्रैवल फोटोग्राफी की शैली रखें।"),
+ P("b06","Travel & Couple Photography","Couple at a Beautiful Lake","सुंदर झील के किनारे जोड़ा",
   "Create a realistic travel photograph of the provided couple beside a beautiful peaceful lake. Preserve their facial identities and natural expressions. Use a scenic background, natural light, realistic colours and professional photography. Do not alter their identity.",
-  "à¤¦à¤¿à¤ à¤—à¤ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥€ à¤à¤• à¤¸à¥à¤‚à¤¦à¤°, à¤¶à¤¾à¤‚à¤¤ à¤à¥€à¤² à¤•à¥‡ à¤•à¤¿à¤¨à¤¾à¤°à¥‡ à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¨à¤¾à¤à¤‚à¥¤ à¤‰à¤¨à¤•à¥‡ à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨ à¤”à¤° à¤¸à¥à¤µà¤¾à¤­à¤¾à¤µà¤¿à¤• à¤­à¤¾à¤µ à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¥‡à¤‚à¥¤ à¤¸à¥à¤‚à¤¦à¤° à¤ªà¥ƒà¤·à¥à¤ à¤­à¥‚à¤®à¤¿, à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤°à¥‹à¤¶à¤¨à¥€, à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤°à¤‚à¤— à¤”à¤° à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤«à¥‹à¤Ÿà¥‹à¤—à¥à¤°à¤¾à¤«à¥€ à¤•à¤¾ à¤‰à¤ªà¤¯à¥‹à¤— à¤•à¤°à¥‡à¤‚à¥¤ à¤‰à¤¨à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨ à¤®à¥‡à¤‚ à¤•à¥‹à¤ˆ à¤¬à¤¦à¤²à¤¾à¤µ à¤¨ à¤•à¤°à¥‡à¤‚à¥¤"),
- P("b07","Travel & Couple Photography","Couple Visiting America","à¤…à¤®à¥‡à¤°à¤¿à¤•à¤¾ à¤•à¥€ à¤¸à¥ˆà¤° à¤•à¤°à¤¤à¤¾ à¤œà¥‹à¤¡à¤¼à¤¾",
+  "दिए गए जोड़े की एक सुंदर, शांत झील के किनारे यथार्थवादी ट्रैवल फोटो बनाएं। उनके चेहरे की पहचान और स्वाभाविक भाव सुरक्षित रखें। सुंदर पृष्ठभूमि, प्राकृतिक रोशनी, यथार्थवादी रंग और पेशेवर फोटोग्राफी का उपयोग करें। उनकी पहचान में कोई बदलाव न करें।"),
+ P("b07","Travel & Couple Photography","Couple Visiting America","अमेरिका की सैर करता जोड़ा",
   "Create a realistic tourist photograph of the provided couple at a famous American landmark. Preserve their original facial identities, expressions and natural appearance. Use believable travel clothing, realistic surroundings and natural daylight.",
-  "à¤¦à¤¿à¤ à¤—à¤ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥€ à¤…à¤®à¥‡à¤°à¤¿à¤•à¤¾ à¤•à¥‡ à¤•à¤¿à¤¸à¥€ à¤ªà¥à¤°à¤¸à¤¿à¤¦à¥à¤§ à¤¸à¥à¤¥à¤² à¤ªà¤° à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¨à¤¾à¤à¤‚à¥¤ à¤‰à¤¨à¤•à¥‡ à¤®à¥‚à¤² à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨, à¤­à¤¾à¤µ à¤”à¤° à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤°à¥‚à¤ª à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¥‡à¤‚à¥¤ à¤µà¤¿à¤¶à¥à¤µà¤¸à¤¨à¥€à¤¯ à¤¯à¤¾à¤¤à¥à¤°à¤¾-à¤ªà¤°à¤¿à¤§à¤¾à¤¨, à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤ªà¤°à¤¿à¤µà¥‡à¤¶ à¤”à¤° à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤¦à¤¿à¤¨ à¤•à¥€ à¤°à¥‹à¤¶à¤¨à¥€ à¤•à¤¾ à¤‰à¤ªà¤¯à¥‹à¤— à¤•à¤°à¥‡à¤‚à¥¤"),
- P("b08","Travel & Couple Photography","Tourist Couple: Leh & Kashmir","à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤œà¥‹à¤¡à¤¼à¤¾: à¤²à¥‡à¤¹ à¤”à¤° à¤•à¤¶à¥à¤®à¥€à¤°",
+  "दिए गए जोड़े की अमेरिका के किसी प्रसिद्ध स्थल पर यथार्थवादी पर्यटक फोटो बनाएं। उनके मूल चेहरे की पहचान, भाव और प्राकृतिक रूप सुरक्षित रखें। विश्वसनीय यात्रा-परिधान, यथार्थवादी परिवेश और प्राकृतिक दिन की रोशनी का उपयोग करें।"),
+ P("b08","Travel & Couple Photography","Tourist Couple: Leh & Kashmir","पर्यटक जोड़ा: लेह और कश्मीर",
   "Photorealistic portrait of the same couple as tourists exploring breathtaking landscapes of Leh Ladakh and snow-capped mountains of Kashmir. Natural bright daylight, crystal clear blue lake reflection, happy candid expressions, wearing winter travel jackets, cinematic composition, 8k.",
-  "à¤‰à¤¸à¥€ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥€ à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤¤à¤¸à¥à¤µà¥€à¤°, à¤œà¥‹ à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤•à¥‡ à¤°à¥‚à¤ª à¤®à¥‡à¤‚ à¤²à¥‡à¤¹ à¤²à¤¦à¥à¤¦à¤¾à¤– à¤•à¥€ à¤²à¥à¤­à¤¾à¤µà¤¨à¥€ à¤µà¤¾à¤¦à¤¿à¤¯à¥‹à¤‚ à¤”à¤° à¤•à¤¶à¥à¤®à¥€à¤° à¤•à¥‡ à¤¬à¤°à¥à¤«à¤¼ à¤¸à¥‡ à¤¢à¤•à¥‡ à¤ªà¤¹à¤¾à¤¡à¤¼à¥‹à¤‚ à¤•à¥€ à¤¸à¥ˆà¤° à¤•à¤° à¤°à¤¹à¥‡ à¤¹à¥ˆà¤‚à¥¤ à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤‰à¤œà¥à¤œà¥à¤µà¤² à¤¦à¤¿à¤¨ à¤•à¥€ à¤°à¥‹à¤¶à¤¨à¥€, à¤¸à¤¾à¤«à¤¼ à¤¨à¥€à¤²à¥€ à¤à¥€à¤² à¤®à¥‡à¤‚ à¤ªà¥à¤°à¤¤à¤¿à¤¬à¤¿à¤‚à¤¬, à¤–à¥à¤¶à¤¨à¥à¤®à¤¾ à¤¸à¥à¤µà¤¾à¤­à¤¾à¤µà¤¿à¤• à¤­à¤¾à¤µ, à¤¸à¤°à¥à¤¦à¤¿à¤¯à¥‹à¤‚ à¤•à¥€ à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤œà¥ˆà¤•à¥‡à¤Ÿ, à¤¸à¤¿à¤¨à¥‡à¤®à¤¾à¤ˆ à¤°à¤šà¤¨à¤¾, 8kà¥¤",
+  "उसी जोड़े की यथार्थवादी तस्वीर, जो पर्यटक के रूप में लेह लद्दाख की लुभावनी वादियों और कश्मीर के बर्फ़ से ढके पहाड़ों की सैर कर रहे हैं। प्राकृतिक उज्ज्वल दिन की रोशनी, साफ़ नीली झील में प्रतिबिंब, खुशनुमा स्वाभाविक भाव, सर्दियों की ट्रैवल जैकेट, सिनेमाई रचना, 8k।",
   NEG_TRAVEL),
- P("b09","Travel & Couple Photography","Tourist Couple: Mountains & Lakes","à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤œà¥‹à¤¡à¤¼à¤¾: à¤ªà¤¹à¤¾à¤¡à¤¼ à¤”à¤° à¤à¥€à¤²à¥‡à¤‚",
+ P("b09","Travel & Couple Photography","Tourist Couple: Mountains & Lakes","पर्यटक जोड़ा: पहाड़ और झीलें",
   "Same couple hiking through lush green pine forests and alpine mountain trails next to a serene turquoise lake under a bright sunny sky, highly detailed, photorealistic.",
-  "à¤‰à¤¸à¥€ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥‹ à¤¹à¤°à¥‡-à¤­à¤°à¥‡ à¤šà¥€à¤¡à¤¼ à¤•à¥‡ à¤œà¤‚à¤—à¤²à¥‹à¤‚ à¤”à¤° à¤Šà¤‚à¤šà¥‡ à¤ªà¤¹à¤¾à¤¡à¤¼à¥€ à¤°à¤¾à¤¸à¥à¤¤à¥‹à¤‚ à¤ªà¤°, à¤¤à¥‡à¤œà¤¼ à¤§à¥‚à¤ª à¤µà¤¾à¤²à¥‡ à¤†à¤¸à¤®à¤¾à¤¨ à¤•à¥‡ à¤¨à¥€à¤šà¥‡ à¤à¤• à¤¶à¤¾à¤‚à¤¤ à¤«à¤¼à¤¿à¤°à¥‹à¤œà¤¼à¥€ à¤à¥€à¤² à¤•à¥‡ à¤•à¤¿à¤¨à¤¾à¤°à¥‡ à¤Ÿà¥à¤°à¥ˆà¤•à¤¿à¤‚à¤— à¤•à¤°à¤¤à¥‡ à¤¹à¥à¤ à¤¦à¤¿à¤–à¤¾à¤à¤‚à¥¤ à¤…à¤¤à¥à¤¯à¤‚à¤¤ à¤¬à¤¾à¤°à¥€à¤• à¤µà¤¿à¤µà¤°à¤£, à¤«à¥‹à¤Ÿà¥‹à¤°à¤¿à¤¯à¤²à¤¿à¤¸à¥à¤Ÿà¤¿à¤•à¥¤",
+  "उसी जोड़े को हरे-भरे चीड़ के जंगलों और ऊंचे पहाड़ी रास्तों पर, तेज़ धूप वाले आसमान के नीचे एक शांत फ़िरोज़ी झील के किनारे ट्रैकिंग करते हुए दिखाएं। अत्यंत बारीक विवरण, फोटोरियलिस्टिक।",
   NEG_TRAVEL),
- P("b10","Travel & Couple Photography","Tourist Couple: Deserts & Beaches","à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤œà¥‹à¤¡à¤¼à¤¾: à¤°à¥‡à¤—à¤¿à¤¸à¥à¤¤à¤¾à¤¨ à¤”à¤° à¤¸à¤®à¥à¤¦à¥à¤° à¤¤à¤Ÿ",
+ P("b10","Travel & Couple Photography","Tourist Couple: Deserts & Beaches","पर्यटक जोड़ा: रेगिस्तान और समुद्र तट",
   "Same couple riding camels across golden sand dunes of Thar Desert during sunset, or walking along a pristine tropical white-sand beach with turquoise ocean waves.",
-  "à¤‰à¤¸à¥€ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥‹ à¤¸à¥‚à¤°à¥à¤¯à¤¾à¤¸à¥à¤¤ à¤•à¥‡ à¤¸à¤®à¤¯ à¤¥à¤¾à¤° à¤°à¥‡à¤—à¤¿à¤¸à¥à¤¤à¤¾à¤¨ à¤•à¥‡ à¤¸à¥à¤¨à¤¹à¤°à¥‡ à¤°à¥‡à¤¤à¥€à¤²à¥‡ à¤Ÿà¥€à¤²à¥‹à¤‚ à¤ªà¤° à¤Šà¤‚à¤Ÿ à¤•à¥€ à¤¸à¤µà¤¾à¤°à¥€ à¤•à¤°à¤¤à¥‡ à¤¹à¥à¤ à¤¦à¤¿à¤–à¤¾à¤à¤‚, à¤¯à¤¾ à¤«à¤¼à¤¿à¤°à¥‹à¤œà¤¼à¥€ à¤²à¤¹à¤°à¥‹à¤‚ à¤µà¤¾à¤²à¥‡ à¤¸à¤¾à¤«à¤¼ à¤¸à¤«à¤¼à¥‡à¤¦ à¤°à¥‡à¤¤ à¤•à¥‡ à¤‰à¤·à¥à¤£à¤•à¤Ÿà¤¿à¤¬à¤‚à¤§à¥€à¤¯ à¤¸à¤®à¥à¤¦à¥à¤° à¤¤à¤Ÿ à¤ªà¤° à¤Ÿà¤¹à¤²à¤¤à¥‡ à¤¹à¥à¤à¥¤",
+  "उसी जोड़े को सूर्यास्त के समय थार रेगिस्तान के सुनहरे रेतीले टीलों पर ऊंट की सवारी करते हुए दिखाएं, या फ़िरोज़ी लहरों वाले साफ़ सफ़ेद रेत के उष्णकटिबंधीय समुद्र तट पर टहलते हुए।",
   NEG_TRAVEL),
- P("b11","Travel & Couple Photography","Tourist Couple: Cities","à¤ªà¤°à¥à¤¯à¤Ÿà¤• à¤œà¥‹à¤¡à¤¼à¤¾: à¤¶à¤¹à¤°",
+ P("b11","Travel & Couple Photography","Tourist Couple: Cities","पर्यटक जोड़ा: शहर",
   "Same couple exploring a vibrant historic European city street with classic architecture, casual stylish travel outfits, natural street lighting, 8k.",
-  "à¤‰à¤¸à¥€ à¤œà¥‹à¤¡à¤¼à¥‡ à¤•à¥‹ à¤¶à¤¾à¤¸à¥à¤¤à¥à¤°à¥€à¤¯ à¤µà¤¾à¤¸à¥à¤¤à¥à¤•à¤²à¤¾ à¤µà¤¾à¤²à¥€ à¤à¤• à¤œà¥€à¤µà¤‚à¤¤ à¤à¤¤à¤¿à¤¹à¤¾à¤¸à¤¿à¤• à¤¯à¥‚à¤°à¥‹à¤ªà¥€à¤¯ à¤¶à¤¹à¤° à¤•à¥€ à¤—à¤²à¥€ à¤®à¥‡à¤‚ à¤˜à¥‚à¤®à¤¤à¥‡ à¤¹à¥à¤ à¤¦à¤¿à¤–à¤¾à¤à¤‚à¥¤ à¤¸à¥à¤Ÿà¤¾à¤‡à¤²à¤¿à¤¶ à¤•à¥ˆà¤œà¤¼à¥à¤…à¤² à¤Ÿà¥à¤°à¥ˆà¤µà¤² à¤•à¤ªà¤¡à¤¼à¥‡, à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤¸à¥à¤Ÿà¥à¤°à¥€à¤Ÿ à¤²à¤¾à¤‡à¤Ÿà¤¿à¤‚à¤—, 8kà¥¤",
+  "उसी जोड़े को शास्त्रीय वास्तुकला वाली एक जीवंत ऐतिहासिक यूरोपीय शहर की गली में घूमते हुए दिखाएं। स्टाइलिश कैज़ुअल ट्रैवल कपड़े, प्राकृतिक स्ट्रीट लाइटिंग, 8k।",
   NEG_TRAVEL),
- P("b12","Background & Passport Photo","Professional Passport Photo","à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ à¤«à¥‹à¤Ÿà¥‹",
+ P("b12","Background & Passport Photo","Professional Passport Photo","पेशेवर पासपोर्ट फोटो",
   "Create a clean, professional passport-style photograph from the provided image. Preserve the person's identity and natural facial features. Use a plain white background, even lighting, front-facing composition and a neat crop. Follow the required official photo dimensions separately.",
-  "à¤¦à¥€ à¤—à¤ˆ à¤«à¥‹à¤Ÿà¥‹ à¤¸à¥‡ à¤à¤• à¤¸à¤¾à¤«à¤¼, à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ-à¤¶à¥ˆà¤²à¥€ à¤•à¥€ à¤«à¥‹à¤Ÿà¥‹ à¤¬à¤¨à¤¾à¤à¤‚à¥¤ à¤µà¥à¤¯à¤•à¥à¤¤à¤¿ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨ à¤”à¤° à¤šà¥‡à¤¹à¤°à¥‡ à¤•à¥€ à¤ªà¥à¤°à¤¾à¤•à¥ƒà¤¤à¤¿à¤• à¤µà¤¿à¤¶à¥‡à¤·à¤¤à¤¾à¤à¤‚ à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ à¤°à¤–à¥‡à¤‚à¥¤ à¤¸à¤¾à¤¦à¤¾ à¤¸à¤«à¤¼à¥‡à¤¦ à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡, à¤¸à¤®à¤¾à¤¨ à¤°à¥‹à¤¶à¤¨à¥€, à¤¸à¤¾à¤®à¤¨à¥‡ à¤•à¥€ à¤“à¤° à¤¦à¥‡à¤–à¤¤à¤¾ à¤šà¥‡à¤¹à¤°à¤¾ à¤”à¤° à¤¸à¤¾à¤«à¤¼ à¤•à¥à¤°à¥‰à¤ª à¤°à¤–à¥‡à¤‚à¥¤ à¤†à¤§à¤¿à¤•à¤¾à¤°à¤¿à¤• à¤«à¥‹à¤Ÿà¥‹ à¤•à¥‡ à¤†à¤•à¤¾à¤° à¤•à¤¾ à¤ªà¤¾à¤²à¤¨ à¤…à¤²à¤— à¤¸à¥‡ à¤•à¤°à¥‡à¤‚à¥¤"),
- P("b13","Background & Passport Photo","Background Change: Corporate Office","à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡ à¤¬à¤¦à¤²à¥‡à¤‚: à¤•à¥‰à¤°à¥à¤ªà¥‹à¤°à¥‡à¤Ÿ à¤‘à¤«à¤¼à¤¿à¤¸",
+  "दी गई फोटो से एक साफ़, पेशेवर पासपोर्ट-शैली की फोटो बनाएं। व्यक्ति की पहचान और चेहरे की प्राकृतिक विशेषताएं सुरक्षित रखें। सादा सफ़ेद बैकग्राउंड, समान रोशनी, सामने की ओर देखता चेहरा और साफ़ क्रॉप रखें। आधिकारिक फोटो के आकार का पालन अलग से करें।"),
+ P("b13","Background & Passport Photo","Background Change: Corporate Office","बैकग्राउंड बदलें: कॉर्पोरेट ऑफ़िस",
   "Seamless background replacement: Place the subject into a modern corporate office interior with soft out-of-focus background bokeh, professional softbox studio rim lighting, photorealistic integration, matching color grading.",
-  "à¤¬à¤¿à¤¨à¤¾ à¤œà¥‹à¤¡à¤¼ à¤¦à¤¿à¤–à¥‡ à¤¬à¥ˆà¤•à¤—à¥à¤°à¤¾à¤‰à¤‚à¤¡ à¤¬à¤¦à¤²à¥‡à¤‚: à¤µà¥à¤¯à¤•à¥à¤¤à¤¿ à¤•à¥‹ à¤†à¤§à¥à¤¨à¤¿à¤• à¤•à¥‰à¤°à¥à¤ªà¥‹à¤°à¥‡à¤Ÿ à¤‘à¤«à¤¼à¤¿à¤¸ à¤•à¥‡ à¤‡à¤‚à¤Ÿà¥€à¤°à¤¿à¤¯à¤° à¤®à¥‡à¤‚ à¤°à¤–à¥‡à¤‚, à¤œà¤¿à¤¸à¤•à¥€ à¤ªà¥ƒà¤·à¥à¤ à¤­à¥‚à¤®à¤¿ à¤¹à¤²à¥à¤•à¥€ à¤§à¥à¤‚à¤§à¤²à¥€ à¤¬à¥‹à¤•à¥‡à¤¹ à¤µà¤¾à¤²à¥€ à¤¹à¥‹à¥¤ à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤¸à¥‰à¤«à¤¼à¥à¤Ÿà¤¬à¥‰à¤•à¥à¤¸ à¤¸à¥à¤Ÿà¥‚à¤¡à¤¿à¤¯à¥‹ à¤°à¤¿à¤® à¤²à¤¾à¤‡à¤Ÿà¤¿à¤‚à¤—, à¤¯à¤¥à¤¾à¤°à¥à¤¥à¤µà¤¾à¤¦à¥€ à¤à¤•à¥€à¤•à¤°à¤£ à¤”à¤° à¤®à¥‡à¤² à¤–à¤¾à¤¤à¥€ à¤•à¤²à¤° à¤—à¥à¤°à¥‡à¤¡à¤¿à¤‚à¤—à¥¤",
+  "बिना जोड़ दिखे बैकग्राउंड बदलें: व्यक्ति को आधुनिक कॉर्पोरेट ऑफ़िस के इंटीरियर में रखें, जिसकी पृष्ठभूमि हल्की धुंधली बोकेह वाली हो। पेशेवर सॉफ़्टबॉक्स स्टूडियो रिम लाइटिंग, यथार्थवादी एकीकरण और मेल खाती कलर ग्रेडिंग।",
   NEG_PORTRAIT),
- P("b14","Portrait & Studio","Professional Executive Portrait","à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤à¤—à¥à¤œà¤¼à¥€à¤•à¥à¤¯à¥‚à¤Ÿà¤¿à¤µ à¤ªà¥‹à¤°à¥à¤Ÿà¥à¤°à¥‡à¤Ÿ",
+ P("b14","Portrait & Studio","Professional Executive Portrait","पेशेवर एग्ज़ीक्यूटिव पोर्ट्रेट",
   "Professional executive headshot portrait, studio lighting, crisp focus on eyes, subtle neutral grey backdrop, wearing formal business attire, high-end commercial photography style, 8k.",
-  "à¤ªà¥‡à¤¶à¥‡à¤µà¤° à¤à¤—à¥à¤œà¤¼à¥€à¤•à¥à¤¯à¥‚à¤Ÿà¤¿à¤µ à¤¹à¥‡à¤¡à¤¶à¥‰à¤Ÿ à¤ªà¥‹à¤°à¥à¤Ÿà¥à¤°à¥‡à¤Ÿ, à¤¸à¥à¤Ÿà¥‚à¤¡à¤¿à¤¯à¥‹ à¤²à¤¾à¤‡à¤Ÿà¤¿à¤‚à¤—, à¤†à¤‚à¤–à¥‹à¤‚ à¤ªà¤° à¤¤à¥‡à¤œà¤¼ à¤«à¤¼à¥‹à¤•à¤¸, à¤¹à¤²à¥à¤•à¤¾ à¤¨à¥à¤¯à¥‚à¤Ÿà¥à¤°à¤² à¤—à¥à¤°à¥‡ à¤¬à¥ˆà¤•à¤¡à¥à¤°à¥‰à¤ª, à¤”à¤ªà¤šà¤¾à¤°à¤¿à¤• à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤ªà¥‹à¤¶à¤¾à¤•, à¤‰à¤šà¥à¤š-à¤¸à¥à¤¤à¤°à¥€à¤¯ à¤•à¤®à¤°à¥à¤¶à¤¿à¤¯à¤² à¤«à¥‹à¤Ÿà¥‹à¤—à¥à¤°à¤¾à¤«à¥€ à¤¶à¥ˆà¤²à¥€, 8kà¥¤",
+  "पेशेवर एग्ज़ीक्यूटिव हेडशॉट पोर्ट्रेट, स्टूडियो लाइटिंग, आंखों पर तेज़ फ़ोकस, हल्का न्यूट्रल ग्रे बैकड्रॉप, औपचारिक बिज़नेस पोशाक, उच्च-स्तरीय कमर्शियल फोटोग्राफी शैली, 8k।",
   NEG_PORTRAIT)
 ];
 
@@ -360,7 +361,7 @@ function pick(p,field){return p[field][lang]||p[field][other(lang)]||""}
 
 function applyLang(){
  $("ps").lang=lang==="hi"?"hi":"en";
-
+ 
  document.querySelectorAll("[data-i18n]").forEach(function(e){e.textContent=t(e.getAttribute("data-i18n"))});
  document.querySelectorAll("[data-i18n-ph]").forEach(function(e){e.placeholder=t(e.getAttribute("data-i18n-ph"))});
  $("langEn").classList.toggle("on",lang==="en");$("langHi").classList.toggle("on",lang==="hi");
@@ -405,7 +406,7 @@ function renderPrompts(){
   var missing=!p.text[lang];
   var neg=pick(p,"negative");
   return '<article class="prompt-card" data-id="'+esc(p.id)+'">'+
-   '<div class="row"><div><h3>'+esc(pick(p,"title"))+'</h3><span class="muted">'+esc(catLabel(p.category))+' Â· '+(lang==="hi"?"à¤¹à¤¿à¤¨à¥à¤¦à¥€":"English")+'</span>'+
+   '<div class="row"><div><h3>'+esc(pick(p,"title"))+'</h3><span class="muted">'+esc(catLabel(p.category))+' · '+(lang==="hi"?"हिन्दी":"English")+'</span>'+
    (missing?'<span class="badge">'+esc(t(lang==="hi"?"noHindi":"noEnglish"))+'</span>':'')+'</div>'+
    '<button class="secondary small noflex" data-act="fav">'+esc(p.favorite?t("faved"):t("fav"))+'</button></div>'+
    '<p>'+esc(pick(p,"text"))+'</p>'+
@@ -481,7 +482,7 @@ function importData(ev){
  var reader=new FileReader();
  reader.onload=function(){
   try{
-   var data=JSON.parse(String(reader.result).replace(/^ï»¿/,""));
+   var data=JSON.parse(String(reader.result).replace(/^﻿/,""));
    var list=Array.isArray(data)?data:(data&&Array.isArray(data.prompts)?data.prompts:null);
    if(!list)throw new Error("format");
    var cleaned=list.map(norm);
@@ -531,6 +532,6 @@ applyLang();fromHash();
 
 })();
 </script>
-  <script src="assets/js/demo-mode.js?v=36"></script>
+  <script src="assets/js/demo-mode.js?v=41"></script>
 </body>
 </html>

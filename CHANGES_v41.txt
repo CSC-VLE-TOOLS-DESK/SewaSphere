@@ -1,0 +1,9 @@
+CSC VLE TOOLS v41  (17 Nov 2026)  Candy 3D buttons, group cards, Ledger and Website Tools pages
+
+1. Candy 3D buttons (assets/css/candy3d.css + assets/js/candy3d.js) are linked on every page: solid edge, gloss, lift on hover, push-down on press, click ripple. Pages keep their own button colours.
+2. Home page: Daily Use Apps are now group cards. Stacked-sheet cards open a page with many tools (Ledger & Khata Books / Bahi Khata, Calculators, Website Tools, Prompt Studio). Single cards open one app (Pro Studio, Haryana Apply, Kids Corner). AI Voice Generator and Website Planner are "Coming soon" cards.
+3. Home page: All Categories is now 16 group cards that list the tools inside each category. Most Used Tools have an Open tool button. Mouse tilt works on the group cards.
+4. New pages: cat-ledger.html (10 ledgers) and cat-webgen.html (Privacy Policy, Disclaimer, About Us; Website Planner coming soon). tools_website_planner.html is a Coming soon page.
+5. Moved: the 10 ledgers left Receipts & Billing (now 4 tools); the 3 generators left Resume, Documents & Text (now 5 tools). Left sidebar and New Tools sidebar updated on all category pages; site.js categories updated.
+6. All CSS/JS links use ?v=41. sitemap.xml has the two new category pages.
+Tested here: 11 pages in headless Chromium, 0 script errors, no sideways scroll at 400 px except pro-studio.html (already did before v41). Not tested: real Chrome look of every tool page with the new buttons, printing.

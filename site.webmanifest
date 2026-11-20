@@ -1,12 +1,12 @@
 {
-  "name": "CSC VLE TOOLS",
-  "short_name": "CSC VLE",
+  "name": "SevaSphere",
+  "short_name": "SevaSphere",
   "description": "Free online tools for CSC and VLE centres.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1a3fa6",
+  "theme_color": "#1d4fd8",
   "lang": "en-IN",
   "icons": [
     {

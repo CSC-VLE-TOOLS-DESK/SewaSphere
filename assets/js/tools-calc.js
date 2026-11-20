@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS: calculators and quick utilities */
+/* SevaSphere: calculators and quick utilities */
 (function () {
   'use strict';
   var CSC = window.CSC, T = CSC.tools, h = CSC.h, esc = CSC.esc;

@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS v27: Mobile Cam Scanner.
+/* SevaSphere v27: Mobile Cam Scanner.
    Take a photo of a paper, drag 4 corners, straighten it, clean it (Magic colour / Grey / Black & White) and save as PDF or JPG.
    Runs in the browser. Pictures are not uploaded. */
 (function () {

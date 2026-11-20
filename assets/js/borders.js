@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS v27: shared border library.
+/* SevaSphere v27: shared border library.
    8 styles: Golden Royal, Ornate Red, Blue, Pink, Floral Pattern, Classic Double, Modern, Traditional.
    One SVG drawing is used everywhere: inside the biodata page, and drawn onto canvases for photo/album tools.
    CSC.borders.svg(id, W, H, opt) -> svg string      (W,H in "units"; A4 = 210 x 297)

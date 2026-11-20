@@ -1,5 +1,5 @@
 {
-  "project": "CSC VLE TOOLS",
+  "project": "SevaSphere",
   "brandVersion": "1.0",
   "foundationVersion": "1.3",
   "visualIdentity": {
@@ -26,7 +26,7 @@
     "shop-ledger.html",
     "pro-studio.html"
   ],
-  "siteUrl": "https://csc-vle-tools-desk.github.io/CSC-VLE-TOOLS/",
+  "siteUrl": "https://cschelpdesk.github.io/",
   "pages": [
     "index.html",
     "feedback.html",

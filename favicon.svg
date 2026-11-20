@@ -1,15 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CSC VLE TOOLS">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SevaSphere">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f6bff"/><stop offset="1" stop-color="#0f2a73"/></linearGradient>
-    <linearGradient id="sf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc247"/><stop offset="1" stop-color="#ff8a00"/></linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b73ff"/><stop offset="1" stop-color="#1239a8"/></linearGradient>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ffe9a6"/></linearGradient>
   </defs>
   <rect width="64" height="64" rx="15" fill="url(#bg)"/>
-  <rect x="9" y="14" width="40" height="30" rx="5" fill="#fff"/>
-  <circle cx="21" cy="26" r="5" fill="#1a3fa6"/>
-  <path d="M13 38c1.6-5 15.4-5 16 0z" fill="#1a3fa6"/>
-  <rect x="31" y="22" width="14" height="3.4" rx="1.7" fill="#9db4ee"/>
-  <rect x="31" y="29" width="14" height="3.4" rx="1.7" fill="#9db4ee"/>
-  <rect x="31" y="36" width="9" height="3.4" rx="1.7" fill="#9db4ee"/>
-  <circle cx="46" cy="44" r="13" fill="url(#sf)" stroke="#fff" stroke-width="3"/>
-  <path d="M39.6 44.4l4.4 4.4 8-9" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="32" r="22" fill="url(#lg)"/>
+  <path d="M16 36c8-14 22-17 33-11-9 0-17 5-20 14-4-1-9-2-13-3z" fill="#ffc928"/>
+  <path d="M22 46c5-9 14-14 25-11-8 2-13 6-15 12-3 0-7-.5-10-1z" fill="#1d4fd8"/>
 </svg>

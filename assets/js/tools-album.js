@@ -1,4 +1,4 @@
-/* CSC VLE TOOLS v27: Couple Photo, Family Photo, Document Album and ID Card Album Cover tools.
+/* SevaSphere v27: Couple Photo, Family Photo, Document Album and ID Card Album Cover tools.
    Needs site.js and borders.js. Everything runs in the browser; photos are not uploaded. */
 (function () {
   'use strict';

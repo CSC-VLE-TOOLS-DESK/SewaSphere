@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#087b55">
+  <meta name="description" content="SevaSphere AI Voice Studio - prepare Hindi, English and Hinglish voiceovers for CSC VLE tools.">
+  <title>AI Voice Studio | SevaSphere – CSC VLE Tools</title>
+  <style>
+    :root{
+      --green:#087b55;--green-dark:#075b41;--mint:#e9f8f1;--ink:#172b24;
+      --muted:#687a72;--line:#dce9e2;--surface:#fff;--bg:#f4f8f5;
+      --shadow:0 12px 35px rgba(14,75,52,.09);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.5}
+    button,select,textarea,input{font:inherit}
+    .topbar{background:linear-gradient(115deg,#075b41,#0b9565);color:#fff;padding:17px 22px;box-shadow:0 4px 18px #064c3830}
+    .top-inner{max-width:1120px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-mark{width:42px;height:42px;border-radius:13px;background:#ffffff20;display:grid;place-items:center;font-size:22px;font-weight:800;border:1px solid #ffffff40}
+    .brand-name{font-size:20px;font-weight:800;letter-spacing:.2px}
+    .brand-sub{font-size:11px;opacity:.85;letter-spacing:1.5px;text-transform:uppercase}
+    .top-link{color:#fff;text-decoration:none;border:1px solid #ffffff70;padding:9px 13px;border-radius:10px;font-size:13px;font-weight:650}
+    .wrap{max-width:1120px;margin:30px auto;padding:0 18px 45px}
+    .hero{margin-bottom:22px}
+    .eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+    h1{font-size:clamp(27px,4vw,38px);line-height:1.15;margin:7px 0 8px;letter-spacing:-.8px}
+    .hero p{color:var(--muted);margin:0;max-width:760px}
+    .layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.85fr);gap:20px;align-items:start}
+    .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:23px}
+    .panel h2{font-size:18px;margin:0 0 4px}
+    .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+    label{display:block;font-size:13px;font-weight:750;margin:0 0 7px}
+    textarea,select{width:100%;border:1px solid #cddbd3;border-radius:11px;background:#fff;color:var(--ink);outline:none}
+    textarea{min-height:205px;padding:14px;resize:vertical;line-height:1.65}
+    textarea:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px #087b5518}
+    .field{margin-bottom:17px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    select{height:43px;padding:0 11px}
+    .counter{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:6px}
+    .samples{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 17px}
+    .chip{border:1px solid var(--line);background:#f8fbf9;color:#365448;border-radius:20px;padding:6px 10px;font-size:12px;cursor:pointer}
+    .chip:hover{border-color:var(--green);color:var(--green)}
+    .range-line{display:flex;align-items:center;gap:10px}
+    input[type=range]{width:100%;accent-color:var(--green)}
+    .range-value{min-width:40px;text-align:right;color:var(--green);font-size:13px;font-weight:800}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .btn{border:0;border-radius:11px;padding:11px 16px;font-weight:750;cursor:pointer;transition:.15s}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .primary{background:var(--green);color:#fff}.primary:hover{background:var(--green-dark)}
+    .secondary{background:var(--mint);color:var(--green-dark)}
+    .outline{background:#fff;border:1px solid var(--line);color:#3c5148}
+    .status{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f3f7f4;color:#52665c;font-size:12px;min-height:42px}
+    .status.active{background:#eaf8f1;color:#086344}
+    .status.error{background:#fff3ed;color:#9b4326}
+    .side-panel{position:sticky;top:18px}
+    .voice-card{background:linear-gradient(145deg,#effaf4,#f8fcf9);border:1px solid #d7eee1;border-radius:14px;padding:16px;margin:15px 0}
+    .voice-icon{width:42px;height:42px;border-radius:13px;background:#d8f2e4;color:var(--green);display:grid;place-items:center;font-size:21px;margin-bottom:10px}
+    .voice-card strong{display:block;font-size:15px}
+    .voice-card p{font-size:12px;color:var(--muted);margin:4px 0 0}
+    .export{border:1px dashed #b9d8c7;border-radius:13px;padding:14px;margin-top:14px}
+    .export-head{font-size:14px;font-weight:800;margin-bottom:5px}
+    .export p{font-size:12px;color:var(--muted);margin:0 0 12px}
+    .format-row{display:flex;gap:8px}
+    .format{flex:1;background:#f4f7f5;border:1px solid var(--line);border-radius:9px;padding:9px;text-align:center;font-weight:800;color:#65756d;font-size:13px}
+    .format small{display:block;font-weight:500;font-size:10px}
+    .notice{font-size:12px;color:#64766d;background:#f7faf8;border-left:3px solid #91c8a9;padding:11px 12px;border-radius:0 9px 9px 0;margin-top:15px}
+    .footer{text-align:center;color:#839188;font-size:12px;margin-top:25px}
+    .footer a{color:var(--green);text-decoration:none}
+    @media(max-width:820px){.layout{grid-template-columns:1fr}.side-panel{position:static}}
+    @media(max-width:520px){.top-inner{align-items:flex-start}.brand-name{font-size:17px}.top-link{font-size:11px;padding:8px}.panel{padding:17px}.field-row{grid-template-columns:1fr}.wrap{margin-top:22px}}
+
+    [hidden]{display:none!important}
+    .howto{background:#fff;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:14px;padding:15px 18px;margin-bottom:20px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+    .howto ol{margin:0;padding-left:20px;font-size:14px;color:#365448}
+    .howto li{margin:2px 0}
+    .howto .btn{white-space:nowrap;text-decoration:none;display:inline-block}
+    .mtabs{display:flex;gap:6px;background:#eef5f1;padding:4px;border-radius:10px;margin:10px 0 12px}
+    .mtabs button{flex:1;border:0;background:transparent;border-radius:7px;padding:8px 6px;font-size:12px;font-weight:750;color:#51665c;cursor:pointer}
+    .mtabs button.on{background:#fff;color:var(--green-dark);box-shadow:0 0 0 1px var(--line)}
+    .export select,.export input[type=password],.export input[type=text]{width:100%;height:40px;padding:0 10px;border:1px solid #cddbd3;border-radius:10px;margin-bottom:10px;background:#fff;color:var(--ink)}
+    .export label{font-size:12px;margin-bottom:4px}
+    .full{width:100%}
+    .chk{display:flex!important;gap:7px;align-items:center;font-weight:500!important;margin-bottom:10px}
+    .dlrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .dlrow .btn{flex:1;min-width:92px}
+    #player{width:100%;margin-top:12px}
+    .steps{font-size:12px;color:var(--muted);margin:0 0 12px;padding-left:18px}
+  </style>
+<style>.ss-bar{position:relative;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:8px 14px;background:linear-gradient(180deg,#14306f,#0d1b3d);color:#fff;font:700 13px/1.2 "Nunito","Segoe UI",system-ui,sans-serif;box-shadow:0 3px 0 #06102a}.ss-bar a{color:#fff;text-decoration:none;padding:5px 11px;border-radius:9px;background:rgba(255,255,255,.12)}.ss-bar a:hover,.ss-bar a:focus-visible{background:#ffc928;color:#2b1d00;outline:0}.ss-bar b{margin-right:auto;font-weight:800;letter-spacing:.2px}@media print{.ss-bar{display:none}}</style><link rel="icon" href="favicon.svg?v=42" type="image/svg+xml"><link rel="icon" href="favicon-32.png?v=42" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=42">
+</head>
+<body>
+<nav class="ss-bar" aria-label="SevaSphere navigation"><b>SevaSphere</b><a href="index.html">&larr; Home</a><a href="cat-ai.html">AI &amp; Writing Tools</a><a href="index.html#tools">All tools</a></nav>
+  <header class="topbar">
+    <div class="top-inner">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div><div class="brand-name">SevaSphere</div><div class="brand-sub">CSC VLE Tools</div></div>
+      </div>
+      <a class="top-link" href="index.html">← Main Website</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Voice creation workspace</div>
+      <h1>AI Voice Studio</h1>
+      <p>Turn your written script into spoken Hindi, English or Hinglish. Try the voice available on this computer and adjust the speaking speed.</p>
+    </section>
+
+    <div class="howto">
+      <ol>
+        <li>Write your Hindi / English / Hinglish script.</li>
+        <li>Choose language and voice, press <strong>Play</strong> to listen.</li>
+        <li>Open <strong>Download audio</strong> and save your WAV / MP3 file.</li>
+      </ol>
+      <a class="btn primary" href="#exportBox">⬇ Go to Download</a>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>1. Write your script</h2>
+        <p class="sub">Enter or paste the text you want the voice to speak.</p>
+        <div class="field">
+          <label for="script">Your text</label>
+          <textarea id="script" maxlength="10000" placeholder="यहाँ अपना हिंदी, English या Hinglish script लिखें..."></textarea>
+          <div class="counter"><span>Maximum 10,000 characters</span><span id="count">0 / 10,000</span></div>
+        </div>
+        <div class="samples">
+          <button class="chip" type="button" data-sample="hi">Hindi sample</button>
+          <button class="chip" type="button" data-sample="en">English sample</button>
+          <button class="chip" type="button" data-sample="mix">Hinglish sample</button>
+        </div>
+
+        <h2>2. Choose voice settings</h2>
+        <p class="sub">The voice list depends on the voices installed in your browser or computer.</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="language">Script language</label>
+            <select id="language">
+              <option value="hi-IN">Hindi</option>
+              <option value="en-IN">English (India)</option>
+              <option value="mix">Hinglish (mixed)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="gender">Voice preference</label>
+            <select id="gender">
+              <option value="all">All available voices</option>
+              <option value="female">Female (if identifiable)</option>
+              <option value="male">Male (if identifiable)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="style">Voice style (works with any voice)</label>
+          <select id="style">
+            <option value="normal">Normal</option>
+            <option value="male">Male style (deeper)</option>
+            <option value="deep">Deep male</option>
+            <option value="bright">Female bright</option>
+            <option value="young">Young / child-like</option>
+            <option value="narrator">Slow narrator</option>
+            <option value="news">News anchor (fast)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="voice">Available device voice</label>
+          <select id="voice"><option value="">Loading available voices…</option></select>
+        </div>
+        <div class="field">
+          <label for="rate">Speaking speed</label>
+          <div class="range-line"><input id="rate" type="range" min="0.65" max="1.35" step="0.05" value="1"><span class="range-value" id="rateValue">1.00×</span></div>
+        </div>
+        <div class="field">
+          <label for="pitch">Voice pitch</label>
+          <div class="range-line"><input id="pitch" type="range" min="0.5" max="1.6" step="0.05" value="1"><span class="range-value" id="pitchValue">1.00</span></div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="speakBtn" type="button">▶ Play voice</button>
+          <button class="btn secondary" id="pauseBtn" type="button" disabled>Ⅱ Pause</button>
+          <button class="btn outline" id="stopBtn" type="button">■ Stop</button>
+          <button class="btn outline" id="saveTxt" type="button">💾 Save script</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite">Ready. Enter text and select an available voice to begin.</div>
+      </section>
+
+      <aside class="panel side-panel">
+        <h2>Studio information</h2>
+        <p class="sub">Preview, record and download</p>
+        <div class="voice-card">
+          <div class="voice-icon">🎙</div>
+          <strong>Browser voice preview</strong>
+          <p>Hindi, English and Hinglish are supported. In Hinglish mode, Devanagari and English words are read with matching voices. Voice names and accents may differ between computers.</p>
+        </div>
+        <div class="export" id="exportBox">
+          <div class="export-head">⬇ Download audio</div>
+          <div class="mtabs">
+            <button type="button" id="mFree" class="on">Free (record)</button>
+            <button type="button" id="mAI">AI voice (MP3 + WAV)</button>
+          </div>
+
+          <div id="freeBox">
+            <ol class="steps">
+              <li>Click <strong>Record</strong>.</li>
+              <li>In the pop-up choose <strong>This tab</strong> and turn on <strong>Share tab audio</strong>.</li>
+              <li>Wait until the voice finishes, then download.</li>
+            </ol>
+            <button class="btn primary full" id="recBtn" type="button">⏺ Record and create file</button>
+          </div>
+
+          <div id="aiBox" hidden>
+            <label for="apiKey">OpenAI API key</label>
+            <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off">
+            <label for="aiVoice">AI voice</label>
+            <select id="aiVoice">
+              <option value="alloy">Alloy - neutral</option>
+              <option value="onyx">Onyx - male, deep</option>
+              <option value="echo">Echo - male</option>
+              <option value="ash">Ash - male</option>
+              <option value="fable">Fable - male, storyteller</option>
+              <option value="ballad" class="mini">Ballad - male (newest model)</option>
+              <option value="verse" class="mini">Verse - male (newest model)</option>
+              <option value="nova">Nova - female</option>
+              <option value="coral">Coral - female</option>
+              <option value="sage">Sage - female</option>
+              <option value="shimmer">Shimmer - female</option>
+            </select>
+            <label for="aiModel">Quality</label>
+            <select id="aiModel"><option value="tts-1">Standard (tts-1)</option><option value="tts-1-hd">High (tts-1-hd)</option><option value="gpt-4o-mini-tts">Newest (gpt-4o-mini-tts)</option></select>
+            <div id="aiStyleBox" hidden>
+              <label for="aiStyle">Speaking style (optional, newest model)</label>
+              <input id="aiStyle" type="text" placeholder="e.g. Calm male Hindi news anchor, clear accent">
+            </div>
+            <label class="chk"><input type="checkbox" id="remember"> Remember key on this device</label>
+            <button class="btn primary full" id="genBtn" type="button">✨ Generate AI voice</button>
+          </div>
+
+          <audio id="player" controls hidden></audio>
+          <div class="dlrow" id="dlRow" hidden>
+            <button class="btn secondary" id="dlWav" type="button">⬇ WAV</button>
+            <button class="btn secondary" id="dlMp3" type="button" hidden>⬇ MP3</button>
+            <button class="btn secondary" id="dlWebm" type="button" hidden>⬇ WebM</button>
+          </div>
+        </div>
+        <div class="notice"><strong>Privacy:</strong> Free mode keeps your script on this device. AI voice mode sends your script and your key directly to OpenAI (not to any other server). It uses your OpenAI credit.</div>
+        <div class="notice">For best results, use an updated desktop browser and make sure Hindi/English speech voices are available in your computer's language settings.</div>
+      </aside>
+    </div>
+    <div class="footer">© <span id="year"></span> SevaSphere – CSC VLE Tools · <a href="index.html">Visit main website</a></div>
+  </main>
+
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const synth = window.speechSynthesis;
+      let voices = [];
+      const samples = {
+        hi: "नमस्कार! SevaSphere AI Voice Studio में आपका स्वागत है। यहाँ आप अपने टेक्स्ट को आवाज़ में सुन सकते हैं।",
+        en: "Welcome to SevaSphere AI Voice Studio. Write your script, choose an available voice, and listen to a preview.",
+        mix: "Namaskar! SevaSphere AI Voice Studio mein aapka swagat hai. Apna script likhiye aur voice preview suniye."
+      };
+
+      $("year").textContent = new Date().getFullYear();
+
+      function setStatus(message, type = "") {
+        $("status").textContent = message;
+        $("status").className = "status" + (type ? " " + type : "");
+      }
+
+      const MALE_RE = /(?<![a-z])(male|man|david|mark|ravi|hemant|prabhat|madhur|rishi|guy|george|james|daniel|alex|fred|richard|sean)(?![a-z])/i;
+      const FEMALE_RE = /(female|woman|zira|susan|heera|kalpana|veena|aditi|swara|neerja|lekha|samantha|karen|moira|tessa|priya|raveena|हिन्दी)/i;
+      function genderOf(v) {
+        if (MALE_RE.test(v.name)) return "male";
+        if (FEMALE_RE.test(v.name)) return "female";
+        return "unknown";
+      }
+      const PRESETS = {
+        normal: [1, 1], male: [0.7, 0.95], deep: [0.55, 0.9], bright: [1.2, 1.05],
+        young: [1.5, 1.05], narrator: [0.85, 0.85], news: [0.95, 1.15]
+      };
+      function applyPreset(name) {
+        const p = PRESETS[name] || PRESETS.normal;
+        $("pitch").value = p[0]; $("rate").value = p[1];
+        $("pitch").dispatchEvent(new Event("input")); $("rate").dispatchEvent(new Event("input"));
+      }
+
+      function refreshVoices() {
+        if (!synth) {
+          $("voice").innerHTML = '<option value="">Speech synthesis is not supported in this browser</option>';
+          $("speakBtn").disabled = true;
+          setStatus("This browser does not support speech preview. Please try an updated browser.", "error");
+          return;
+        }
+        voices = synth.getVoices();
+        const language = $("language").value;
+        const preference = $("gender").value;
+        const isLang = (v, l) => v.lang.toLowerCase().replace("_", "-").startsWith(l);
+        let matching = voices.filter(v => language === "mix" ? (isLang(v, "hi") || isLang(v, "en")) : isLang(v, language.slice(0, 2).toLowerCase()));
+        let note = "";
+        if (preference !== "all") {
+          const wanted = matching.filter(v => genderOf(v) === preference);
+          if (wanted.length) matching = wanted;
+          else if (preference === "male") {
+            note = "No real male voice for this language is installed on this device, so a deeper male-style tone is applied. For a real male voice use Microsoft Edge (Madhur for Hindi, Prabhat for English) or the AI voice download method.";
+            if ($("style").value === "normal") { $("style").value = "male"; applyPreset("male"); }
+          } else note = "No female-labelled voice found, showing all available voices.";
+        }
+        $("voice").innerHTML = "";
+        if (!matching.length) {
+          const opt = document.createElement("option");
+          opt.value = "";
+          opt.textContent = voices.length ? "No matching language voice found" : "No device voices detected";
+          $("voice").appendChild(opt);
+          setStatus("No matching voice was found. Try another language or check the speech voices installed on your computer.", "error");
+          return;
+        }
+        const mark = { male: "♂ ", female: "♀ ", unknown: "" };
+        matching.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = voices.indexOf(v);
+          opt.textContent = `${mark[genderOf(v)]}${v.name} — ${v.lang}${v.default ? " (Default)" : ""}`;
+          $("voice").appendChild(opt);
+        });
+        setStatus(note || `${matching.length} available voice option(s). Voice availability depends on this device.`, note ? "" : "active");
+      }
+
+      $("script").addEventListener("input", () => {
+        $("count").textContent = `${$("script").value.length.toLocaleString()} / 10,000`;
+      });
+      document.querySelectorAll("[data-sample]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          $("script").value = samples[btn.dataset.sample];
+          $("script").dispatchEvent(new Event("input"));
+          $("language").value = btn.dataset.sample === "hi" ? "hi-IN" : btn.dataset.sample === "en" ? "en-IN" : "mix";
+          refreshVoices();
+        });
+      });
+      $("language").addEventListener("change", refreshVoices);
+      $("gender").addEventListener("change", refreshVoices);
+      $("rate").addEventListener("input", () => $("rateValue").textContent = Number($("rate").value).toFixed(2) + "×");
+      $("pitch").addEventListener("input", () => $("pitchValue").textContent = Number($("pitch").value).toFixed(2));
+
+      let session = 0, recorder = null, playerUrl = null;
+      const blobs = {};
+      const hasDev = (s) => /[\u0900-\u097F]/.test(s);
+      const hasWord = (s) => /[\p{L}\p{N}]/u.test(s);
+
+      function saveBlob(blob, name) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      function pick(prefix, preferred) {
+        if (preferred && preferred.lang.toLowerCase().startsWith(prefix)) return preferred;
+        const norm = v => v.lang.toLowerCase().replace("_", "-");
+        const list = voices.filter(v => norm(v).startsWith(prefix));
+        const inList = list.filter(v => norm(v).startsWith(prefix + "-in"));
+        const pool = inList.length ? inList : list;
+        const g = preferred ? genderOf(preferred) : "unknown";
+        return (g !== "unknown" && pool.find(v => genderOf(v) === g)) || pool[0] || preferred || null;
+      }
+
+      function splitLong(t, max) {
+        const out = []; let cur = "";
+        t.split(/(?<=[.!?।\n])\s*/).forEach(s => {
+          if (!s) return;
+          if (cur && (cur + s).length > max) { out.push(cur); cur = ""; }
+          cur += s + " ";
+          while (cur.length > max * 1.5) { out.push(cur.slice(0, max)); cur = cur.slice(max); }
+        });
+        if (cur.trim()) out.push(cur);
+        return out.map(x => x.trim()).filter(Boolean);
+      }
+
+      // Hinglish: Devanagari parts use a Hindi voice, English parts use an English (India) voice
+      function buildChunks(text) {
+        const lang = $("language").value;
+        const selected = voices[Number($("voice").value)] || null;
+        if (lang !== "mix" || !hasDev(text)) return splitLong(text, 220).map(t => ({ t, v: selected }));
+        const hi = pick("hi", selected), en = pick("en", selected);
+        const parts = text.match(/[\u0900-\u097F][\u0900-\u097F\s.,!?।\-]*|[^\u0900-\u097F]+/g) || [text];
+        const out = [];
+        parts.forEach(p => {
+          if (!hasWord(p)) return;
+          const v = hasDev(p) ? hi : en;
+          splitLong(p, 220).forEach(t => out.push({ t, v }));
+        });
+        return out;
+      }
+
+      function getText() {
+        const t = $("script").value.trim();
+        if (!t) { setStatus("Please enter your script first.", "error"); $("script").focus(); return null; }
+        return t;
+      }
+
+      function speakChunks(chunks, onDone) {
+        synth.cancel();
+        const id = ++session;
+        chunks.forEach((c, i) => {
+          const u = new SpeechSynthesisUtterance(c.t);
+          if (c.v) { u.voice = c.v; u.lang = c.v.lang; }
+          else u.lang = $("language").value === "en-IN" ? "en-IN" : "hi-IN";
+          u.rate = Number($("rate").value);
+          u.pitch = Number($("pitch").value);
+          if (i === 0) u.onstart = () => { setStatus("Speaking…", "active"); $("pauseBtn").disabled = false; $("pauseBtn").textContent = "Ⅱ Pause"; };
+          u.onend = () => { if (id === session && i === chunks.length - 1) { $("pauseBtn").disabled = true; if (onDone) onDone(true); } };
+          u.onerror = (e) => {
+            if (id !== session || e.error === "canceled" || e.error === "interrupted") return;
+            session++; synth.cancel(); $("pauseBtn").disabled = true;
+            setStatus("Speech could not start. Please choose another voice and try again.", "error");
+            if (onDone) onDone(false);
+          };
+          synth.speak(u);
+        });
+      }
+
+      $("speakBtn").addEventListener("click", () => {
+        const text = getText(); if (!text) return;
+        if (!synth) { setStatus("Speech preview is not supported in this browser.", "error"); return; }
+        speakChunks(buildChunks(text), ok => { if (ok) setStatus("Preview finished. You can play it again or download the audio.", "active"); });
+      });
+      $("pauseBtn").addEventListener("click", () => {
+        if (!synth) return;
+        if (synth.paused) { synth.resume(); $("pauseBtn").textContent = "Ⅱ Pause"; setStatus("Speaking…", "active"); }
+        else if (synth.speaking) { synth.pause(); $("pauseBtn").textContent = "▶ Resume"; setStatus("Preview paused."); }
+      });
+      $("stopBtn").addEventListener("click", () => {
+        session++;
+        if (synth) synth.cancel();
+        if (recorder && recorder.state !== "inactive") recorder.stop();
+        $("pauseBtn").disabled = true; $("pauseBtn").textContent = "Ⅱ Pause";
+        setStatus("Playback stopped.");
+      });
+
+      // Save the script as a text file (UTF-8 with BOM so Hindi opens correctly in Notepad)
+      $("saveTxt").addEventListener("click", () => {
+        const t = $("script").value;
+        if (!t.trim()) { setStatus("Nothing to save yet. Write your script first.", "error"); return; }
+        saveBlob(new Blob(["\ufeff" + t], { type: "text/plain;charset=utf-8" }), "sevasphere-script.txt");
+        setStatus("Script saved as sevasphere-script.txt", "active");
+      });
+
+      // ----- download method tabs -----
+      function method(ai) {
+        $("freeBox").hidden = ai; $("aiBox").hidden = !ai;
+        $("mFree").classList.toggle("on", !ai); $("mAI").classList.toggle("on", ai);
+      }
+      $("mFree").addEventListener("click", () => method(false));
+      $("mAI").addEventListener("click", () => method(true));
+
+      // ----- result + downloads -----
+      function showResult(b) {
+        Object.keys(blobs).forEach(k => delete blobs[k]);
+        Object.assign(blobs, b);
+        if (playerUrl) URL.revokeObjectURL(playerUrl);
+        playerUrl = URL.createObjectURL(b.mp3 || b.webm);
+        $("player").src = playerUrl; $("player").hidden = false;
+        $("dlRow").hidden = false;
+        $("dlMp3").hidden = !b.mp3; $("dlWebm").hidden = !b.webm;
+        setStatus("Audio is ready. Play it above and use the download buttons.", "active");
+        $("exportBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      function encodeWav(ab) {
+        const ch = Math.min(ab.numberOfChannels, 2), len = ab.length, sr = ab.sampleRate;
+        const v = new DataView(new ArrayBuffer(44 + len * ch * 2));
+        const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+        w(0, "RIFF"); v.setUint32(4, 36 + len * ch * 2, true); w(8, "WAVE"); w(12, "fmt ");
+        v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, ch, true);
+        v.setUint32(24, sr, true); v.setUint32(28, sr * ch * 2, true); v.setUint16(32, ch * 2, true);
+        v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, len * ch * 2, true);
+        const data = []; for (let c = 0; c < ch; c++) data.push(ab.getChannelData(c));
+        let off = 44;
+        for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) {
+          const s = Math.max(-1, Math.min(1, data[c][i]));
+          v.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7fff, true); off += 2;
+        }
+        return new Blob([v], { type: "audio/wav" });
+      }
+      async function toWav(blob) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        try { return encodeWav(await ctx.decodeAudioData(await blob.arrayBuffer())); }
+        finally { ctx.close(); }
+      }
+      $("dlMp3").addEventListener("click", () => blobs.mp3 && saveBlob(blobs.mp3, "sevasphere-voice.mp3"));
+      $("dlWebm").addEventListener("click", () => blobs.webm && saveBlob(blobs.webm, "sevasphere-voice.webm"));
+      $("dlWav").addEventListener("click", async () => {
+        const srcBlob = blobs.mp3 || blobs.webm;
+        if (!srcBlob) return;
+        try {
+          setStatus("Preparing WAV file…");
+          if (!blobs.wav) blobs.wav = await toWav(srcBlob);
+          saveBlob(blobs.wav, "sevasphere-voice.wav");
+          setStatus("WAV file downloaded.", "active");
+        } catch (e) { setStatus("Could not create WAV. Please download the other format.", "error"); }
+      });
+
+      // ----- Free method: record this tab's audio while the browser voice speaks -----
+      $("recBtn").addEventListener("click", async () => {
+        const text = getText(); if (!text) return;
+        if (!synth || !navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia || !window.MediaRecorder) {
+          setStatus("Recording needs desktop Chrome or Edge. Use the AI voice method instead.", "error"); return;
+        }
+        let stream;
+        try { stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true, preferCurrentTab: true }); }
+        catch (e) { setStatus("Recording was cancelled. Click Record again and choose “This tab”.", "error"); return; }
+        const tracks = stream.getAudioTracks();
+        stream.getVideoTracks().forEach(t => t.stop());
+        if (!tracks.length) {
+          setStatus("No audio was shared. Choose “This tab” and turn on “Share tab audio”.", "error"); return;
+        }
+        const parts = [];
+        const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "";
+        recorder = new MediaRecorder(new MediaStream(tracks), mime ? { mimeType: mime } : undefined);
+        recorder.ondataavailable = e => { if (e.data.size) parts.push(e.data); };
+        recorder.onstop = () => {
+          tracks.forEach(t => t.stop()); recorder = null; $("recBtn").disabled = false;
+          if (!parts.length) { setStatus("Nothing was recorded. Try again or use the AI voice method.", "error"); return; }
+          showResult({ webm: new Blob(parts, { type: "audio/webm" }) });
+        };
+        $("recBtn").disabled = true;
+        recorder.start();
+        setStatus("Recording… keep this tab open until the voice finishes.", "active");
+        setTimeout(() => speakChunks(buildChunks(text), () => setTimeout(() => {
+          if (recorder && recorder.state !== "inactive") recorder.stop();
+        }, 600)), 700);
+      });
+
+      // ----- AI method: OpenAI text-to-speech -> MP3 (+ WAV) -----
+      try { const k = localStorage.getItem("ss_key"); if (k) { $("apiKey").value = k; $("remember").checked = true; } } catch (e) {}
+      $("genBtn").addEventListener("click", async () => {
+        const text = getText(); if (!text) return;
+        const key = $("apiKey").value.trim();
+        if (!key) { setStatus("Enter your OpenAI API key first.", "error"); $("apiKey").focus(); return; }
+        try { if ($("remember").checked) localStorage.setItem("ss_key", key); else localStorage.removeItem("ss_key"); } catch (e) {}
+        $("genBtn").disabled = true;
+        try {
+          const pieces = splitLong(text, 3500), out = [];
+          const model = $("aiModel").value;
+          for (let i = 0; i < pieces.length; i++) {
+            setStatus(`Generating AI voice… part ${i + 1} of ${pieces.length}`, "active");
+            const body = { model, voice: $("aiVoice").value, input: pieces[i], response_format: "mp3" };
+            if (model !== "gpt-4o-mini-tts") body.speed = Number($("rate").value);
+            else if ($("aiStyle").value.trim()) body.instructions = $("aiStyle").value.trim();
+            const res = await fetch("https://api.openai.com/v1/audio/speech", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+              body: JSON.stringify(body)
+            });
+            if (!res.ok) {
+              let m = "Request failed (" + res.status + ").";
+              try { const j = await res.json(); if (j.error && j.error.message) m = j.error.message; } catch (e) {}
+              throw new Error(m);
+            }
+            out.push(await res.blob());
+          }
+          showResult({ mp3: new Blob(out, { type: "audio/mpeg" }) });
+        } catch (e) {
+          setStatus(e.message === "Failed to fetch" ? "Could not reach OpenAI. Open this file from your computer and check your internet." : e.message, "error");
+        } finally { $("genBtn").disabled = false; }
+      });
+
+      $("style").addEventListener("change", () => applyPreset($("style").value));
+      function syncModel() {
+        const mini = $("aiModel").value === "gpt-4o-mini-tts";
+        $("aiStyleBox").hidden = !mini;
+        document.querySelectorAll("#aiVoice .mini").forEach(o => { o.disabled = !mini; });
+        if (!mini && $("aiVoice").selectedOptions[0].classList.contains("mini")) $("aiVoice").value = "onyx";
+      }
+      $("aiModel").addEventListener("change", syncModel);
+      syncModel();
+
+      refreshVoices();
+      if (synth && "onvoiceschanged" in synth) synth.onvoiceschanged = refreshVoices;
+      setTimeout(refreshVoices, 700);
+    })();
+  </script>
+</body>
+</html>

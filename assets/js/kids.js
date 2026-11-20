@@ -1,25 +1,25 @@
-/* CSC VLE TOOLS - Kids Corner. Ten small learning games for KG, UKG and Class 1.
+/* SevaSphere - Kids Corner. Ten small learning games for KG, UKG and Class 1.
    All pictures live in assets/kids/NAME.png. To add a picture: drop the file there and add one line in PICS below. */
 (function () {
   'use strict';
 
   /* ---------- Pictures: name -> [English, Hindi] ---------- */
   var PICS = {
-    apple: ['Apple', 'à¤¸à¥‡à¤¬'], 'arrow-down': ['Arrow down', 'à¤¨à¥€à¤šà¥‡'], 'arrow-up': ['Arrow up', 'à¤Šà¤ªà¤°'], baby: ['Baby', 'à¤¬à¤šà¥à¤šà¤¾'], ball: ['Ball', 'à¤—à¥‡à¤‚à¤¦'],
-    balloon: ['Balloon', 'à¤—à¥à¤¬à¥à¤¬à¤¾à¤°à¤¾'], bat: ['Bat', 'à¤¬à¤²à¥à¤²à¤¾'], bed: ['Bed', 'à¤¬à¤¿à¤¸à¥à¤¤à¤°'], bus: ['Bus', 'à¤¬à¤¸'], calendar: ['Calendar', 'à¤•à¥ˆà¤²à¥‡à¤‚à¤¡à¤°'],
-    car: ['Car', 'à¤•à¤¾à¤°'], cat: ['Cat', 'à¤¬à¤¿à¤²à¥à¤²à¥€'], chick: ['Chick', 'à¤šà¥‚à¤œà¤¼à¤¾'], cow: ['Cow', 'à¤—à¤¾à¤¯'], 'dew-drops': ['Dew drops', 'à¤“à¤¸'],
-    dog: ['Dog', 'à¤•à¥à¤¤à¥à¤¤à¤¾'], duck: ['Duck', 'à¤¬à¤¤à¤–'], egg: ['Egg', 'à¤…à¤‚à¤¡à¤¾'], elephant: ['Elephant', 'à¤¹à¤¾à¤¥à¥€'], 'empty-glass': ['Empty glass', 'à¤–à¤¾à¤²à¥€'],
-    fire: ['Fire', 'à¤†à¤—'], fish: ['Fish', 'à¤®à¤›à¤²à¥€'], flag: ['Flag', 'à¤à¤‚à¤¡à¤¾'], flower: ['Flower', 'à¤«à¥‚à¤²'], 'flower-pot': ['Flower pot', 'à¤—à¤®à¤²à¤¾'],
-    fox: ['Fox', 'à¤²à¥‹à¤®à¤¡à¤¼à¥€'], frog: ['Frog', 'à¤®à¥‡à¤‚à¤¢à¤•'], 'full-glass': ['Full glass', 'à¤­à¤°à¤¾'], glasses: ['Spectacles', 'à¤à¤¨à¤•'], grapes: ['Grapes', 'à¤…à¤‚à¤—à¥‚à¤°'],
-    'happy-face': ['Happy face', 'à¤–à¥à¤¶'], hat: ['Hat', 'à¤Ÿà¥‹à¤ªà¥€'], hen: ['Hen', 'à¤®à¥à¤°à¥à¤—à¥€'], house: ['House', 'à¤˜à¤°'], 'ice-cream': ['Ice cream', 'à¤†à¤‡à¤¸à¤•à¥à¤°à¥€à¤®'],
-    juice: ['Juice', 'à¤œà¥‚à¤¸'], kite: ['Kite', 'à¤ªà¤¤à¤‚à¤—'], lion: ['Lion', 'à¤¶à¥‡à¤°'], mango: ['Mango', 'à¤†à¤®'], moon: ['Moon', 'à¤šà¤¾à¤à¤¦'],
-    mouse: ['Mouse', 'à¤šà¥‚à¤¹à¤¾'], nose: ['Nose', 'à¤¨à¤¾à¤•'], 'old-man': ['Old man', 'à¤¬à¥‚à¤¢à¤¼à¤¾'], orange: ['Orange', 'à¤¸à¤‚à¤¤à¤°à¤¾'], owl: ['Owl', 'à¤‰à¤²à¥à¤²à¥‚'],
-    parrot: ['Parrot', 'à¤¤à¥‹à¤¤à¤¾'], pig: ['Pig', 'à¤¸à¥à¤…à¤°'], pigeon: ['Pigeon', 'à¤•à¤¬à¥‚à¤¤à¤°'], pomegranate: ['Pomegranate', 'à¤…à¤¨à¤¾à¤°'], queen: ['Queen', 'à¤°à¤¾à¤¨à¥€'],
-    rabbit: ['Rabbit', 'à¤–à¤°à¤—à¥‹à¤¶'], 'sad-face': ['Sad face', 'à¤‰à¤¦à¤¾à¤¸'], ship: ['Ship', 'à¤œà¤¹à¤¾à¤œ'], snowflake: ['Snowflake', 'à¤¬à¤°à¥à¤«'], spoon: ['Spoon', 'à¤šà¤®à¥à¤®à¤š'],
-    star: ['Star', 'à¤¤à¤¾à¤°à¤¾'], strawberry: ['Strawberry', 'à¤¸à¥à¤Ÿà¥à¤°à¥‰à¤¬à¥‡à¤°à¥€'], sugarcane: ['Sugarcane', 'à¤ˆà¤–'], sun: ['Sun', 'à¤¸à¥‚à¤°à¤œ'], tamarind: ['Tamarind', 'à¤‡à¤®à¤²à¥€'],
-    tiger: ['Tiger', 'à¤¬à¤¾à¤˜'], tomato: ['Tomato', 'à¤Ÿà¤®à¤¾à¤Ÿà¤°'], turtle: ['Turtle', 'à¤•à¤›à¥à¤†'], umbrella: ['Umbrella', 'à¤›à¤¤à¤°à¥€'], van: ['Van', 'à¤µà¥ˆà¤¨'],
-    watch: ['Watch', 'à¤˜à¤¡à¤¼à¥€'], watermelon: ['Watermelon', 'à¤¤à¤°à¤¬à¥‚à¤œ'], woman: ['Woman', 'à¤”à¤°à¤¤'], wool: ['Wool', 'à¤Šà¤¨'], 'xmas-tree': ['Christmas tree', 'à¤•à¥à¤°à¤¿à¤¸à¤®à¤¸ à¤Ÿà¥à¤°à¥€'],
-    yacht: ['Yacht', 'à¤¨à¤¾à¤µ'], zebra: ['Zebra', 'à¤œà¤¼à¥‡à¤¬à¤°à¤¾']
+    apple: ['Apple', 'सेब'], 'arrow-down': ['Arrow down', 'नीचे'], 'arrow-up': ['Arrow up', 'ऊपर'], baby: ['Baby', 'बच्चा'], ball: ['Ball', 'गेंद'],
+    balloon: ['Balloon', 'गुब्बारा'], bat: ['Bat', 'बल्ला'], bed: ['Bed', 'बिस्तर'], bus: ['Bus', 'बस'], calendar: ['Calendar', 'कैलेंडर'],
+    car: ['Car', 'कार'], cat: ['Cat', 'बिल्ली'], chick: ['Chick', 'चूज़ा'], cow: ['Cow', 'गाय'], 'dew-drops': ['Dew drops', 'ओस'],
+    dog: ['Dog', 'कुत्ता'], duck: ['Duck', 'बतख'], egg: ['Egg', 'अंडा'], elephant: ['Elephant', 'हाथी'], 'empty-glass': ['Empty glass', 'खाली'],
+    fire: ['Fire', 'आग'], fish: ['Fish', 'मछली'], flag: ['Flag', 'झंडा'], flower: ['Flower', 'फूल'], 'flower-pot': ['Flower pot', 'गमला'],
+    fox: ['Fox', 'लोमड़ी'], frog: ['Frog', 'मेंढक'], 'full-glass': ['Full glass', 'भरा'], glasses: ['Spectacles', 'ऐनक'], grapes: ['Grapes', 'अंगूर'],
+    'happy-face': ['Happy face', 'खुश'], hat: ['Hat', 'टोपी'], hen: ['Hen', 'मुर्गी'], house: ['House', 'घर'], 'ice-cream': ['Ice cream', 'आइसक्रीम'],
+    juice: ['Juice', 'जूस'], kite: ['Kite', 'पतंग'], lion: ['Lion', 'शेर'], mango: ['Mango', 'आम'], moon: ['Moon', 'चाँद'],
+    mouse: ['Mouse', 'चूहा'], nose: ['Nose', 'नाक'], 'old-man': ['Old man', 'बूढ़ा'], orange: ['Orange', 'संतरा'], owl: ['Owl', 'उल्लू'],
+    parrot: ['Parrot', 'तोता'], pig: ['Pig', 'सुअर'], pigeon: ['Pigeon', 'कबूतर'], pomegranate: ['Pomegranate', 'अनार'], queen: ['Queen', 'रानी'],
+    rabbit: ['Rabbit', 'खरगोश'], 'sad-face': ['Sad face', 'उदास'], ship: ['Ship', 'जहाज'], snowflake: ['Snowflake', 'बर्फ'], spoon: ['Spoon', 'चम्मच'],
+    star: ['Star', 'तारा'], strawberry: ['Strawberry', 'स्ट्रॉबेरी'], sugarcane: ['Sugarcane', 'ईख'], sun: ['Sun', 'सूरज'], tamarind: ['Tamarind', 'इमली'],
+    tiger: ['Tiger', 'बाघ'], tomato: ['Tomato', 'टमाटर'], turtle: ['Turtle', 'कछुआ'], umbrella: ['Umbrella', 'छतरी'], van: ['Van', 'वैन'],
+    watch: ['Watch', 'घड़ी'], watermelon: ['Watermelon', 'तरबूज'], woman: ['Woman', 'औरत'], wool: ['Wool', 'ऊन'], 'xmas-tree': ['Christmas tree', 'क्रिसमस ट्री'],
+    yacht: ['Yacht', 'नाव'], zebra: ['Zebra', 'ज़ेबरा']
   };
   function en(n) { return PICS[n][0]; }
   function hi(n) { return PICS[n][1]; }
@@ -31,22 +31,22 @@
   var ABC = [['A', 'apple'], ['B', 'ball'], ['C', 'cat'], ['D', 'dog'], ['E', 'elephant'], ['F', 'fish'], ['G', 'grapes'], ['H', 'hat'], ['I', 'ice-cream'],
     ['J', 'juice'], ['K', 'kite'], ['L', 'lion'], ['M', 'mango'], ['N', 'nose'], ['O', 'orange'], ['P', 'parrot'], ['Q', 'queen'], ['R', 'rabbit'],
     ['S', 'sun'], ['T', 'tiger'], ['U', 'umbrella'], ['V', 'van'], ['W', 'watch'], ['X', 'xmas-tree'], ['Y', 'yacht'], ['Z', 'zebra']];
-  var HINDI = [['à¤…', 'pomegranate'], ['à¤†', 'mango'], ['à¤‡', 'tamarind'], ['à¤ˆ', 'sugarcane'], ['à¤‰', 'owl'], ['à¤Š', 'wool'], ['à¤', 'glasses'], ['à¤“', 'dew-drops'],
-    ['à¤”', 'woman'], ['à¤•', 'pigeon'], ['à¤–', 'rabbit'], ['à¤—', 'flower-pot'], ['à¤˜', 'house'], ['à¤š', 'spoon'], ['à¤›', 'umbrella'], ['à¤œ', 'ship'], ['à¤', 'flag'],
-    ['à¤Ÿ', 'tomato'], ['à¤¤', 'watermelon'], ['à¤ª', 'kite'], ['à¤«', 'flower'], ['à¤¬', 'duck'], ['à¤®', 'fish'], ['à¤¹', 'elephant']];
+  var HINDI = [['अ', 'pomegranate'], ['आ', 'mango'], ['इ', 'tamarind'], ['ई', 'sugarcane'], ['उ', 'owl'], ['ऊ', 'wool'], ['ऐ', 'glasses'], ['ओ', 'dew-drops'],
+    ['औ', 'woman'], ['क', 'pigeon'], ['ख', 'rabbit'], ['ग', 'flower-pot'], ['घ', 'house'], ['च', 'spoon'], ['छ', 'umbrella'], ['ज', 'ship'], ['झ', 'flag'],
+    ['ट', 'tomato'], ['त', 'watermelon'], ['प', 'kite'], ['फ', 'flower'], ['ब', 'duck'], ['म', 'fish'], ['ह', 'elephant']];
   var COUNTABLE = ['apple', 'balloon', 'car', 'chick', 'fish', 'flower', 'star', 'strawberry'];
   var SPELL = ['bat', 'bed', 'bus', 'cat', 'cow', 'dog', 'egg', 'fox', 'hat', 'hen', 'pig', 'sun', 'fish', 'frog'];
   var OPPOSITES = [
-    { a: ['arrow-up', 'Up', 'à¤Šà¤ªà¤°'], b: ['arrow-down', 'Down', 'à¤¨à¥€à¤šà¥‡'] }, { a: ['full-glass', 'Full', 'à¤­à¤°à¤¾'], b: ['empty-glass', 'Empty', 'à¤–à¤¾à¤²à¥€'] },
-    { a: ['happy-face', 'Happy', 'à¤–à¥à¤¶'], b: ['sad-face', 'Sad', 'à¤‰à¤¦à¤¾à¤¸'] }, { a: ['baby', 'New / Young', 'à¤¨à¤¯à¤¾ / à¤›à¥‹à¤Ÿà¤¾'], b: ['old-man', 'Old', 'à¤¬à¥‚à¤¢à¤¼à¤¾'] },
-    { a: ['fire', 'Hot', 'à¤—à¤°à¤®'], b: ['snowflake', 'Cold', 'à¤ à¤‚à¤¡à¤¾'] }, { a: ['sun', 'Day', 'à¤¦à¤¿à¤¨'], b: ['moon', 'Night', 'à¤°à¤¾à¤¤'] },
-    { a: ['elephant', 'Big', 'à¤¬à¤¡à¤¼à¤¾'], b: ['mouse', 'Small', 'à¤›à¥‹à¤Ÿà¤¾'] }, { a: ['rabbit', 'Fast', 'à¤¤à¥‡à¤œà¤¼'], b: ['turtle', 'Slow', 'à¤§à¥€à¤®à¤¾'] }
+    { a: ['arrow-up', 'Up', 'ऊपर'], b: ['arrow-down', 'Down', 'नीचे'] }, { a: ['full-glass', 'Full', 'भरा'], b: ['empty-glass', 'Empty', 'खाली'] },
+    { a: ['happy-face', 'Happy', 'खुश'], b: ['sad-face', 'Sad', 'उदास'] }, { a: ['baby', 'New / Young', 'नया / छोटा'], b: ['old-man', 'Old', 'बूढ़ा'] },
+    { a: ['fire', 'Hot', 'गरम'], b: ['snowflake', 'Cold', 'ठंडा'] }, { a: ['sun', 'Day', 'दिन'], b: ['moon', 'Night', 'रात'] },
+    { a: ['elephant', 'Big', 'बड़ा'], b: ['mouse', 'Small', 'छोटा'] }, { a: ['rabbit', 'Fast', 'तेज़'], b: ['turtle', 'Slow', 'धीमा'] }
   ];
-  var NUMW = [['zero', 'à¤¶à¥‚à¤¨à¥à¤¯'], ['one', 'à¤à¤•'], ['two', 'à¤¦à¥‹'], ['three', 'à¤¤à¥€à¤¨'], ['four', 'à¤šà¤¾à¤°'], ['five', 'à¤ªà¤¾à¤à¤š'], ['six', 'à¤›à¤¹'], ['seven', 'à¤¸à¤¾à¤¤'], ['eight', 'à¤†à¤ '], ['nine', 'à¤¨à¥Œ'], ['ten', 'à¤¦à¤¸'],
-    ['eleven', 'à¤—à¥à¤¯à¤¾à¤°à¤¹'], ['twelve', 'à¤¬à¤¾à¤°à¤¹'], ['thirteen', 'à¤¤à¥‡à¤°à¤¹'], ['fourteen', 'à¤šà¥Œà¤¦à¤¹'], ['fifteen', 'à¤ªà¤‚à¤¦à¥à¤°à¤¹'], ['sixteen', 'à¤¸à¥‹à¤²à¤¹'], ['seventeen', 'à¤¸à¤¤à¥à¤°à¤¹'], ['eighteen', 'à¤…à¤ à¤¾à¤°à¤¹'], ['nineteen', 'à¤‰à¤¨à¥à¤¨à¥€à¤¸'], ['twenty', 'à¤¬à¥€à¤¸']];
-  var DAYS = [['Sunday', 'à¤°à¤µà¤¿à¤µà¤¾à¤°'], ['Monday', 'à¤¸à¥‹à¤®à¤µà¤¾à¤°'], ['Tuesday', 'à¤®à¤‚à¤—à¤²à¤µà¤¾à¤°'], ['Wednesday', 'à¤¬à¥à¤§à¤µà¤¾à¤°'], ['Thursday', 'à¤—à¥à¤°à¥à¤µà¤¾à¤°'], ['Friday', 'à¤¶à¥à¤•à¥à¤°à¤µà¤¾à¤°'], ['Saturday', 'à¤¶à¤¨à¤¿à¤µà¤¾à¤°']];
-  var SHAPES = [['circle', 'Circle', 'à¤—à¥‹à¤²à¤¾'], ['square', 'Square', 'à¤µà¤°à¥à¤—'], ['triangle', 'Triangle', 'à¤¤à¥à¤°à¤¿à¤­à¥à¤œ'], ['rectangle', 'Rectangle', 'à¤†à¤¯à¤¤'], ['star', 'Star', 'à¤¤à¤¾à¤°à¤¾'], ['heart', 'Heart', 'à¤¦à¤¿à¤²'], ['diamond', 'Diamond', 'à¤¸à¤®à¤šà¤¤à¥à¤°à¥à¤­à¥à¤œ'], ['oval', 'Oval', 'à¤…à¤‚à¤¡à¤¾à¤•à¤¾à¤°']];
-  var COLORS = [['#e53935', 'Red', 'à¤²à¤¾à¤²'], ['#1e88e5', 'Blue', 'à¤¨à¥€à¤²à¤¾'], ['#43a047', 'Green', 'à¤¹à¤°à¤¾'], ['#fdd835', 'Yellow', 'à¤ªà¥€à¤²à¤¾'], ['#fb8c00', 'Orange', 'à¤¨à¤¾à¤°à¤‚à¤—à¥€'], ['#ec407a', 'Pink', 'à¤—à¥à¤²à¤¾à¤¬à¥€'], ['#8e24aa', 'Purple', 'à¤¬à¥ˆà¤‚à¤—à¤¨à¥€'], ['#6d4c41', 'Brown', 'à¤­à¥‚à¤°à¤¾']];
+  var NUMW = [['zero', 'शून्य'], ['one', 'एक'], ['two', 'दो'], ['three', 'तीन'], ['four', 'चार'], ['five', 'पाँच'], ['six', 'छह'], ['seven', 'सात'], ['eight', 'आठ'], ['nine', 'नौ'], ['ten', 'दस'],
+    ['eleven', 'ग्यारह'], ['twelve', 'बारह'], ['thirteen', 'तेरह'], ['fourteen', 'चौदह'], ['fifteen', 'पंद्रह'], ['sixteen', 'सोलह'], ['seventeen', 'सत्रह'], ['eighteen', 'अठारह'], ['nineteen', 'उन्नीस'], ['twenty', 'बीस']];
+  var DAYS = [['Sunday', 'रविवार'], ['Monday', 'सोमवार'], ['Tuesday', 'मंगलवार'], ['Wednesday', 'बुधवार'], ['Thursday', 'गुरुवार'], ['Friday', 'शुक्रवार'], ['Saturday', 'शनिवार']];
+  var SHAPES = [['circle', 'Circle', 'गोला'], ['square', 'Square', 'वर्ग'], ['triangle', 'Triangle', 'त्रिभुज'], ['rectangle', 'Rectangle', 'आयत'], ['star', 'Star', 'तारा'], ['heart', 'Heart', 'दिल'], ['diamond', 'Diamond', 'समचतुर्भुज'], ['oval', 'Oval', 'अंडाकार']];
+  var COLORS = [['#e53935', 'Red', 'लाल'], ['#1e88e5', 'Blue', 'नीला'], ['#43a047', 'Green', 'हरा'], ['#fdd835', 'Yellow', 'पीला'], ['#fb8c00', 'Orange', 'नारंगी'], ['#ec407a', 'Pink', 'गुलाबी'], ['#8e24aa', 'Purple', 'बैंगनी'], ['#6d4c41', 'Brown', 'भूरा']];
 
   /* ---------- Small helpers ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -92,7 +92,7 @@
   function celebrate(n) {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var box = $('#kc-confetti'); if (!box) return;
-    var bits = ['â­', 'ðŸŽˆ', 'ðŸŒŸ', 'ðŸŽ‰', 'âœ¨', 'ðŸŽ', 'ðŸŽŠ'];
+    var bits = ['⭐', '🎈', '🌟', '🎉', '✨', '🍎', '🎊'];
     for (var i = 0; i < (n || 18); i++) {
       var s = document.createElement('span'); s.textContent = pick(bits);
       s.style.left = rnd(100) + '%'; s.style.fontSize = (18 + rnd(22)) + 'px'; s.style.animationDuration = (1.1 + Math.random() * 1.1) + 's'; s.style.animationDelay = (Math.random() * 0.25) + 's';
@@ -103,16 +103,16 @@
 
   /* ---------- Activities ---------- */
   var ACT = [
-    { id: 'abc', t: 'ABC Letters', h: 'à¤…à¤‚à¤—à¥à¤°à¥‡à¤œà¤¼à¥€ à¤µà¤°à¥à¤£à¤®à¤¾à¤²à¤¾', lv: ['KG'], pic: 'apple', c: 'c1', d: 'Learn A to Z with a picture for every letter. Then play the quiz.', run: runAbc },
-    { id: 'hindi', t: 'Hindi Alphabet', h: 'à¤¹à¤¿à¤‚à¤¦à¥€ à¤µà¤°à¥à¤£à¤®à¤¾à¤²à¤¾', lv: ['UKG'], pic: 'mango', c: 'c2', d: 'à¤… à¤¸à¥‡ à¤…à¤¨à¤¾à¤°. Learn Hindi letters with pictures, then take the quiz.', run: runHindi },
-    { id: 'numbers', t: 'Numbers 1 to 20', h: 'à¤—à¤¿à¤¨à¤¤à¥€ 1 à¤¸à¥‡ 20', lv: ['KG', 'UKG'], pic: 'balloon', c: 'c3', d: 'Tap a number to see that many pictures. English and Hindi names.', run: runNumbers },
-    { id: 'count', t: 'Count & Pick', h: 'à¤—à¤¿à¤¨à¥‹ à¤”à¤° à¤šà¥à¤¨à¥‹', lv: ['KG'], pic: 'star', c: 'c4', d: 'Count the pictures and pick the right number.', run: runCount },
-    { id: 'add', t: 'Add with Pictures', h: 'à¤šà¤¿à¤¤à¥à¤°à¥‹à¤‚ à¤¸à¥‡ à¤œà¥‹à¤¡à¤¼à¥‹', lv: ['UKG'], pic: 'strawberry', c: 'c5', d: 'Simple addition with pictures. Sums up to 10.', run: runAdd },
-    { id: 'words', t: 'Picture Words', h: 'à¤šà¤¿à¤¤à¥à¤° à¤¸à¥‡ à¤¶à¤¬à¥à¤¦', lv: ['UKG'], pic: 'cat', c: 'c6', d: 'Look at the picture and tap the letters to spell the word.', run: runWords },
-    { id: 'missing', t: 'Missing Letter', h: 'à¤›à¥‚à¤Ÿà¤¾ à¤¹à¥à¤† à¤…à¤•à¥à¤·à¤°', lv: ['Class 1'], pic: 'frog', c: 'c7', d: 'One letter is hidden. Pick the letter that completes the word.', run: runMissing },
-    { id: 'opposites', t: 'Opposites', h: 'à¤µà¤¿à¤²à¥‹à¤® à¤¶à¤¬à¥à¤¦', lv: ['Class 1'], pic: 'elephant', c: 'c8', d: 'Up and down, hot and cold. Match each word to its opposite.', run: runOpposites },
-    { id: 'days', t: 'Days of the Week', h: 'à¤¸à¤ªà¥à¤¤à¤¾à¤¹ à¤•à¥‡ à¤¦à¤¿à¤¨', lv: ['Class 1'], pic: 'calendar', c: 'c9', d: 'Learn the seven days, then answer what comes before and after.', run: runDays },
-    { id: 'shapes', t: 'Shapes & Colours', h: 'à¤†à¤•à¤¾à¤° à¤”à¤° à¤°à¤‚à¤—', lv: ['KG', 'UKG'], pic: 'kite', c: 'c10', d: 'Name the shape or the colour. Great first game for little ones.', run: runShapes }
+    { id: 'abc', t: 'ABC Letters', h: 'अंग्रेज़ी वर्णमाला', lv: ['KG'], pic: 'apple', c: 'c1', d: 'Learn A to Z with a picture for every letter. Then play the quiz.', run: runAbc },
+    { id: 'hindi', t: 'Hindi Alphabet', h: 'हिंदी वर्णमाला', lv: ['UKG'], pic: 'mango', c: 'c2', d: 'अ से अनार. Learn Hindi letters with pictures, then take the quiz.', run: runHindi },
+    { id: 'numbers', t: 'Numbers 1 to 20', h: 'गिनती 1 से 20', lv: ['KG', 'UKG'], pic: 'balloon', c: 'c3', d: 'Tap a number to see that many pictures. English and Hindi names.', run: runNumbers },
+    { id: 'count', t: 'Count & Pick', h: 'गिनो और चुनो', lv: ['KG'], pic: 'star', c: 'c4', d: 'Count the pictures and pick the right number.', run: runCount },
+    { id: 'add', t: 'Add with Pictures', h: 'चित्रों से जोड़ो', lv: ['UKG'], pic: 'strawberry', c: 'c5', d: 'Simple addition with pictures. Sums up to 10.', run: runAdd },
+    { id: 'words', t: 'Picture Words', h: 'चित्र से शब्द', lv: ['UKG'], pic: 'cat', c: 'c6', d: 'Look at the picture and tap the letters to spell the word.', run: runWords },
+    { id: 'missing', t: 'Missing Letter', h: 'छूटा हुआ अक्षर', lv: ['Class 1'], pic: 'frog', c: 'c7', d: 'One letter is hidden. Pick the letter that completes the word.', run: runMissing },
+    { id: 'opposites', t: 'Opposites', h: 'विलोम शब्द', lv: ['Class 1'], pic: 'elephant', c: 'c8', d: 'Up and down, hot and cold. Match each word to its opposite.', run: runOpposites },
+    { id: 'days', t: 'Days of the Week', h: 'सप्ताह के दिन', lv: ['Class 1'], pic: 'calendar', c: 'c9', d: 'Learn the seven days, then answer what comes before and after.', run: runDays },
+    { id: 'shapes', t: 'Shapes & Colours', h: 'आकार और रंग', lv: ['KG', 'UKG'], pic: 'kite', c: 'c10', d: 'Name the shape or the colour. Great first game for little ones.', run: runShapes }
   ];
   function byId(id) { for (var i = 0; i < ACT.length; i++) if (ACT[i].id === id) return ACT[i]; return null; }
 
@@ -125,17 +125,17 @@
     var list = ACT.filter(function (a) { return level === 'All' || a.lv.indexOf(level) > -1; });
     grid.innerHTML = list.map(function (a) {
       return '<a class="kc-card ' + a.c + '" href="#' + a.id + '" data-id="' + a.id + '"><span class="kc-thumb">' + img(a.pic) + '</span>' +
-        '<span class="kc-body"><span class="kc-lv">' + a.lv.join(' Â· ') + '</span><strong>' + a.t + '</strong><span class="kc-hi" lang="hi">' + a.h + '</span><small>' + a.d + '</small>' +
+        '<span class="kc-body"><span class="kc-lv">' + a.lv.join(' · ') + '</span><strong>' + a.t + '</strong><span class="kc-hi" lang="hi">' + a.h + '</span><small>' + a.d + '</small>' +
         '<span class="kc-foot">' + starRow(stars[a.id] || 0) + '<em>Play <i class="fa-solid fa-play" aria-hidden="true"></i></em></span></span></a>';
     }).join('');
     $$('.kc-tab').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lv') === level); });
   }
   function route() {
     var id = (location.hash || '').replace('#', ''), a = byId(id);
-    if (!a) { root.classList.remove('playing'); stage.innerHTML = ''; drawHome(); document.title = 'Kids Corner | Learn & Play for KG, UKG and Class 1 | CSC VLE TOOLS'; return; }
-    root.classList.add('playing'); document.title = a.t + ' | Kids Corner | CSC VLE TOOLS';
+    if (!a) { root.classList.remove('playing'); stage.innerHTML = ''; drawHome(); document.title = 'Kids Corner | Learn & Play for KG, UKG and Class 1 | SevaSphere'; return; }
+    root.classList.add('playing'); document.title = a.t + ' | Kids Corner | SevaSphere';
     stage.innerHTML = '<div class="ks-head ' + a.c + '"><a class="ks-back" href="#"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All games</a>' +
-      '<h2>' + a.t + ' <span lang="hi">' + a.h + '</span></h2><span class="ks-lv">' + a.lv.join(' Â· ') + '</span></div><div class="ks-body" id="ks-body"></div>';
+      '<h2>' + a.t + ' <span lang="hi">' + a.h + '</span></h2><span class="ks-lv">' + a.lv.join(' · ') + '</span></div><div class="ks-body" id="ks-body"></div>';
     window.scrollTo({ top: Math.max(0, root.getBoundingClientRect().top + window.scrollY - 70), behavior: 'auto' });
     a.run($('#ks-body'), a);
   }
@@ -146,7 +146,7 @@
     if ((stars[act.id] || 0) < st) { stars[act.id] = st; store.set('kc_stars', stars); }
     sWin(); celebrate(34);
     var next = ACT[(ACT.indexOf(act) + 1) % ACT.length];
-    body.innerHTML = '<div class="kz-done"><div class="kz-trophy">' + (st === 3 ? 'ðŸ†' : st === 2 ? 'ðŸ¥ˆ' : 'ðŸŒ±') + '</div><h3>' + (st === 3 ? 'Superstar!' : st === 2 ? 'Well done!' : 'Good try!') + '</h3>' +
+    body.innerHTML = '<div class="kz-done"><div class="kz-trophy">' + (st === 3 ? '🏆' : st === 2 ? '🥈' : '🌱') + '</div><h3>' + (st === 3 ? 'Superstar!' : st === 2 ? 'Well done!' : 'Good try!') + '</h3>' +
       starRow(st).replace('kc-stars', 'kc-stars big') + '<p>You got <b>' + score + '</b> out of <b>' + total + '</b> on the first try.</p>' +
       '<div class="kz-actions"><button type="button" class="kb kb-go" id="kz-again"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Play again</button>' +
       '<a class="kb" href="#' + next.id + '">Next: ' + next.t + ' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a><a class="kb kb-alt" href="#">All games</a></div></div>';
@@ -158,7 +158,7 @@
     function round() {
       var q = cfg.make(), tries = 0;
       body.innerHTML = (back ? '<div class="kz-tools"><button type="button" class="kb kb-alt" id="kz-learn"><i class="fa-solid fa-book-open" aria-hidden="true"></i> ' + back.label + '</button></div>' : '') + '<div class="kz"><div class="kz-bar" aria-hidden="true"><i style="width:' + (i / total * 100) + '%"></i></div>' +
-        '<div class="kz-top"><span>Question ' + (i + 1) + ' of ' + total + '</span><span>â­ ' + score + '</span></div>' +
+        '<div class="kz-top"><span>Question ' + (i + 1) + ' of ' + total + '</span><span>⭐ ' + score + '</span></div>' +
         '<div class="kz-prompt">' + q.prompt + (q.spoken ? '<button type="button" class="kb-say" aria-label="Hear it"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>' : '') + '</div>' +
         '<div class="kz-opts ' + (q.cls || '') + '">' + q.opts.map(function (o, k) { return '<button type="button" class="kz-opt" data-k="' + k + '">' + o.html + '</button>'; }).join('') + '</div>' +
         '<p class="kz-msg" aria-live="polite"></p></div>';
@@ -185,7 +185,7 @@
     var wrong = sample(pool, 2, [correct]);
     return shuffle([correct].concat(wrong)).map(function (x) { return { html: fmt(x), v: keyfn(x) }; });
   }
-
+  
   /* ---------- 1. ABC ---------- */
   function learnGrid(body, act, items, o) {
     var cur = 0;
@@ -210,7 +210,7 @@
     show(0, false);
   }
   function printChart(title, items, cell) {
-    var p = $('#kc-print'); p.innerHTML = '<h1>' + title + '</h1><p>CSC VLE TOOLS Â· Kids Corner</p><div class="pc-grid">' + items.map(function (it) { return '<div class="pc-cell">' + img(it[1]) + '<div>' + cell(it) + '</div></div>'; }).join('') + '</div>';
+    var p = $('#kc-print'); p.innerHTML = '<h1>' + title + '</h1><p>SevaSphere · Kids Corner</p><div class="pc-grid">' + items.map(function (it) { return '<div class="pc-cell">' + img(it[1]) + '<div>' + cell(it) + '</div></div>'; }).join('') + '</div>';
     document.body.classList.add('kc-printing');
     var imgs = $$('img', p), left = imgs.length, go = function () { setTimeout(function () { window.print(); }, 60); };
     imgs.forEach(function (im) { if (im.complete) left--; else im.onload = im.onerror = function () { if (--left <= 0) go(); }; });
@@ -245,17 +245,17 @@
       quiz(body, act, {
         total: 8, make: function () {
           var c = pick(HINDI);
-          return { prompt: '<span class="kz-q">à¤‡à¤¸ à¤šà¤¿à¤¤à¥à¤° à¤•à¤¾ à¤ªà¤¹à¤²à¤¾ à¤…à¤•à¥à¤·à¤° à¤•à¥Œà¤¨ à¤¸à¤¾ à¤¹à¥ˆ?</span><span class="kz-pic">' + img(c[1]) + '</span>', spoken: { t: hi(c[1]), l: 'hi' }, cls: 'letters', ans: c[0],
+          return { prompt: '<span class="kz-q">इस चित्र का पहला अक्षर कौन सा है?</span><span class="kz-pic">' + img(c[1]) + '</span>', spoken: { t: hi(c[1]), l: 'hi' }, cls: 'letters', ans: c[0],
             opts: opts3(c, HINDI, function (x) { return '<span class="kz-letter" lang="hi">' + x[0] + '</span>'; }, function (x) { return x[0]; }) };
         }
       }, { label: 'Back to letters', fn: learn });
     };
     var learn = function () {
       learnGrid(body, act, HINDI, {
-        label: 'Hindi letters', title: 'à¤¹à¤¿à¤‚à¤¦à¥€ à¤µà¤°à¥à¤£à¤®à¤¾à¤²à¤¾ à¤šà¤¾à¤°à¥à¤Ÿ', cell: function (it) { return '<b lang="hi">' + it[0] + '</b> <span lang="hi">' + hi(it[1]) + '</span>'; },
+        label: 'Hindi letters', title: 'हिंदी वर्णमाला चार्ट', cell: function (it) { return '<b lang="hi">' + it[0] + '</b> <span lang="hi">' + hi(it[1]) + '</span>'; },
         big: function (it) { return '<div class="kl-letter" lang="hi">' + it[0] + '</div>'; },
-        line: function (it) { return '<span lang="hi"><b>' + it[0] + '</b> à¤¸à¥‡ ' + hi(it[1]) + '</span><span>' + en(it[1]) + '</span>'; },
-        speak: function (it) { speak(it[0] + ' à¤¸à¥‡ ' + hi(it[1]), 'hi'); }, quiz: play
+        line: function (it) { return '<span lang="hi"><b>' + it[0] + '</b> से ' + hi(it[1]) + '</span><span>' + en(it[1]) + '</span>'; },
+        speak: function (it) { speak(it[0] + ' से ' + hi(it[1]), 'hi'); }, quiz: play
       });
     };
     learn();
@@ -327,7 +327,7 @@
     function round() {
       var w = order[i], letters = w.toUpperCase().split(''), tiles = shuffle(letters.map(function (c, k) { return { c: c, k: k }; })), pos = 0, mistakes = 0;
       if (letters.length > 1 && tiles.every(function (t, k) { return t.c === letters[k]; })) tiles.reverse();
-      body.innerHTML = '<div class="kz"><div class="kz-bar" aria-hidden="true"><i style="width:' + (i / total * 100) + '%"></i></div><div class="kz-top"><span>Word ' + (i + 1) + ' of ' + total + '</span><span>â­ ' + score + '</span></div>' +
+      body.innerHTML = '<div class="kz"><div class="kz-bar" aria-hidden="true"><i style="width:' + (i / total * 100) + '%"></i></div><div class="kz-top"><span>Word ' + (i + 1) + ' of ' + total + '</span><span>⭐ ' + score + '</span></div>' +
         '<div class="kz-prompt"><span class="kz-pic big">' + img(w) + '</span><button type="button" class="kb-say" aria-label="Hear it"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button></div>' +
         '<div class="kw-slots" aria-label="Your word">' + letters.map(function () { return '<span class="kw-slot"></span>'; }).join('') + '</div>' +
         '<div class="kw-tiles">' + tiles.map(function (t, k) { return '<button type="button" class="kw-tile" data-k="' + k + '">' + t.c + '</button>'; }).join('') + '</div>' +

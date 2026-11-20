@@ -1,0 +1,32 @@
+SevaSphere full build (v42)
+- New SevaSphere home page: hero with photo, image cards for every category, Kids Corner as a small card.
+- Six colour directions (Dynamic Blue, Electric Cyan, Royal Violet, Emerald, Vibrant Orange, Bright Pink) via the Theme button.
+- 6 new tools: AI Prompt Generator, AI Voice Studio, Smart Notebook, Website Planner, Free Website Studio, Screen Recorder.
+- New category page: AI & Writing Tools (cat-ai.html). Website Tools now has 5 tools. Quick Utilities has 6.
+- PDF Tools card icon replaced with a clean 3D PDF image.
+- Tool count on the home page counts the real tools (89), it is not typed by hand.
+- Website Planner and Website Studio keep robots noindex (as in your files).
+- AI Voice Studio: AI mode needs the visitor's own OpenAI key. Free mode records this tab's audio (desktop Chrome or Edge).
+- Domain set to https://cschelpdesk.github.io/ in canonical, sitemap and robots.
+- To fill in: social links, contact details, Google verification (see SETUP_GUIDE.md).
+
+v4.1 home page order: Hero (tagline is a button) > Daily Use Apps (14 cards) > All Categories > Prompt Studio > Most Used Tools > Search the Web > Why SevaSphere? > How it works > Popular Topics > Official Portal Quick Links > FAQ > Help us make it better (Follow Us, Stay Updated, Quick Links, Chat with Us) > More (House Expense, Kids Corner, Prompt Studio, Step Guides, Web Search, Handwriting Converter).
+The old Daily Use Apps card section is removed. Stay Updated sends the email to the feedback page (no mailing list is connected yet).
+
+v4.2 (from your Resize & Compress report)
+- Thumb Impression Resizer: new option "Clean / change background" (white, light blue, cream or custom colour) with a strength slider, to fix grey paper from mobile camera photos.
+- Image Converter: added a Preview window and small picture in each list row; shows before and after size.
+- JPG / PNG Converter & Compressor: added a Preview window and small pictures; shows before and after size.
+
+v4.3
+- New tool: Translator (tools_translator.html), in AI & Writing Tools. English or Hindi to Hindi, Punjabi, Haryanvi, Bhojpuri. Copy, download TXT, listen.
+- Hindi and Punjabi use the free MyMemory online service. Haryanvi and Bhojpuri are made from Hindi by word rules (approximate). Optional AI method uses the visitor's own OpenAI key.
+- Tool count is now 90.
+
+v4.4
+- Translator now works in any direction between English, Hindi, Haryanvi, Punjabi and Bhojpuri, with a Swap button. Haryanvi and Bhojpuri are handled through Hindi by word rules (approximate). Backup translation service added.
+
+
+v4.5 (19 Nov 2026)
+- NEW kids-classes.html: Kids Learning for Class 2, 3, 4, 5. Subjects: Maths (random questions every time), English, Hindi, EVS, GK. Short lesson + quiz, stars, best score saved in browser, Hindi/English labels, read-aloud.
+- Linked from Kids Corner hero and home page.

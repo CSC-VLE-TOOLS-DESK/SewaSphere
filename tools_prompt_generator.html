@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Prompt Generator – ChatGPT, Claude, Gemini, Copilot</title>
+<meta name="description" content="Free AI prompt generator with dropdown categories. Build better prompts for ChatGPT, Claude, Gemini, Copilot, Perplexity and more.">
+<style>
+:root{--p:#c98a0b;--s:#f0c14b;--btn:linear-gradient(135deg,#c98a0b,#f0c14b);--bg:#faf7f0;--card:#fff;--tx:#1d1d1f;--mut:#6b6b73;--bd:#e3ddd0;--fld:#fff;--ok:#1a8f4a}
+body[data-theme="dark"]{--bg:#14161b;--card:#1d2027;--tx:#eceef2;--mut:#9aa0ac;--bd:#2c303a;--fld:#14161b}
+body[data-theme="ocean"]{--bg:#eef7fb;--bd:#cfe6f0}
+body[data-theme="forest"]{--bg:#f0f7f2;--bd:#d3e6da}
+body[data-theme="rose"]{--bg:#fff3f6;--bd:#f4d4dd}
+body[data-theme="neon"]{--bg:#0b0d17;--card:#141828;--tx:#f2f4ff;--mut:#9aa3c7;--bd:#262c4a;--fld:#0b0d17}
+body[data-canvas="dots"]{background-image:radial-gradient(var(--bd) 1.2px,transparent 1.2px);background-size:18px 18px}
+body[data-canvas="grid"]{background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:28px 28px}
+body[data-canvas="aurora"]{background-image:radial-gradient(circle at 15% 10%,color-mix(in srgb,var(--p) 25%,transparent),transparent 45%),radial-gradient(circle at 85% 20%,color-mix(in srgb,var(--s) 25%,transparent),transparent 45%)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background-color:var(--bg);color:var(--tx);line-height:1.5;transition:background-color .25s}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 14px 60px}
+header{text-align:center;margin:10px 0 22px}
+h1{margin:0 0 6px;font-size:clamp(1.5rem,4vw,2.3rem);background:var(--btn);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{margin:0;color:var(--mut)}
+.grid{display:block;max-width:780px;margin:0 auto}
+.sticky{margin-top:18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.05)}
+.card h2{font-size:1rem;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.card h2 span{background:var(--btn);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:.8rem}
+.row{display:grid;gap:12px;grid-template-columns:1fr}
+label{display:block;font-weight:700;font-size:.85rem;margin:10px 0 4px}
+select,input[type=text],textarea{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--fld);color:var(--tx);font:inherit;font-size:.93rem}
+select:focus,input:focus,textarea:focus{outline:2px solid var(--p);outline-offset:0}
+textarea{resize:vertical;min-height:70px}
+#out{min-height:300px;font-family:ui-monospace,Consolas,monospace;font-size:.86rem;line-height:1.55}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chips label{display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:500;font-size:.8rem;border:1px solid var(--bd);border-radius:999px;padding:5px 11px;cursor:pointer;background:var(--fld)}
+.chips input{accent-color:var(--p)}
+.chips label:has(input:checked){border-color:var(--p);background:color-mix(in srgb,var(--p) 14%,transparent)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:11px 18px;cursor:pointer;color:#fff;background:var(--btn);transition:transform .1s,opacity .2s}
+button:hover{opacity:.92}button:active{transform:scale(.97)}
+button.alt{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+button.big{font-size:1.05rem;padding:13px 26px}
+.meter{height:10px;background:var(--bd);border-radius:99px;overflow:hidden;margin:6px 0}
+.meter i{display:block;height:100%;width:0;background:var(--btn);transition:width .3s}
+.mrow{display:flex;justify-content:space-between;font-size:.82rem;color:var(--mut)}
+.tips{margin:10px 0 0;padding-left:18px;color:var(--mut);font-size:.83rem}
+.hint{font-size:.78rem;color:var(--mut);margin-top:3px}
+.radio{display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+.radio label{display:inline-flex;gap:6px;align-items:center;font-weight:500;margin:0}
+.radio input{accent-color:var(--p)}
+input[type=color]{width:46px;height:34px;padding:0;border:1px solid var(--bd);border-radius:8px;background:none;cursor:pointer}
+.colors{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px;font-weight:700;font-size:.85rem}
+.colors span{display:inline-flex;align-items:center;gap:6px}
+details{margin-top:14px;border-top:1px dashed var(--bd);padding-top:10px}
+summary{cursor:pointer;font-weight:700;font-size:.9rem}
+#hist{list-style:none;margin:8px 0 0;padding:0;max-height:200px;overflow:auto}
+#hist li{padding:7px 10px;border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;font-size:.82rem;cursor:pointer;background:var(--fld)}
+#hist li:hover{border-color:var(--p)}
+#hist small{color:var(--mut);display:block}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#222;color:#fff;padding:10px 18px;border-radius:999px;font-size:.88rem;opacity:0;transition:.3s;z-index:9}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.hide{display:none!important}
+.steps{max-width:1180px;margin:0 auto 18px;padding:12px 16px;border:1px dashed var(--p);border-radius:12px;background:color-mix(in srgb,var(--p) 8%,var(--card));font-size:.92rem;text-align:center}
+.sum{list-style:none;display:flex;align-items:center;gap:8px;font-size:1rem}
+.sum::-webkit-details-marker{display:none}
+.sum::after{content:"▾";margin-left:auto;color:var(--mut)}
+details[open]>.sum::after{content:"▴"}
+.num{background:var(--btn);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:.8rem;flex:none}
+.livel{display:flex;gap:8px;align-items:center;font-weight:500;font-size:.8rem;color:var(--mut);margin:8px 0 0}
+.livel input{accent-color:var(--p)}
+.advbtn{width:100%;text-align:left;padding:13px 16px;font-size:.95rem}
+@media(min-width:600px){.compact .row.three{grid-template-columns:1fr 1fr 1fr}.compact .row.two{grid-template-columns:1fr 1fr}}
+</style>
+<style>.ss-bar{position:relative;z-index:9999;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:8px 14px;background:linear-gradient(180deg,#14306f,#0d1b3d);color:#fff;font:700 13px/1.2 "Nunito","Segoe UI",system-ui,sans-serif;box-shadow:0 3px 0 #06102a}.ss-bar a{color:#fff;text-decoration:none;padding:5px 11px;border-radius:9px;background:rgba(255,255,255,.12)}.ss-bar a:hover,.ss-bar a:focus-visible{background:#ffc928;color:#2b1d00;outline:0}.ss-bar b{margin-right:auto;font-weight:800;letter-spacing:.2px}@media print{.ss-bar{display:none}}</style><link rel="icon" href="favicon.svg?v=42" type="image/svg+xml"><link rel="icon" href="favicon-32.png?v=42" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=42">
+</head>
+<body data-theme="gold" data-canvas="plain">
+<nav class="ss-bar" aria-label="SevaSphere navigation"><b>SevaSphere</b><a href="index.html">&larr; Home</a><a href="cat-ai.html">AI &amp; Writing Tools</a><a href="index.html#tools">All tools</a></nav>
+<div class="wrap">
+<header>
+  <h1>AI Prompt Generator</h1>
+  <p>Pick a category, fill the details, get a ready-to-paste prompt for ChatGPT, Claude, Gemini, Copilot &amp; more.</p>
+</header>
+<div class="steps"><b>Quick start:</b> ① Pick a category &nbsp;→&nbsp; ② Click <b>Try Example</b> &nbsp;→&nbsp; ③ Copy your prompt. Then change anything you like, the prompt updates live.</div>
+
+<div class="grid">
+<!-- LEFT: FORM -->
+<div>
+  <div class="card">
+    <h2><span>1</span> AI Platform &amp; Category</h2>
+    <div class="row two">
+      <div><label for="plat">AI Platform</label><select id="plat"></select></div>
+      <div><label for="cat">Category</label><select id="cat"></select></div>
+    </div>
+    <div class="row two">
+      <div><label for="task">Task Type</label><select id="task"></select></div>
+      <div><label for="persona">AI Role / Persona</label><select id="persona"></select></div>
+    </div>
+    <div class="btns"><button class="big" id="exBtn">🎲 Try Example (auto-fill + generate)</button></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2><span>2</span> Your Idea &amp; Context</h2>
+    <label for="topicPick">Topic / Goal <b style="color:#d33">*</b></label>
+    <select id="topicPick"></select>
+    <input type="text" id="topic" placeholder="...or type your own idea here" style="margin-top:8px">
+    <label for="ctxPick">Extra Context <small style="font-weight:400;color:var(--mut)">(optional: pick lines to add, or type your own)</small></label>
+    <select id="ctxPick"></select>
+    <textarea id="ctx" placeholder="Who you are, your business, what you tried, constraints, keywords..." style="margin-top:8px"></textarea>
+  </div>
+
+  <div class="card compact" style="margin-top:18px">
+    <h2><span>3</span> Page Style &amp; Canvas</h2>
+    <div class="row three">
+      <div><label for="theme">Theme</label>
+        <select id="theme">
+          <option value="gold">Gold (default)</option><option value="dark">Dark</option><option value="ocean">Ocean</option>
+          <option value="forest">Forest</option><option value="rose">Rose</option><option value="neon">Neon Night</option>
+        </select></div>
+      <div><label for="canvas">Canvas</label>
+        <select id="canvas">
+          <option value="plain">Plain</option><option value="dots">Dots</option><option value="grid">Grid</option><option value="aurora">Aurora glow</option>
+        </select></div>
+      <div><label>Color Theme</label>
+        <div class="radio">
+          <label><input type="radio" name="cm" value="single"> Single</label>
+          <label><input type="radio" name="cm" value="grad" checked> Gradient</label>
+        </div></div>
+    </div>
+    <div class="colors">
+      <span>Primary Color: <input type="color" id="cp" value="#c98a0b"></span>
+      <span>Secondary Color: <input type="color" id="cs" value="#f0c14b"></span>
+    </div>
+  </div>
+
+  <div class="card compact hide" id="visBox" style="margin-top:18px">
+    <h2><span>🎨</span> Image generation options</h2>
+    <div class="row three">
+      <div><label for="target">Target generator</label><select id="target"></select></div>
+      <div><label for="vstyle">Visual style</label><select id="vstyle"></select></div>
+      <div><label for="light">Lighting</label><select id="light"></select></div>
+    </div>
+    <div class="row two">
+      <div><label for="shot">Shot / camera</label><select id="shot"></select></div>
+      <div><label for="ratio">Aspect ratio</label><select id="ratio"></select></div>
+    </div>
+  </div>
+
+  <div class="card hide" id="webBox" style="margin-top:18px">
+    <h2><span>🌐</span> Website sections</h2>
+    <label for="wcat">Website Category:</label><select id="wcat"></select>
+    <label>Color Theme:</label>
+    <div class="radio">
+      <label><input type="radio" name="wm" value="single"> Single Color</label>
+      <label><input type="radio" name="wm" value="grad" checked> Gradient Color</label>
+    </div>
+    <div class="colors">
+      <span>Primary Color: <input type="color" id="wp" value="#c98a0b"></span>
+      <span>Secondary Color: <input type="color" id="ws" value="#f0c14b"></span>
+    </div>
+    <label for="wmenu">Menu Type:</label><select id="wmenu"></select>
+    <label for="wside">Side Bar:</label><select id="wside"></select>
+    <label for="whead">Header Section:</label><select id="whead"></select>
+    <label for="whero">Hero Section:</label><select id="whero"></select>
+    <label for="wlist">Main Content / Tool List:</label><select id="wlist"></select>
+    <label for="wadd">Add / Manage Cards (buttons):</label><select id="wadd"></select>
+    <label for="wabout">About Us:</label><select id="wabout"></select>
+    <label for="wcontact">Contact Us:</label><select id="wcontact"></select>
+    <label for="wfoot">Footer Section:</label><select id="wfoot"></select>
+    <label for="wcard">Card Style:</label><select id="wcard"></select>
+    <label for="wbtn">Button Style:</label><select id="wbtn"></select>
+    <label>Extra Features (tick any):</label>
+    <div class="chips" id="wfeat"></div>
+  </div>
+
+  <div style="margin-top:18px">
+    <button type="button" class="alt advbtn" id="advBtn" aria-expanded="false">⚙️ Advanced User options (example, audience, tone, rules) ▾</button>
+  </div>
+  <div class="card compact hide" id="advBox" style="margin-top:12px">
+    <h2><span>⚙️</span> Advanced options</h2>
+    <label for="refPick">Example / Reference <small style="font-weight:400;color:var(--mut)">(optional)</small></label>
+    <select id="refPick"></select>
+    <textarea id="examples" placeholder="Paste a sample of the style or result you like." style="margin-top:8px"></textarea>
+    <div class="row three">
+      <div><label for="aud">Audience</label><select id="aud"></select></div>
+      <div><label for="tone">Tone</label><select id="tone"></select></div>
+      <div><label for="fmt">Format</label><select id="fmt"></select></div>
+    </div>
+    <div class="row three">
+      <div><label for="len">Length</label><select id="len"></select></div>
+      <div><label for="lang">Language</label><select id="lang"></select></div>
+      <div><label for="count">How many results?</label><select id="count"></select></div>
+    </div>
+    <label for="tech">Prompting Technique</label>
+    <select id="tech"></select>
+    <label>Rules (tick any)</label>
+    <div class="chips" id="cons"></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="btns" style="margin-top:0">
+      <button class="big" id="gen">⚡ Generate Prompt</button>
+      <button class="alt" id="reset">↺ Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: OUTPUT -->
+<div class="sticky">
+  <div class="card">
+    <h2><span>✨</span> Your Prompt</h2>
+    <div class="mrow"><span>Prompt strength: <b id="lvl">Weak</b></span><span id="pct">0%</span></div>
+    <div class="meter"><i id="bar"></i></div>
+    <div class="hint" id="adv">Fill in more fields to make the prompt stronger.</div>
+    <label class="livel"><input type="checkbox" id="live" checked> Live update: the prompt refreshes as you change options</label>
+    <label for="out" style="margin-top:14px">Generated prompt (you can edit it)</label>
+    <textarea id="out" placeholder="Your generated prompt will appear here..."></textarea>
+    <div class="btns">
+      <button id="copy">📋 Copy</button>
+      <button class="alt" id="open">🚀 Copy &amp; Open <span id="openName">ChatGPT</span></button>
+      <button class="alt" id="dl">⬇ Download .txt</button>
+    </div>
+    <ul class="tips" id="tips"></ul>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h2><span>🕘</span> Recent Prompts</h2>
+    <div class="hint">Saved only in this browser.</div>
+    <ul id="hist"></ul>
+    <button class="alt" id="clr" style="margin-top:6px;padding:7px 14px;font-size:.8rem">Clear history</button>
+  </div>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+
+/* ---------- DATA ---------- */
+var PLAT={
+ any:{n:"Any AI Chatbot",s:"md",tips:["State the goal first, then add context.","Paste the prompt, then answer any follow-up questions.","Iterate: reply 'shorter', 'more specific' or 'give examples'."]},
+ chatgpt:{n:"ChatGPT",s:"md",url:"https://chatgpt.com/?q=",tips:["Works best with a clear role plus step-by-step instructions.","Use Projects or Custom Instructions to save your style.","Turn on Search when you need fresh facts."]},
+ claude:{n:"Claude",s:"xml",url:"https://claude.ai/new?q=",tips:["Claude follows XML-tagged sections very well.","Put long documents first and the question last.","Use Projects to keep context between chats.","Let it ask clarifying questions for better output."]},
+ gemini:{n:"Gemini",s:"ptcf",url:"https://gemini.google.com/app",tips:["Use Persona + Task + Context + Format.","Attach files or links for extra context.","Save a reusable persona as a Gem.","Ask for a table or checklist for quick scanning."]},
+ copilot:{n:"Microsoft Copilot",s:"brief",url:"https://copilot.microsoft.com/?q=",tips:["Keep it goal-focused: goal, context, expectations, source.","In Microsoft 365, reference a file, email or meeting.","Ask for a specific format such as a table or email."]},
+ perplexity:{n:"Perplexity",s:"brief",cite:1,url:"https://www.perplexity.ai/search?q=",tips:["Ask research questions; it searches the web and cites sources.","Name the time period or region you care about.","Use Focus modes (Academic, Video, etc.) for narrower results."]},
+ grok:{n:"Grok",s:"md",url:"https://grok.com/?q=",tips:["Good for current topics and conversational answers.","Be explicit about tone; it follows style instructions."]},
+ deepseek:{n:"DeepSeek",s:"md",url:"https://chat.deepseek.com/",tips:["Strong on math, code and reasoning: ask for step-by-step logic.","Give exact inputs and expected outputs for code tasks."]},
+ meta:{n:"Meta AI",s:"brief",url:"https://www.meta.ai/",tips:["Keep prompts short and clear.","Great for quick ideas, captions and image prompts."]}
+};
+
+/* [icon, name, role, example, visualFlag, noteFlag, tasks[]] */
+var CATS=[
+["✍️","Writing & Blogging","an expert content writer and editor","Beginner's guide to saving money on groceries",0,0,["Blog post","Article outline","Rewrite / paraphrase text","Proofread & edit","Summarize text","Headline ideas","Newsletter","Press release","Product description","Short story or script"]],
+["🔎","SEO & Website Content","a senior SEO strategist","a free online PDF tools website",0,0,["Keyword research","Meta title & description","On-page SEO audit","Content cluster plan","SEO blog brief","Landing page copy","FAQ section ideas","Backlink outreach email","Local SEO plan","YouTube SEO"]],
+["📱","Social Media","an experienced social media manager","launching a new tools website",0,0,["Instagram caption","Reel / Shorts script","LinkedIn post","X / Twitter thread","Facebook post","30-day content calendar","Hashtag set","Profile bio","Viral hook ideas","Comment & DM replies"]],
+["📣","Marketing & Ads","a performance marketing expert","a free AI tools directory",0,0,["Google Ads copy","Meta / Facebook ad","Marketing plan","Brand voice guide","Unique selling points","Email campaign","Sales funnel","A/B test ideas","Competitor analysis","Slogans & taglines"]],
+["💼","Business & Startup","a seasoned startup consultant","a small digital service center",0,0,["Business idea validation","Business plan","SWOT analysis","Pitch deck outline","Market research","Pricing strategy","Go-to-market plan","Side hustle ideas","SOP / process document","OKRs & goals"]],
+["💻","Coding & Development","a senior software engineer","a Python script that renames files by date",0,0,["Write code","Debug an error","Explain code","Code review","Refactor code","Write unit tests","Convert between languages","API design","SQL query","Regex pattern","Git help","Software architecture"]],
+["🌐","Website & App Building","a full-stack web developer and UI/UX designer","a tools website with 12 tool cards, dropdown menu and dark theme",0,0,["Full website (HTML/CSS/JS)","Landing page","Single-page online tool","Navbar & footer","Contact form","Dashboard UI","WordPress setup","Blogger template","Chrome extension","Mobile app screen","Responsive layout fix","CSS animations"]],
+["🖼️","AI Image Generation","an expert AI image prompt engineer","a cozy coffee shop on a rainy evening",1,0,["Realistic photo","Logo concept","Product mockup","Poster","YouTube thumbnail","Character design","Anime illustration","3D render","Wallpaper / background","Icon set","Interior design","Fashion look"]],
+["🎬","Video & YouTube","a YouTube growth strategist and scriptwriter","how to earn online with free AI tools",0,0,["Video script","YouTube Shorts script","Video idea list","Title & thumbnail ideas","Description & tags","Storyboard","Text-to-video prompt","Voice-over script","Podcast outline","Channel growth plan"]],
+["🎨","Design & Branding","a senior brand and graphic designer","a modern brand for an online tools website",0,0,["Brand identity brief","Color palette","Font pairing","Logo brief","UI/UX critique","Canva design brief","Presentation design","Packaging concept"]],
+["🎓","Education & Study","an expert teacher who explains clearly","photosynthesis for class 8",0,0,["Explain simply (ELI5)","Study plan","MCQ quiz","Flashcards","Lesson plan","Revision notes","Essay","Homework help","Exam strategy","Mind map","Language learning plan"]],
+["🔬","Research & Analysis","a rigorous research analyst","the impact of AI tools on small businesses",0,0,["Literature review","Compare options","Pros & cons","Research report","Trend analysis","Case study","Survey questions","Hypothesis ideas"]],
+["📊","Data, Excel & Sheets","a data analyst and spreadsheet expert","sales data with columns Date, Product, Qty, Price",0,0,["Excel formula","Google Sheets formula","Data cleaning steps","Dashboard plan","Pivot table guide","Python pandas code","Chart recommendation","Apps Script automation","Analyze a dataset"]],
+["🧑‍💼","Career & Jobs","a career coach and senior recruiter","a fresher applying for a data entry job",0,0,["Resume / CV","Cover letter","LinkedIn profile","Interview preparation","Salary negotiation","Career change plan","Skills roadmap","Freelance proposal","Portfolio ideas","Resignation letter"]],
+["✉️","Email & Communication","a professional business communicator","asking a client for a payment update",0,0,["Professional email","Follow-up email","Complaint letter","Apology message","Reply to a message","Meeting agenda","Meeting minutes","Cold outreach","WhatsApp message","Speech"]],
+["🗓️","Productivity & Planning","a productivity coach","balancing a job and a side business",0,0,["Daily schedule","Weekly plan","Goal setting","Habit tracker","Project plan","Decision framework","Time blocking","Checklist","Delegation plan","Task prioritization"]],
+["🛒","E-commerce & Selling","an e-commerce growth expert","handmade soy candles",0,0,["Marketplace product listing","Product title","Product description","Online store setup","Dropshipping research","Reply to reviews","Pricing strategy","Supplier message","Festival campaign"]],
+["🤝","Sales & Customer Support","a top sales trainer and support lead","a SaaS tool with a free trial",0,0,["Sales pitch","Cold call script","Objection handling","FAQ answers","Support reply","Chatbot flow","Follow-up sequence","Testimonial request","CRM notes"]],
+["👥","HR & Management","an experienced HR and people manager","hiring a customer support executive",0,0,["Job description","Interview questions","Onboarding plan","Performance review","Company policy","Team motivation","Conflict resolution","Training program"]],
+["💰","Finance & Money (general info)","a financial educator who explains basics clearly","building an emergency fund on a monthly salary",0,1,["Monthly budget","Saving plan","Investing basics explained","Expense tracking","Debt payoff plan","Invoice template","Tax concepts explained","Financial glossary"]],
+["🏃","Health & Fitness (general info)","a certified fitness and wellness coach","a beginner home workout without equipment",0,1,["Workout plan","Healthy meal plan","Habit building","Sleep routine","Stress relief","Yoga routine","Wellness checklist"]],
+["🍳","Food & Recipes","a professional chef and recipe developer","a high-protein vegetarian dinner",0,0,["Recipe","Weekly meal prep","Diet-friendly menu","Restaurant menu","Cooking tips","Leftover ideas","Party menu"]],
+["✈️","Travel & Lifestyle","an experienced travel planner","a 5-day budget trip to Manali",0,0,["Day-by-day itinerary","Budget trip plan","Packing list","Local food guide","Document checklist","Hotel comparison","Road trip plan"]],
+["📖","Creative Writing & Fun","a bestselling author and creative writing coach","a lighthearted mystery set in a small village",0,0,["Story","Poem","Jokes","Dialogue","Character profile","Plot twist ideas","World building","Rap / rhyme","Funny speech"]],
+["🎵","Music & Audio","a songwriter and music producer","a calm lo-fi track for studying",0,0,["Original song lyrics","Song concept","Music generator style prompt (Suno / Udio)","Podcast script","Voice-over script","Playlist ideas"]],
+["⚖️","Legal & Documents (general info)","a legal writing specialist who explains in plain language","a rental agreement for a shop",0,1,["Agreement outline","Explain a clause","Privacy policy draft","Terms & conditions draft","Formal notice","RTI application","Application letter"]],
+["🏛️","Government & Online Services (India)","a helpful digital service center (CSC) guide","Ayushman Card registration for a family",0,1,["Application letter","Explain a scheme","Document checklist","Step-by-step portal guide","Customer flyer","Service price list","Complaint letter"]],
+["🈳","Language & Translation","a professional translator and language teacher","a polite business message about a delivery delay",0,0,["Translate text","Hindi ↔ English","Grammar correction","Vocabulary list","Conversation practice","Localize content","Hinglish rewrite"]],
+["🌱","Personal Growth","a thoughtful life coach","building confidence before public speaking",0,0,["Self-reflection questions","Motivation message","Confidence building","Gratitude journal","Communication skills","Mindset reset","Mentorship questions"]],
+["🎮","Gaming & Tech","a game designer and tech expert","a simple 2D browser game idea",0,0,["Game idea","Game story","Level design","Minecraft ideas","Tech troubleshooting","PC build guide","Esports plan"]],
+["🧰","Online Tools & Utilities","a product manager who specializes in free online tools","a word counter and text case converter",0,0,["Tool idea list","Tool landing page text","Tool specification","Calculator logic","File converter plan","Tool SEO plan","How-to guide for a tool","Tool FAQ"]],
+["🧠","AI Prompting & Automation","a prompt engineer and AI workflow designer","a custom assistant that writes product descriptions",0,0,["Improve my prompt","System prompt","Custom GPT instructions","Claude Project instructions","Gemini Gem instructions","Prompt chain","Reusable prompt template","Evaluate AI outputs"]]
+];
+
+var PERSONA=[["Auto (best for category)","auto"],["Subject-matter expert","a world-class subject-matter expert"],["Teacher","a patient, clear teacher"],["Coach","a supportive, practical coach"],["Consultant","a senior consultant"],["Editor","a sharp professional editor"],["Developer","a senior software developer"],["Designer","a creative senior designer"],["Marketer","a results-driven marketer"],["Analyst","a careful, data-driven analyst"],["Journalist","an investigative journalist"],["Strategist","a pragmatic business strategist"],["Interviewer","a tough but fair interviewer"],["Critic","a constructive critic who gives honest feedback"],["Friend","a friendly, knowledgeable friend"]];
+var AUD=["Auto","General audience","Complete beginners","Students","Kids (8-12)","Teenagers","Working professionals","Experts","Business owners","Customers","Developers","Non-technical / rural users","Senior citizens","Recruiters","Investors"];
+var TONE=["Auto","Professional","Friendly","Casual","Persuasive","Formal","Humorous","Inspirational","Simple & clear","Empathetic","Authoritative","Storytelling","Urgent","Minimalist"];
+var FMT=["Auto","Bullet points","Numbered steps","Table","Paragraphs","Checklist","Markdown with headings","JSON","Code block","Outline","Email","Script","Q&A","Step-by-step guide","Mind map (text)"];
+var LEN=["Auto","Very short (about 50 words)","Short (about 150 words)","Medium (about 400 words)","Long (about 800 words)","Very detailed (1500+ words)"];
+var LANG=["English","Hindi (हिंदी)","Hinglish (Hindi in English letters)","Punjabi","Urdu","Bengali","Tamil","Telugu","Marathi","Gujarati","Spanish","French","German","Arabic","Japanese"];
+var COUNT=["Auto","1","3","5","10","20"];
+var TECH=[["None","none",""],["Think step by step","steps","Think through the problem step by step before giving the final answer."],["Ask me questions first","ask","Before answering, ask me up to 5 clarifying questions and wait for my replies."],["Give 3 options + recommend","options","Give 3 distinct options with pros and cons, then recommend the best one."],["Draft, critique, improve","critique","Write a first draft, critique it honestly, then deliver an improved final version."],["Follow my examples (few-shot)","fewshot","Follow the pattern, structure and style of my examples closely."],["Expert panel","panel","Answer as a panel of 3 relevant experts who each share a view, then combine them into one clear conclusion."],["Pros & cons analysis","proscons","Weigh the pros and cons before giving your conclusion."],["Verify & flag uncertainty","verify","Do not invent facts, names, links or statistics. Clearly flag anything you are unsure about."]];
+var CONS=[["No fluff / no preamble","Skip introductions and filler; deliver the result directly."],["Use real examples","Include concrete, realistic examples."],["Add action steps","End with clear action steps I can take next."],["Avoid jargon","Avoid jargon; explain any technical term simply."],["Add FAQ","Add a short FAQ at the end."],["Mention uncertainty / sources","Cite sources where possible and say when you are unsure."],["No emojis","Do not use emojis."],["Use emojis","Use a few relevant emojis."],["SEO-friendly","Make it SEO-friendly with natural keywords and clear headings."],["Original content","Write original content in your own words."],["Summary at top","Start with a 2-3 line summary."],["Include next steps","Finish with suggested next steps."]];
+var V_TARGET=["Any image generator","Midjourney","ChatGPT Images / DALL·E","Gemini Imagen","Stable Diffusion","Leonardo AI","Adobe Firefly","Ideogram","Sora (video)","Veo (video)","Runway (video)","Kling (video)"];
+var V_STYLE=["Auto","Photorealistic","Cinematic","Anime","3D render","Watercolor","Flat vector","Minimal","Cyberpunk","Vintage film","Oil painting","Isometric","Pencil sketch","Paper cut","Neon glow"];
+var V_LIGHT=["Auto","Soft natural light","Golden hour","Studio lighting","Dramatic shadows","Neon lighting","Moody low-key","Bright and airy","Backlit silhouette"];
+var V_SHOT=["Auto","Close-up","Wide shot","Overhead / flat lay","Low angle","Portrait 85mm","Macro","Aerial drone view","Eye-level"];
+var V_RATIO=["Auto","1:1 (square)","16:9 (YouTube)","9:16 (Reels / Shorts)","4:5 (Instagram post)","3:2 (photo)","21:9 (ultra-wide)"];
+var W_CAT=["Tools","Blog","Business / Company","Portfolio","E-commerce Store","News / Magazine","Education / Courses","Service Center (CSC)","Directory / Listing","Restaurant / Cafe","Photography","Agency","Real Estate","Community / Forum","Landing Page"];
+var W_MENU=["Dropdown","Mega Menu","Sticky Top Menu","Hamburger (mobile style)","Sidebar Menu","Centered Logo Menu"];
+var W_HEAD=["Static","Sticky","Transparent over hero","With Search Bar","With Call-to-Action Button"];
+var W_HERO=["Hero With Button","Hero With Search Box","Hero With Image","Hero With Video Background","Centered Text Only","Split Hero (text + image)","Hero With Dynamic Color Background (animated gradient)"];
+var W_SIDE=["No Sidebar","Left Sidebar with Menu Buttons","Right Sidebar","Collapsible Left Sidebar (toggle button)","Sidebar with Categories + Search","Sidebar with Quick Action Buttons"];
+var W_ADD=["No Add Option","Add Card Button (a form saves the new card in the browser)","Add + Edit + Delete Buttons on every card","Admin-style Panel to Manage Cards"];
+var W_LIST=["12 Tool Style","6 Tool Style","9 Tool Style","24 Tool Style","Card Grid","List Style","Categorized Tabs","Featured + Latest"];
+var W_ABOUT=["Detailed","Short","With Team Section","With Timeline","With Stats Counters"];
+var W_CONTACT=["Form","Email Only","Form + Google Map","WhatsApp Button","Phone & Address"];
+var W_FOOT=["With Social Media","Simple","Multi-column Links","With Newsletter Signup","Minimal Copyright Only"];
+var W_CARD=["Standard","3D Hover Lift","Glass (frosted)","Neumorphic (soft)","Gradient Border","Image on Top"];
+var W_BTN=["Rounded Gradient","3D Style (raised, with pressed effect)","Flat","Glass (frosted)","Outline","Neon Glow"];
+var W_FEAT=["Search box to filter cards","Dark / light mode toggle","Floating WhatsApp button","Scroll-to-top button","Cards open a popup with details","Stats counter strip"];
+var THEME_COLORS={gold:["#c98a0b","#f0c14b"],dark:["#7c5cff","#22d3ee"],ocean:["#0077b6","#00b4d8"],forest:["#2d6a4f","#52b788"],rose:["#d6336c","#ff8fab"],neon:["#00e5a0","#ff2bd6"]};
+
+/* One rich example per category (same order as CATS):
+   [task, topic, context, audience, tone, format, (image only) [style, lighting, shot, ratio, count]] */
+var EX=[
+["Blog post","10 simple ways to save money on groceries in India","I run a household-tips blog for middle-class families. Readers like practical, budget-friendly advice with real rupee examples.","General audience","Friendly","Markdown with headings"],
+["SEO blog brief","free online PDF tools website","My site offers free PDF merge, split and compress tools. Main keyword: free pdf tools online. Target readers: students and office workers in India.","Business owners","Professional","Outline"],
+["Instagram caption","launch of our new free tools website","Brand voice is friendly and helpful. Audience: students and small shop owners. End with a call to action to visit the link in bio.","General audience","Casual","Auto"],
+["Google Ads copy","free AI tools directory website","Goal: free sign-ups on a small budget. People search for 'free ai tools'. Headlines under 30 characters, descriptions under 90.","Business owners","Persuasive","Table"],
+["Business idea validation","a small digital service center in a town","I run a CSC center with printing, form filling and online services. I want 2 more income streams with low investment.","Business owners","Professional","Bullet points"],
+["Write code","Python script that renames files by date","Windows 11, Python 3.12. A folder has hundreds of photos. Rename them to YYYY-MM-DD_001.jpg using the modified date. Add comments and error handling.","Developers","Simple & clear","Code block"],
+["Single-page online tool","word counter with character count and reading time","Plain HTML, CSS and JavaScript in one file, mobile responsive, clean modern design with a dark mode toggle, no external libraries.","Developers","Professional","Code block"],
+["Realistic photo","a cozy coffee shop on a rainy evening","For an Instagram banner. Warm colors, leave empty space on the left for text.","General audience","Auto","Auto",["Photorealistic","Moody low-key","Eye-level","4:5 (Instagram post)","3"]],
+["Video script","how to earn online with free AI tools","Channel for beginners in India. 8-minute video. Honest advice with no get-rich-quick claims. Include a hook, 5 methods and a call to subscribe.","Complete beginners","Friendly","Script"],
+["Brand identity brief","a modern brand for an online tools website","Brand values: simple, fast, free. Audience: students and freelancers. Suggest 3 name ideas, a color palette and a logo direction.","Business owners","Professional","Bullet points"],
+["Explain simply (ELI5)","photosynthesis for class 8","The student knows basic science. Use a simple analogy, describe a diagram and end with 5 quick quiz questions.","Students","Friendly","Step-by-step guide"],
+["Research report","impact of AI tools on small businesses in India","Focus on 2024-2026. Include benefits, risks, real examples and a short conclusion. For a college assignment.","Students","Authoritative","Markdown with headings"],
+["Excel formula","sum sales by product from a table with Date, Product, Qty, Price","Excel 365. Columns A to D, 500 rows. I also want total revenue per month and the top 5 products.","Complete beginners","Simple & clear","Step-by-step guide"],
+["Cover letter","data entry operator job at a private company","I am a fresher with 1 year of CSC center experience: typing 40 wpm, MS Office, form filling and customer handling.","Recruiters","Professional","Email"],
+["Follow-up email","asking a client for a pending payment","Invoice of Rs. 12,000 sent 15 days ago. The client is a regular customer, so stay polite but firm.","Customers","Professional","Email"],
+["Weekly plan","balancing a job and a side business","Job 9 to 6 on weekdays. I can give 1.5 hours on weekday evenings and 4 hours on Sunday.","General audience","Friendly","Table"],
+["Marketplace product listing","handmade soy candles","Selling on Amazon India and Flipkart. 3 scents: lavender, vanilla, sandalwood. 200 g, burn time 40 hours.","Customers","Persuasive","Bullet points"],
+["Sales pitch","SaaS tool with a free trial","The tool automates invoices for small shops. Price Rs. 499 per month. Prospects are shop owners who use paper bills.","Business owners","Persuasive","Script"],
+["Job description","customer support executive","Team of 6, hybrid work, 2 years of experience preferred, salary range Rs. 20,000 to 28,000.","Recruiters","Professional","Bullet points"],
+["Monthly budget","building an emergency fund on a monthly salary","Salary Rs. 30,000, rent Rs. 8,000, no debts. Goal: 6 months of expenses saved.","Complete beginners","Simple & clear","Table"],
+["Workout plan","beginner home workout without equipment","30 minutes a day, 5 days a week, age 30, no injuries. Goal: build stamina.","Complete beginners","Friendly","Table"],
+["Recipe","high-protein vegetarian dinner","Indian kitchen, ready in 30 minutes, serves 2, no paneer.","General audience","Friendly","Numbered steps"],
+["Day-by-day itinerary","5-day budget trip to Manali","Travelling from Haryana by car in March with a family of 4. Total budget Rs. 40,000.","General audience","Friendly","Table"],
+["Story","a lighthearted mystery set in a small village","About 600 words, a clever child detective, a funny twist ending, suitable for all ages.","General audience","Humorous","Paragraphs"],
+["Original song lyrics","a calm song about studying late at night","Hindi-English mix, soft acoustic mood, verse-chorus-verse-chorus-bridge structure.","General audience","Inspirational","Auto"],
+["Agreement outline","a rental agreement for a shop","Shop in a small Indian town, 11-month agreement with monthly rent and security deposit. For understanding only.","General audience","Simple & clear","Outline"],
+["Document checklist","Ayushman Card registration for a family","I help customers at my CSC center. I need a simple checklist and steps in easy language.","Non-technical / rural users","Simple & clear","Checklist"],
+["Translate text","a polite business message about a delivery delay","Translate from English to Hindi. Keep it respectful and natural.","Customers","Professional","Auto"],
+["Confidence building","public speaking confidence","I get nervous presenting to groups at work. I need a 2-week practice plan with small daily exercises.","General audience","Empathetic","Numbered steps"],
+["Game idea","a simple 2D browser game","Solo developer, one week, HTML5 canvas. A casual game that works on phones.","Developers","Casual","Bullet points"],
+["Tool landing page text","word counter and text case converter","Free, no sign-up, works in the browser. Include a headline, 3 benefits, how it works and a short FAQ.","General audience","Friendly","Markdown with headings"],
+["Custom GPT instructions","assistant that writes product descriptions","For an online store owner. It should ask for the product name and features first, then write 3 versions.","Business owners","Professional","Markdown with headings"]
+];
+/* Ready-made ideas and context lines per category (same order as CATS) */
+var TOPICS=[
+["10 simple ways to save money on groceries","How to start a blog and earn from it","Benefits of waking up early","A beginner's guide to freelancing","Why reading daily changes your life"],
+["free online PDF tools website","local SEO for a small shop","blog about government job updates","a calculator tools website","YouTube channel about AI tools"],
+["launch of my new website","festival offer for my shop","daily motivation page","tips for students","before-and-after service results"],
+["free AI tools website","a local coaching institute","a digital service center","an online clothing store","a mobile repair shop"],
+["a small digital service center","an online tools website business","a home-based tiffin service","a freelance content agency","a printing and photocopy shop"],
+["Python script that renames files","JavaScript form validation","SQL query to find duplicate records","a Chrome extension for notes","fix an 'undefined is not a function' error"],
+["a free online tools website","a blog for government schemes","a CSC center services website","a portfolio for a freelancer","a landing page for a coaching class"],
+["a cozy coffee shop on a rainy evening","a futuristic Indian city at sunset","a premium product photo of a smartwatch","a festive Diwali greeting poster","a friendly robot teaching kids"],
+["how to earn online with free AI tools","top 5 free tools for students","a day in the life of a CSC operator","how to make a website for free","AI tools that save 2 hours a day"],
+["a modern brand for a tools website","a logo for a digital service center","a colorful brand for a kids' app","a minimal brand for a cafe","a trustworthy brand for a finance blog"],
+["photosynthesis for class 8","fractions for beginners","the water cycle","how the internet works","basic English grammar tenses"],
+["impact of AI on small businesses","pros and cons of online education","digital payments in rural India","remote work productivity","renewable energy in India"],
+["monthly sales summary in Excel","clean a customer list and remove duplicates","build a dashboard from sales data","VLOOKUP vs XLOOKUP","track daily expenses in Google Sheets"],
+["data entry operator job","a fresher resume for IT support","preparing for an HR interview","switching from a job to freelancing","asking for a salary hike"],
+["asking a client for a pending payment","requesting leave from my manager","a complaint about a delayed delivery","introducing my services to a new client","thanking a customer for their order"],
+["balancing a job and a side business","building a daily study routine","a 30-day habit plan","planning my week in 15 minutes","stop procrastinating"],
+["handmade soy candles","a men's cotton T-shirt","organic honey","a phone case","a stainless steel water bottle"],
+["a SaaS tool with a free trial","insurance for small families","an online course","a web design service","a solar lighting product"],
+["a customer support executive","a sales intern","a data entry operator","onboarding a new employee","a fair performance review"],
+["building an emergency fund","a monthly household budget","how SIP works in simple words","paying off a small loan faster","tracking daily expenses"],
+["a beginner home workout","a simple weekly meal plan","a better sleep routine","a 10-minute morning yoga","a daily walking habit"],
+["a high-protein vegetarian dinner","a quick 15-minute breakfast","a healthy tiffin for kids","an easy dessert without an oven","a weekly meal prep list"],
+["a 5-day budget trip to Manali","a weekend trip near Delhi","a family trip to Jaipur","a first trip to Goa","a pilgrimage trip checklist"],
+["a lighthearted village mystery","a story about a talking cat","a poem about the first rain","a funny speech for a friend's wedding","a heroic tale for kids"],
+["a calm song for late-night study","a motivational Hindi-English track","a lullaby for kids","a festival dance song","a lo-fi playlist theme"],
+["a rental agreement for a shop","a simple freelance contract","a privacy policy for a website","a notice for a late payment","an RTI application"],
+["Ayushman Card registration","PAN card application steps","Aadhaar update documents","Driving licence application","Ration card online process"],
+["a polite business message","an email to a client in Hindi","a product description in English","a thank-you note in Hinglish","simple daily conversation phrases"],
+["public speaking confidence","staying motivated daily","dealing with exam stress","building a morning routine","improving communication skills"],
+["a simple 2D browser game","a quiz game for kids","a Minecraft survival build","a story-based mobile game","a budget gaming PC under 40,000"],
+["word counter and case converter","image compressor","a PDF merge tool","an EMI calculator","a QR code generator"],
+["a writing assistant for blog posts","a customer support chatbot","a study buddy for students","a product description writer","a resume reviewer"]
+];
+var CTXS=[
+["I run a blog for beginners in India.","Readers like short paragraphs and real examples.","The target keyword should appear naturally."],
+["My website is new and has low authority.","The target audience is in India.","I need low-competition keywords."],
+["My brand voice is friendly and helpful.","My audience is students and small business owners.","End with a call to action."],
+["My budget is small.","The goal is more sign-ups, not just traffic.","My audience is in India, mostly on mobile."],
+["I have low investment capital.","I operate in a small town in India.","I want results within 3 months."],
+["I use Windows 11 and Python 3.12.","Add comments and error handling.","Explain the code line by line."],
+["Use plain HTML, CSS and JavaScript in one file.","Mobile responsive with a dark mode toggle.","No external libraries."],
+["For an Instagram banner with empty space for text.","Warm, inviting colors.","No text or logos in the image."],
+["My channel is for beginners in India.","The video is about 8 minutes long.","Honest advice, no get-rich-quick claims."],
+["Brand values: simple, fast, free.","The audience is students and freelancers.","Suggest 3 name ideas and a color palette."],
+["The student is a beginner.","Use a simple everyday analogy.","End with 5 quick quiz questions."],
+["Focus on 2024 to 2026.","This is for a college assignment.","Include real examples and a short conclusion."],
+["I use Excel 365.","Data is in columns A to D with 500 rows.","Explain each step simply."],
+["I am a fresher with 1 year of experience.","My skills: typing, MS Office, customer handling.","The company is a private firm in India."],
+["The client is a regular customer.","Stay polite but firm.","Keep it under 120 words."],
+["I work 9 to 6 on weekdays.","I can give 1.5 hours each evening.","I get distracted easily."],
+["I sell on Amazon India and Flipkart.","Mention key features and size.","Use words buyers actually search for."],
+["Prospects are small shop owners.","The price is affordable per month.","They currently use paper records."],
+["The team has 6 people and works hybrid.","Salary range is Rs. 20,000 to 28,000.","2 years of experience preferred."],
+["My monthly salary is Rs. 30,000.","I have no debts.","Goal: 6 months of expenses saved."],
+["I am 30 with no injuries.","30 minutes a day, 5 days a week.","No equipment at home."],
+["Indian kitchen with basic ingredients.","Ready in 30 minutes.","Serves 2 people."],
+["Travelling by car with a family of 4.","Total budget is Rs. 40,000.","Travel month: March."],
+["About 600 words.","Suitable for all ages.","A funny twist ending."],
+["Hindi-English mix.","Soft acoustic mood.","Verse, chorus, verse, chorus, bridge."],
+["For understanding only, not legal advice.","A small town in India.","Use plain language."],
+["I help customers at my CSC center.","Use easy language for rural users.","Include the documents needed and the steps."],
+["Keep it respectful and natural.","Translate from English to Hindi.","Keep the meaning, not word-for-word."],
+["I get nervous in front of groups.","I need a 2-week plan.","Small daily exercises."],
+["Solo developer, one week.","HTML5 canvas, works on phones.","Casual and simple rules."],
+["Free, no sign-up, works in the browser.","Include a headline and 3 benefits.","Add a short FAQ."],
+["It should ask me questions first.","Tone: professional but friendly.","Give 3 versions each time."]
+];
+var CTX_COMMON=["I am a complete beginner.","I run a small business in India.","My audience is students.","Use simple English.","Include real examples.","Make it unique, not copied.","Keep it practical and ready to use.","Use short paragraphs for mobile readers."];
+var REFS=["Write like a friendly blog post.","Follow this structure: Intro, Steps, Conclusion.","Use a conversational style with short sentences.","Use a professional business style.","Give a table to compare options.","Start with a strong hook in the first line.","Use headings and bullet points.","Match the style of the text I paste below."];
+function fillPick(id,ph,groups){
+  var s=$(id);s.innerHTML="";
+  var o=document.createElement("option");o.value="";o.textContent=ph;s.appendChild(o);
+  groups.forEach(function(g){
+    var og=document.createElement("optgroup");og.label=g[0];
+    g[1].forEach(function(t){var op=document.createElement("option");op.value=t;op.textContent=t;og.appendChild(op);});
+    s.appendChild(og);
+  });
+}
+function addTo(id,text){var t=$(id);var cur=t.value.trim();if(cur.indexOf(text)>-1)return;t.value=cur?cur+" "+text:text;}
+function setSel(id,v){var s=$(id);for(var i=0;i<s.options.length;i++){if(s.options[i].value===v){s.selectedIndex=i;return;}}}
+
+/* ---------- HELPERS ---------- */
+function fillArr(id,arr,pair){var s=$(id);arr.forEach(function(v,i){var o=document.createElement("option");if(pair){o.value=v[1];o.textContent=v[0];}else{o.value=v;o.textContent=v;}s.appendChild(o);});}
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("on");},1800);}
+function val(id){return $(id).value.trim();}
+function auto(v){return v&&v!=="Auto";}
+
+/* ---------- INIT ---------- */
+Object.keys(PLAT).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=PLAT[k].n;$("plat").appendChild(o);});
+CATS.forEach(function(c,i){var o=document.createElement("option");o.value=i;o.textContent=c[0]+" "+c[1];$("cat").appendChild(o);});
+fillArr("persona",PERSONA,true);fillArr("aud",AUD);fillArr("tone",TONE);fillArr("fmt",FMT);fillArr("len",LEN);fillArr("lang",LANG);fillArr("count",COUNT);
+TECH.forEach(function(t){var o=document.createElement("option");o.value=t[1];o.textContent=t[0];$("tech").appendChild(o);});
+fillArr("wcat",W_CAT);fillArr("wmenu",W_MENU);fillArr("whead",W_HEAD);fillArr("whero",W_HERO);fillArr("wlist",W_LIST);fillArr("wabout",W_ABOUT);fillArr("wcontact",W_CONTACT);fillArr("wfoot",W_FOOT);fillArr("wcard",W_CARD);fillArr("wside",W_SIDE);fillArr("wadd",W_ADD);fillArr("wbtn",W_BTN);
+W_FEAT.forEach(function(f,i){var l=document.createElement("label");var cb=document.createElement("input");cb.type="checkbox";cb.value=i;cb.className="wf";l.appendChild(cb);l.appendChild(document.createTextNode(f));$("wfeat").appendChild(l);});
+fillArr("target",V_TARGET);fillArr("vstyle",V_STYLE);fillArr("light",V_LIGHT);fillArr("shot",V_SHOT);fillArr("ratio",V_RATIO);
+CONS.forEach(function(c,i){var l=document.createElement("label");var cb=document.createElement("input");cb.type="checkbox";cb.value=i;cb.className="cons";l.appendChild(cb);l.appendChild(document.createTextNode(c[0]));$("cons").appendChild(l);});
+
+function curCat(){return CATS[+$("cat").value];}
+function onCat(){
+  var c=curCat();var t=$("task");t.innerHTML="";
+  c[6].forEach(function(x){var o=document.createElement("option");o.value=x;o.textContent=x;t.appendChild(o);});
+  var ex=EX[+$("cat").value];
+  $("topic").placeholder="e.g. "+c[3];
+  $("ctx").placeholder="e.g. "+ex[2];
+  $("visBox").classList.toggle("hide",!c[4]);
+  $("webBox").classList.toggle("hide",+$("cat").value!==6);
+  var ci=+$("cat").value;
+  fillPick("topicPick","— Pick a ready idea (or type your own below) —",[["Ideas for this category",TOPICS[ci]]]);
+  fillPick("ctxPick","— Add a context line (tap again to add more) —",[["For this category",CTXS[ci]],["Common",CTX_COMMON]]);
+  score();
+}
+function onPlat(){
+  var P=PLAT[$("plat").value];
+  $("openName").textContent=P.n;
+  var ul=$("tips");ul.innerHTML="";
+  P.tips.forEach(function(t){var li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
+}
+
+/* ---------- BUILD ---------- */
+function gather(){
+  var c=curCat();var pv=val("persona");
+  var techKey=val("tech");var techLine="";TECH.forEach(function(t){if(t[1]===techKey)techLine=t[2];});
+  var rules=[];
+  if(c[5])rules.push("Give general educational information only and suggest consulting a qualified professional for personal decisions.");
+  var isVis=!!c[4];
+  if(techLine&&!(isVis&&(techKey==="options"||techKey==="proscons")))rules.push(techLine);
+  document.querySelectorAll(".cons:checked").forEach(function(cb){
+    if(isVis&&(+cb.value===8||+cb.value===4))return; /* SEO and FAQ don't apply to image prompts */
+    rules.push(CONS[+cb.value][1]);
+  });
+  var lang=val("lang");
+  if(lang!=="English")rules.push("Write the answer in "+lang+".");
+  rules.push(techKey==="ask"?"Be specific and practical.":"Be specific and practical, and deliver a complete, ready-to-use result. If something is unclear, state your assumption instead of stopping.");
+  return {
+    plat:val("plat"),cat:c,task:val("task"),
+    role:pv==="auto"?c[2]:pv,
+    topic:val("topic"),ctx:val("ctx"),ex:val("examples"),
+    aud:val("aud"),tone:val("tone"),fmt:val("fmt"),len:val("len"),lang:lang,count:val("count"),
+    rules:rules,
+    vis:c[4]?{target:val("target"),style:val("vstyle"),light:val("light"),shot:val("shot"),ratio:val("ratio")}:null,
+    web:(+$("cat").value===6)?{cat:val("wcat"),mode:document.querySelector('input[name="wm"]:checked').value,p:val("wp"),s:val("ws"),menu:val("wmenu"),header:val("whead"),hero:val("whero"),list:val("wlist"),about:val("wabout"),contact:val("wcontact"),footer:val("wfoot"),side:val("wside"),add:val("wadd"),card:val("wcard"),btn:val("wbtn"),feats:Array.prototype.map.call(document.querySelectorAll(".wf:checked"),function(x){return W_FEAT[+x.value];})}:null
+  };
+}
+function details(d){
+  var a=[];
+  if(auto(d.aud))a.push("Audience: "+d.aud);
+  if(auto(d.tone))a.push("Tone: "+d.tone);
+  if(auto(d.fmt))a.push("Format: "+d.fmt);
+  if(auto(d.len))a.push("Length: "+d.len);
+  if(auto(d.count))a.push("Number of results: "+d.count);
+  return a;
+}
+function visLines(d){
+  if(!d.vis)return [];
+  var v=d.vis,a=[];
+  a.push("Target generator: "+v.target);
+  if(auto(v.style))a.push("Visual style: "+v.style);
+  if(auto(v.light))a.push("Lighting: "+v.light);
+  if(auto(v.shot))a.push("Shot / camera: "+v.shot);
+  if(auto(v.ratio))a.push("Aspect ratio: "+v.ratio);
+  return a;
+}
+function extraSpec(w){
+  var a=[];
+  if(w.side.indexOf("No ")!==0)a.push("Side bar: "+w.side);
+  if(w.add.indexOf("No ")!==0)a.push("Add / manage cards: "+w.add);
+  return a;
+}
+function webLines(d){
+  if(!d.web)return [];
+  var w=d.web;
+  return ["Website category: "+w.cat,
+    "Color theme: "+(w.mode==="grad"?"gradient from "+w.p+" to "+w.s:"single color "+w.p),
+    "Menu type: "+w.menu+(w.side.indexOf("No ")===0?"":" (in the header, separate from the side bar)"),"Header: "+w.header,"Hero section: "+w.hero,
+    "Main content / tool list: "+w.list,"Card style: "+w.card,"Button style: "+w.btn,"About Us: "+w.about,"Contact Us: "+w.contact,"Footer: "+w.footer].concat(extraSpec(w)).concat(w.feats.map(function(f){return "Extra feature: "+f;}));
+}
+function allRules(d){
+  var r=d.rules.slice();
+  if(d.web)r.unshift("Deliver complete, working, mobile-responsive code with no placeholders. Put everything in a single HTML file unless I say otherwise.");
+  if(d.vis){
+    var n=auto(d.count)?d.count:"3";
+    r.unshift("Write "+n+" ready-to-paste prompt(s) for "+d.vis.target+". Each must describe the subject, style, lighting, composition, camera and aspect ratio, and end with a negative-prompt line.");
+  }
+  return r;
+}
+function buildPrompt(d){
+  var P=PLAT[d.plat],o=[],det=details(d),vl=visLines(d),wl=webLines(d),rl=allRules(d);
+  var taskLine=d.task+": "+d.topic+".";
+  function sec(tagOpen,tagClose,lines){o.push(tagOpen);lines.forEach(function(l){o.push(l);});if(tagClose)o.push(tagClose);o.push("");}
+  function bl(a){return a.map(function(x){return "- "+x;});}
+  if(P.s==="xml"){
+    sec("<role>","</role>",["You are "+d.role+"."]);
+    sec("<task>","</task>",[taskLine]);
+    if(d.ctx)sec("<context>","</context>",[d.ctx]);
+    if(d.ex)sec("<reference_notes>","</reference_notes>",[d.ex]);
+    if(vl.length)sec("<visual_direction>","</visual_direction>",bl(vl));
+    if(wl.length)sec("<website_specification>","</website_specification>",bl(wl));
+    if(det.length)sec("<output_requirements>","</output_requirements>",bl(det));
+    if(rl.length)sec("<rules>","</rules>",bl(rl));
+  }else if(P.s==="ptcf"){
+    sec("Persona:",null,["You are "+d.role+"."]);
+    sec("Task:",null,[taskLine]);
+    if(d.ctx)sec("Context:",null,[d.ctx]);
+    if(d.ex)sec("Reference / style notes:",null,[d.ex]);
+    if(vl.length)sec("Visual direction:",null,bl(vl));
+    if(wl.length)sec("Website specification:",null,bl(wl));
+    if(det.length)sec("Format:",null,bl(det));
+    if(rl.length)sec("Constraints:",null,bl(rl));
+  }else if(P.s==="brief"){
+    var p=["Act as "+d.role+". Goal: "+taskLine];
+    if(d.ctx)p.push("Context: "+d.ctx);
+    if(d.ex)p.push("Reference / style notes: "+d.ex);
+    if(vl.length)p.push("Visual direction: "+vl.join("; ")+".");
+    if(wl.length)p.push("Website specification: "+wl.join("; ")+".");
+    if(det.length)p.push("Expectations: "+det.join("; ")+".");
+    if(rl.length)p.push("Rules: "+rl.join(" "));
+    if(P.cite)p.push("Use current web sources and cite them with links.");
+    o.push(p.join("\n\n"),"");
+  }else{
+    sec("# Role",null,["You are "+d.role+"."]);
+    sec("# Task",null,[taskLine]);
+    if(d.ctx)sec("# Context",null,[d.ctx]);
+    if(d.ex)sec("# Reference / style notes",null,[d.ex]);
+    if(vl.length)sec("# Visual direction",null,bl(vl));
+    if(wl.length)sec("# Website specification",null,bl(wl));
+    if(det.length)sec("# Output requirements",null,bl(det));
+    if(rl.length)sec("# Rules",null,bl(rl));
+  }
+  return o.join("\n").replace(/\n{3,}/g,"\n\n").trim();
+}
+
+/* ---------- SCORE ---------- */
+function score(){
+  var s=5;
+  var t=val("topic").length;
+  if(t>=20)s+=25;else if(t>=6)s+=12;
+  if(val("ctx").length>=30)s+=20;else if(val("ctx").length>0)s+=8;
+  if(val("examples").length>10)s+=10;
+  if(auto(val("aud")))s+=10;
+  if(auto(val("tone")))s+=5;
+  if(auto(val("fmt")))s+=10;
+  if(auto(val("len")))s+=5;
+  if(val("tech")!=="none")s+=5;
+  if(document.querySelectorAll(".cons:checked").length)s+=5;
+  s=Math.min(100,s);
+  $("bar").style.width=s+"%";$("pct").textContent=s+"%";
+  $("lvl").textContent=s>=85?"Excellent":s>=65?"Great":s>=40?"Good":"Weak";
+  var adv="Looking strong. Generate your prompt!";
+  if(t<20)adv="Describe your topic in more detail (20+ characters).";
+  else if(val("ctx").length<30)adv="Add extra context: who you are, your goal, constraints.";
+  else if(!auto(val("fmt")))adv="Choose an output format to get a cleaner answer.";
+  else if(!auto(val("aud")))adv="Pick an audience so the tone fits the reader.";
+  $("adv").textContent=adv;
+  refresh();
+}
+var live=false;
+function refresh(){
+  if(!live||!$("live").checked||val("topic").length<3)return;
+  $("out").value=buildPrompt(gather());
+}
+
+/* ---------- HISTORY ---------- */
+function loadHist(){try{return JSON.parse(localStorage.getItem("pg_hist")||"[]");}catch(e){return [];}}
+function saveHist(h){try{localStorage.setItem("pg_hist",JSON.stringify(h.slice(0,15)));}catch(e){}}
+function renderHist(){
+  var ul=$("hist");ul.innerHTML="";var h=loadHist();
+  if(!h.length){var li=document.createElement("li");li.textContent="Nothing yet.";li.style.cursor="default";ul.appendChild(li);return;}
+  h.forEach(function(x){
+    var li=document.createElement("li");
+    var b=document.createElement("b");b.textContent=x.title;
+    var sm=document.createElement("small");sm.textContent=x.meta;
+    li.appendChild(b);li.appendChild(sm);
+    li.addEventListener("click",function(){$("out").value=x.text;toast("Loaded from history");});
+    ul.appendChild(li);
+  });
+}
+
+/* ---------- ACTIONS ---------- */
+function generate(){
+  if(val("topic").length<3){toast("Please enter your topic / goal first");$("topic").focus();return;}
+  live=true;
+  var d=gather();var text=buildPrompt(d);
+  $("out").value=text;
+  var h=loadHist();
+  h.unshift({title:d.task+": "+d.topic.slice(0,50),meta:PLAT[d.plat].n+" · "+d.cat[1],text:text});
+  saveHist(h);renderHist();
+  toast("Prompt ready!");
+  $("out").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function copyText(txt,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){cb(true);},function(){fallback();});}else fallback();
+  function fallback(){var t=$("out");t.focus();t.select();var ok=false;try{ok=document.execCommand("copy");}catch(e){}cb(ok);}
+}
+$("gen").addEventListener("click",generate);
+$("copy").addEventListener("click",function(){var t=$("out").value;if(!t){toast("Generate a prompt first");return;}copyText(t,function(ok){toast(ok?"Copied!":"Select the text and copy manually");});});
+$("open").addEventListener("click",function(){
+  var t=$("out").value;if(!t){toast("Generate a prompt first");return;}
+  var P=PLAT[$("plat").value];
+  copyText(t,function(ok){
+    var url=P.url;
+    if(url.indexOf("?q=")>-1&&encodeURIComponent(t).length<1800)url+=encodeURIComponent(t);
+    window.open(url,"_blank","noopener");
+    toast(ok?"Copied. Paste it if the chat is empty.":"Opened "+P.n);
+  });
+});
+$("dl").addEventListener("click",function(){
+  var t=$("out").value;if(!t){toast("Generate a prompt first");return;}
+  var b=new Blob([t],{type:"text/plain"});var a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download="prompt.txt";document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+});
+$("exBtn").addEventListener("click",function(){
+  var e=EX[+$("cat").value];
+  setSel("task",e[0]);
+  $("topic").value=e[1];$("ctx").value=e[2];
+  setSel("aud",e[3]);setSel("tone",e[4]);setSel("fmt",e[5]);
+  if(+$("cat").value===6){
+    setSel("wbtn",W_BTN[1]);setSel("wcard",W_CARD[1]);
+    setSel("wside",W_SIDE[1]);setSel("wadd",W_ADD[2]);setSel("whero",W_HERO[6]);
+    document.querySelectorAll(".wf").forEach(function(c){c.checked=([0,2].indexOf(+c.value)>-1);});
+  }
+  if(e[6]){setSel("vstyle",e[6][0]);setSel("light",e[6][1]);setSel("shot",e[6][2]);setSel("ratio",e[6][3]);setSel("count",e[6][4]);}
+  $("topicPick").selectedIndex=0;
+  score();generate();
+});
+$("reset").addEventListener("click",function(){
+  ["topic","ctx","examples","out"].forEach(function(i){$(i).value="";});
+  ["persona","aud","tone","fmt","len","count","vstyle","light","shot","ratio","target","topicPick","ctxPick","refPick"].forEach(function(i){$(i).selectedIndex=0;});
+  $("tech").value="none";$("lang").selectedIndex=0;
+  document.querySelectorAll(".cons").forEach(function(c){c.checked=false;});
+  live=false;
+  ["wcat","wmenu","whead","whero","wlist","wabout","wcontact","wfoot","wcard","wbtn","wside","wadd"].forEach(function(i){$(i).selectedIndex=0;});
+  document.querySelectorAll(".wf").forEach(function(c){c.checked=false;});
+  score();
+});
+$("clr").addEventListener("click",function(){saveHist([]);renderHist();});
+
+/* ---------- THEME / CANVAS ---------- */
+function applyColors(){
+  var p=$("cp").value,s=$("cs").value;
+  var grad=document.querySelector('input[name="cm"]:checked').value==="grad";
+  var r=document.documentElement.style;
+  r.setProperty("--p",p);r.setProperty("--s",s);
+  r.setProperty("--btn",grad?"linear-gradient(135deg,"+p+","+s+")":p);
+}
+$("theme").addEventListener("change",function(){
+  var t=$("theme").value;document.body.setAttribute("data-theme",t);
+  var c=THEME_COLORS[t];$("cp").value=c[0];$("cs").value=c[1];applyColors();
+});
+$("canvas").addEventListener("change",function(){document.body.setAttribute("data-canvas",$("canvas").value);});
+$("cp").addEventListener("input",applyColors);$("cs").addEventListener("input",applyColors);
+document.querySelectorAll('input[name="cm"]').forEach(function(r){r.addEventListener("change",applyColors);});
+
+/* ---------- WIRING ---------- */
+fillPick("refPick","— Add a style hint (optional) —",[["Quick style hints",REFS]]);
+$("topicPick").addEventListener("change",function(){if(this.value){$("topic").value=this.value;score();}});
+$("ctxPick").addEventListener("change",function(){if(this.value){addTo("ctx",this.value);this.selectedIndex=0;score();}});
+$("refPick").addEventListener("change",function(){if(this.value){addTo("examples",this.value);this.selectedIndex=0;score();}});
+$("advBtn").addEventListener("click",function(){
+  var box=$("advBox");var hidden=box.classList.toggle("hide");
+  this.setAttribute("aria-expanded",String(!hidden));
+  this.textContent="⚙️ Advanced User options (example, audience, tone, rules) "+(hidden?"▾":"▴");
+});
+$("cat").addEventListener("change",onCat);
+$("plat").addEventListener("change",onPlat);
+["topic","ctx","examples"].forEach(function(i){$(i).addEventListener("input",score);});
+["aud","tone","fmt","len","tech","lang","count","target","vstyle","light","shot","ratio","wcat","wmenu","whead","whero","wlist","wabout","wcontact","wfoot"].forEach(function(i){$(i).addEventListener("change",score);});
+["wp","ws"].forEach(function(i){$(i).addEventListener("input",score);});
+document.querySelectorAll('input[name="wm"]').forEach(function(r){r.addEventListener("change",score);});
+document.querySelectorAll(".cons").forEach(function(c){c.addEventListener("change",score);});
+document.querySelectorAll(".wf").forEach(function(c){c.addEventListener("change",score);});
+["wcard","wbtn","wside","wadd"].forEach(function(i){$(i).addEventListener("change",score);});
+onCat();onPlat();renderHist();applyColors();
+})();
+</script>
+</body>
+</html>
