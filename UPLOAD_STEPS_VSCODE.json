@@ -2,7 +2,7 @@
   "name": "SevaSphere - upload to GitHub with VS Code",
   "version": "v31",
   "updated": "2026-11-09",
-  "repo_url": "https://github.com/CSCHelpDesk/cschelpdesk.github.io.git",
+  "repo_url": "https://github.com/CSC-VLE-TOOLS-DESK/SewaSphere.git",
   "branch": "main",
   "folders": {
     "unzip_here": "C:\\csc-v31",
@@ -28,7 +28,7 @@
       ],
       "commands": [
         "cd C:\\",
-        "git clone https://github.com/CSCHelpDesk/cschelpdesk.github.io.git sevasphere-repo"
+        "git clone https://github.com/CSC-VLE-TOOLS-DESK/SewaSphere.git sevasphere-repo"
       ]
     },
     {
@@ -80,7 +80,7 @@
       "no": 7,
       "title": "Check the live site",
       "do": [
-        "Open https://github.com/CSCHelpDesk/cschelpdesk.github.io and check the latest commit time. Wait 1 to 2 minutes (see the Actions tab). Open your live site and press Ctrl+F5. On a phone, close the tab and open it again.",
+        "Open https://github.com/CSC-VLE-TOOLS-DESK/SewaSphere and check the latest commit time. Wait 1 to 2 minutes (see the Actions tab). Open your live site and press Ctrl+F5. On a phone, close the tab and open it again.",
         "Check: all header buttons are visible including Theme, both sidebars float with a gap, the right New Tools panel is violet, and 3 or 4 tools open and work."
       ]
     }

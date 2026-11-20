@@ -4,7 +4,7 @@ Already done in the code: page titles, descriptions, canonical links, Open Graph
 structured data (WebApplication, Breadcrumb, FAQ), sitemap.xml, robots.txt, mobile viewport, icons, manifest.
 
 ## Before launch
-1. Check the site address. Every page uses https://cschelpdesk.github.io/ .
+1. Check the site address. Every page uses https://csc-vle-tools-desk.github.io/SewaSphere/ .
    If your live address is different, tell Claude the exact address and all pages, sitemap and robots will be changed together.
 2. Fill SITE.phone, SITE.email, SITE.whatsappNumber and your social links in assets/js/site.js (shown in footer, Contact page and chatbot).
 3. Finish your test report (TEST_CHECKLIST_v32.txt) and fix all FAIL items.

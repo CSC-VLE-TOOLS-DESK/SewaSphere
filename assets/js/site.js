@@ -89,6 +89,12 @@
     ['kids-corner', 'Kids Corner', 'Twenty-three picture games in English and Hindi for KG, UKG and Class 1: ABC, Hindi alphabet, numbers, counting, subtraction, spelling, balloon pop, train, memory match, opposites, days, shapes and colours.', 'kids', 'fa-child-reaching'],
     // Utilities
     ['tools_qr_code_generator', 'QR Code Generator', 'QR codes for text, links, UPI and WhatsApp.', 'util', 'fa-qrcode'],
+    ['tools_promo_maker', 'Promo Maker', 'Poster and message maker for WhatsApp, Facebook, Instagram, X and Telegram with picture, points and a link button.', 'util', 'fa-bullhorn'],
+    ['tools_whatsapp_promo_maker', 'WhatsApp Promo Maker', 'Make a WhatsApp poster and message with a picture, bullet or numbered points and a link button.', 'util', 'fa-share-nodes'],
+    ['tools_facebook_promo_maker', 'Facebook Promo Maker', 'Make a Facebook post text and poster with a picture, points and a link button.', 'util', 'fa-share-nodes'],
+    ['tools_instagram_promo_maker', 'Instagram Promo Maker', 'Make an Instagram caption with hashtags and a 4:5 poster with a picture and points.', 'util', 'fa-share-nodes'],
+    ['tools_x_promo_maker', 'X Promo Maker', 'Make a short X (Twitter) post within 280 letters and a poster with a picture and points.', 'util', 'fa-share-nodes'],
+    ['tools_telegram_promo_maker', 'Telegram Promo Maker', 'Make a Telegram message and poster with a picture, points and a link, ready for your channel.', 'util', 'fa-share-nodes'],
     ['tools_whatsapp_ultimate', 'WhatsApp Direct Message', 'Open a WhatsApp chat with any number without saving it.', 'util', 'fa-whatsapp'],
     ['tools_rgb_hex_converter', 'RGB to HEX Converter', 'Convert RGB, HEX and HSL colour codes, pick a colour and check text contrast.', 'util', 'fa-palette'],
     ['tools_stopwatch', 'Stop Watch', 'Online stop watch with laps, keyboard keys and CSV download.', 'util', 'fa-stopwatch'],
@@ -140,7 +146,7 @@
     tools_pvc_id_print: 'idprint', tools_pan_aadhaar_print: 'idprint', tools_id_card_print: 'idprint', tools_multiple_id_card_print: 'idprint', tools_admit_card_holder: 'idprint',
     tools_student_id_creator: 'idmake', tools_student_id_card: 'idmake', tools_farmer_id_maker: 'idmake',
     tools_visiting_card_maker: 'cards', tools_notebook_sticker: 'cards', tools_csc_stamp_maker: 'cards' };
-  var HIDE = { tools_photo_signature_joiner: 1, tools_photo_name_joiner: 1, tools_passport_photo_sheet: 1, tools_pdf_split: 1, tools_resume_builder: 1, 'kids-corner': 1 };
+  var HIDE = { tools_whatsapp_promo_maker: 1, tools_facebook_promo_maker: 1, tools_instagram_promo_maker: 1, tools_x_promo_maker: 1, tools_telegram_promo_maker: 1, tools_photo_signature_joiner: 1, tools_photo_name_joiner: 1, tools_passport_photo_sheet: 1, tools_pdf_split: 1, tools_resume_builder: 1, 'kids-corner': 1 };
   TOOLS.forEach(function (t) { if (NEWCAT[t.file]) t.cat = NEWCAT[t.file]; });
   var LIST = TOOLS.filter(function (t) { return !HIDE[t.file]; });
 
@@ -178,7 +184,7 @@
      ===================================================================== */
   var SITE = {
     name: 'SevaSphere',
-    url: 'https://cschelpdesk.github.io/',
+    url: 'https://csc-vle-tools-desk.github.io/SewaSphere/',
     tagline: 'Free online tools for CSC & VLE centres',
     location: 'Rohtak, Haryana, India',
     hours: 'Mon - Sat, 9:00 AM - 7:00 PM',
@@ -194,7 +200,7 @@
       youtube: '',        // https://youtube.com/@yourchannel
       x: '',              // https://x.com/yourid
       linkedin: '',       // https://linkedin.com/in/yourid
-      github: 'https://github.com/CSCHelpDesk/cschelpdesk.github.io',
+      github: 'https://github.com/CSC-VLE-TOOLS-DESK/SewaSphere',
       claude: 'https://claude.ai'   // Claude (Anthropic)
     }
   };

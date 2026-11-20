@@ -1,0 +1,8 @@
+/* v4.6 mobile: 16px fields stop iPhone/Android auto-zoom; roomy tap targets; wide previews scroll inside their box */
+@media (max-width:760px){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}
+  select{min-height:44px}
+  main button,main .btn{min-height:44px}
+  #agreementSheet,.agreement-sheet{max-width:100%;overflow-x:auto;word-break:break-word}
+  img,canvas,video{max-width:100%}
+}

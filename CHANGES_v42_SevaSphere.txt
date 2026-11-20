@@ -30,3 +30,24 @@ v4.4
 v4.5 (19 Nov 2026)
 - NEW kids-classes.html: Kids Learning for Class 2, 3, 4, 5. Subjects: Maths (random questions every time), English, Hindi, EVS, GK. Short lesson + quiz, stars, best score saved in browser, Hindi/English labels, read-aloud.
 - Linked from Kids Corner hero and home page.
+
+v4.6 (20 Nov 2026)
+- Mobile: all form fields 16px on phones (stops zoom-in on tap), 44px buttons/dropdowns, wide previews scroll inside their box. New assets/css/mobile-fix.css linked on all pages.
+
+v4.7 (20 Nov 2026)
+- Address fix: every old https://cschelpdesk.github.io link (canonical, og tags, sitemap.xml, robots.txt, README, SETUP_GUIDE, site.js, 988 places) is now https://csc-vle-tools-desk.github.io/SewaSphere/ . GitHub repo link is now CSC-VLE-TOOLS-DESK/SewaSphere. If your Settings > Pages address is different, tell Claude and it will be replaced again.
+- Kids Learning (kids-classes.html) now covers Class 1 to 5. New Class 1: Maths (random questions), English, Hindi, EVS, GK, each with lesson and quiz.
+- Every subject in every class now has Lesson 1 and Lesson 2 (buttons above the lesson).
+
+v4.8 (20 Nov 2026)
+- Kids Learning: right answer plays a happy chime and says "Well done", "Good" or "Marvellous" (Hindi: "शाबाश", "बहुत बढ़िया", "अच्छा"). Hindi is used when the Hindi button is on or in the Hindi subject. Voice needs the phone/PC speech voices (Hindi voice must be installed on the device).
+- Kids Learning: new "Lesson" button on every quiz question to go back to the lesson (progress of that round restarts).
+
+v4.9 (20 Nov 2026)
+- New tool: WhatsApp Promo Maker (tools_whatsapp_promo_maker.html, Quick Utilities). Picture on top, heading, points as bullets / numbers / dots / ticks, green link button, your name and phone. 3 ready templates (website, CSC centres, Kids Learning) in English and Hindi. Buttons: Download poster, Share poster + message, Copy message, WhatsApp, Telegram, Facebook, send to one number.
+- Full check of all 127 pages: pages load with no script errors, no broken local files, no JavaScript syntax errors.
+
+v4.10 (20 Nov 2026)
+- Quick Utilities fix: the 3 wrong "WhatsApp Promo Maker" cards (they opened RGB to HEX and Stop Watch) are removed. Now one "Promo Maker" card opens a page with 5 tools.
+- New: Facebook, Instagram, X and Telegram Promo Makers (tools_facebook_promo_maker.html, tools_instagram_promo_maker.html, tools_x_promo_maker.html, tools_telegram_promo_maker.html). WhatsApp Promo Maker now uses the same shared code (assets/js/promo-maker.js).
+- Poster size choice: Auto, Square 1:1, Portrait 4:5, Story 9:16. Instagram caption uses "Link in bio". X has a 280 letter counter and Short version.

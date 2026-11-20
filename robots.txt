@@ -4,4 +4,4 @@ Disallow: /TEMPLATE_STARTER.html
 Disallow: /upload-check.html
 Disallow: /kids-corner-standalone.html
 
-Sitemap: https://cschelpdesk.github.io/sitemap.xml
+Sitemap: https://csc-vle-tools-desk.github.io/SewaSphere/sitemap.xml

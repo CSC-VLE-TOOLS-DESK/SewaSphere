@@ -176,3 +176,12 @@ textarea{min-height:80px;resize:vertical}
 
 .hdr nav a.nav-kids{background:linear-gradient(135deg,#7c4dff,#ec4899);color:#fff;border-radius:999px;padding:6px 13px;font-weight:800;box-shadow:0 3px 10px rgba(124,77,255,.4)}
 .hdr nav a.nav-kids:hover{filter:brightness(1.1);background:linear-gradient(135deg,#7c4dff,#ec4899)}
+
+/* v4.6 mobile: 16px fields stop iPhone/Android auto-zoom; roomy tap targets; wide previews scroll inside their box */
+@media (max-width:760px){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),select,textarea{font-size:16px!important}
+  select{min-height:44px}
+  main button,main .btn{min-height:44px}
+  #agreementSheet,.agreement-sheet{max-width:100%;overflow-x:auto;word-break:break-word}
+  img,canvas,video{max-width:100%}
+}
