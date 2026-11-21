@@ -51,9 +51,9 @@
       '<div class="t-actions"><button class="btn" id="go" disabled><i class="fa-solid fa-object-group"></i> Merge PDFs</button></div></div>';
     var $ = function (s) { return root.querySelector(s); }, items = [];
     function draw() {
-      fileList($('#ls'), items, draw, function (it) { return it.pages ? ' (' + it.pages + ' pages)' : ''; });
+      fileList($('#ls'), items, draw, function (it) { return it.pages ? ' (' + it.pages + ' pages, ' + CSC.fmtBytes(it.file.size) + ')' : ''; });
       $('#go').disabled = items.length < 2;
-      $('#info').textContent = items.length ? items.length + ' file(s), ' + items.reduce(function (a, b) { return a + (b.pages || 0); }, 0) + ' pages in total.' : 'Add two or more PDF files. Use the arrows to set the order.';
+      $('#info').textContent = items.length ? items.length + ' file(s), ' + items.reduce(function (a, b) { return a + (b.pages || 0); }, 0) + ' pages, ' + CSC.fmtBytes(items.reduce(function (a, b) { return a + b.file.size; }, 0)) + ' in total before merging.' : 'Add two or more PDF files. Use the arrows to set the order.';
     }
     $('#dz').appendChild(CSC.dropzone({
       accept: 'application/pdf,.pdf', multiple: true, icon: 'fa-file-pdf', label: 'Choose PDF files or drop them here',
@@ -73,7 +73,7 @@
           var src = await loadPdf(items[i].file), pgs = await out.copyPages(src, src.getPageIndices());
           pgs.forEach(function (p) { out.addPage(p); });
         }
-        CSC.download(pdfBlob(await out.save()), 'merged.pdf'); CSC.toast('Merged PDF downloaded');
+        var mb = pdfBlob(await out.save()); CSC.download(mb, 'merged.pdf'); CSC.toast('Merged PDF downloaded'); $('#info').innerHTML = '<span class="t-stat">Final merged PDF: ' + CSC.fmtBytes(mb.size) + '</span> <span class="t-stat">' + out.getPageCount() + ' pages</span> <span class="t-stat">Files added: ' + CSC.fmtBytes(items.reduce(function (a, b) { return a + b.file.size; }, 0)) + '</span>';
       } catch (e) { CSC.toast(e.message, true); }
       btn.disabled = items.length < 2;
     };

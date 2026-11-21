@@ -60,3 +60,10 @@ v4.11 (21 Nov 2026)
   * "Check these uncertain words": small picture of each unsure word with a box to type the right word; the text is updated.
   * Cursive helper: save a clear picture and copy a ready instruction for a free AI app (Gemini, ChatGPT, Claude), then paste the text back.
   * Word, PDF and Notepad saving is unchanged.
+
+v4.12 (21 Nov 2026) - fixes from your test report
+- Signature, Photo and Thumb Resizer: new Rotate left / Rotate right buttons under the crop picture.
+- PDF Merge: shows each file size in the list and the total before merging; after merging it shows the final merged size and page count.
+- PAN & Aadhaar Print: Gap slider (0 to 60 mm, default 12 mm) between front and back; Remove shadow; Brightness and Contrast sliders; Reset light button.
+- Resume Builder (Haryana): on a wide screen (1100 px or more) the form stays on the left and the final resume preview shows on the right. Press Update preview after changing details.
+- Not changed yet (need details): Passport Photo Sheet refinement, Background Remover.

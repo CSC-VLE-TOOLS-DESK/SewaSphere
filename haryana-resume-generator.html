@@ -49,6 +49,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pr);border-color
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;color:#fff;padding:10px 16px;border-radius:8px;z-index:99;max-width:90%;display:none;font-size:.9rem;text-align:center}
 @page{size:A4;margin:12mm}
 @media print{#toast{display:none!important}body{background:#fff}header,#form,.noprint{display:none!important}main{padding:0}.paper{border:0;padding:0;outline:none}}
+#upd{display:none}@media(min-width:1100px){body.sbs main{max-width:1560px;display:grid;grid-template-columns:minmax(360px,.85fr) minmax(0,1.15fr);gap:16px;align-items:start}body.sbs #form{max-height:calc(100vh - 20px);overflow:auto;position:sticky;top:8px}body.sbs #out{position:sticky;top:8px;max-height:calc(100vh - 20px);overflow:auto}body.sbs #upd{display:inline-block}}
 .page-head{text-align:center}.page-head .crumbs{text-align:center}.tool-bar{display:flex;justify-content:center;text-align:center}.tool-bar .lg{display:flex;justify-content:center;flex-wrap:wrap;gap:6px}.tool-bar .lg button{margin:0}
 </style>
 <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
@@ -97,7 +98,7 @@ main{max-width:900px}
 <div class="card noprint"><div class="row"><button class="btn" id="pdf" data-i="📄 Save as PDF|📄 PDF सेव करें"></button><button class="btn s" onclick="doPrint()" data-i="🖨 Print|🖨 प्रिंट"></button>
 <select id="lay" style="width:auto"></select><select id="ac" style="width:auto"></select><select id="ls" style="width:auto"></select><select id="ff" style="width:auto"></select>
 <select id="fs" style="width:auto"><option value="12" data-i="Small (12)|छोटा (12)"></option><option value="14" selected data-i="Normal (14)|सामान्य (14)"></option><option value="16" data-i="Large (16)|बड़ा (16)"></option></select></div>
-<div class="row" style="margin-top:8px"><button class="btn s" id="addi" onmousedown="event.preventDefault()" data-i="➕ Add item|➕ पंक्ति जोड़ें"></button><button class="btn s" id="deli" onmousedown="event.preventDefault()" data-i="➖ Delete item|➖ पंक्ति हटाएँ"></button><button class="btn s" id="back" data-i="← Edit details|← विवरण बदलें"></button></div>
+<div class="row" style="margin-top:8px"><button class="btn s" id="addi" onmousedown="event.preventDefault()" data-i="➕ Add item|➕ पंक्ति जोड़ें"></button><button class="btn s" id="deli" onmousedown="event.preventDefault()" data-i="➖ Delete item|➖ पंक्ति हटाएँ"></button><button class="btn" id="upd" data-i="🔄 Update preview|🔄 प्रीव्यू अपडेट करें"></button><button class="btn s" id="back" data-i="← Edit details|← विवरण बदलें"></button></div>
 <div class="hintbar" id="fnh" style="margin-top:8px"></div></div>
 <p class="noprint hintbar" data-i="✏ Click on any text in the resume to edit it before printing.|✏ प्रिंट से पहले रिज्यूमे में किसी भी लिखावट पर क्लिक करके बदलें।"></p>
 <div class="paper" id="paper" contenteditable="true" spellcheck="false"></div></div>
@@ -210,7 +211,7 @@ function gen(){normAll();$("e_all").textContent="";$("e_decl").textContent="";va
  pers:[["Father / Husband Name|पिता / पति का नाम",$("father").value.trim()],["Date of Birth|जन्मतिथि",new Date($("dob").value).toLocaleDateString("en-GB")],["Gender|लिंग",sel("gender")],["Marital Status|वैवाहिक स्थिति",sel("marital")],["Nationality|राष्ट्रीयता",$("nat").value.trim()],["Category|श्रेणी",sel("cat")]]};
  ["lay","ac","fs","ls","ff"].forEach(function(i){$(i).selectedIndex=$(i+"0")?$(i+"0").selectedIndex:0});
  pl=$("lay").selectedIndex;apply();draw();edited=false;
- $("form").style.display="none";$("out").style.display="block";scrollTo(0,0)}
+ $("out").style.display="block";if(innerWidth>=1100){document.body.classList.add("sbs")}else{$("form").style.display="none";scrollTo(0,0)}}
 function sc(t,b){return b?'<div class="sc"><h4>'+L(t)+"</h4>"+b+"</div>":""}
 function ul(a){return a.length?'<ul class="cl">'+a.map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul>":""}
 function ent(r){return'<div class="ent"><span class="dt">'+esc(r[3])+"</span><b>"+esc(r[0])+"</b> – "+esc(r[1])+(r[2]?"<br>"+esc(r[2]):"")+(r[4]?" | "+esc(r[4]):"")+"</div>"}
@@ -249,7 +250,8 @@ $("f").addEventListener("click",function(e){var t=e.target;if(t.id=="addE"){if(d
  if(t.id=="rst"){D=null;PHOTO="";build()}});
 $("f").addEventListener("change",function(e){if(e.target.id=="photo"){var f=e.target.files[0];if(!f)return;if(f.size>3e6){note(L("Photo must be under 3 MB|फोटो 3 MB से छोटी हो"));e.target.value="";PHOTO="";return}var r=new FileReader();r.onload=function(){PHOTO=r.result};r.readAsDataURL(f)}});
 document.querySelector(".lg").addEventListener("click",function(e){var l=e.target.dataset.l;if(l){lang=l;apply();if(D&&$("out").style.display=="block"&&!edited)draw()}});
-$("back").onclick=function(){$("out").style.display="none";$("form").style.display="block"};
+$("back").onclick=function(){$("out").style.display="none";$("form").style.display="block";document.body.classList.remove("sbs")};
+$("upd").onclick=function(){if(edited&&!ok(L("Updating the preview discards your manual edits. Continue?|प्रीव्यू अपडेट करने से हाथ से किए बदलाव हट जाएँगे। जारी रखें?")))return;gen()};
 $("lay").onchange=function(){if(edited&&!ok(L("Changing layout discards manual edits. Continue?|लेआउट बदलने से आपके हाथ से किए बदलाव हट जाएँगे। जारी रखें?"))){this.selectedIndex=pl;return}pl=this.selectedIndex;edited=false;draw()};
 $("ac").onchange=function(){$("paper").style.setProperty("--ac",this.value)};
 $("fs").onchange=function(){$("paper").style.fontSize=this.value+"px"};

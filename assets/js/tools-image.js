@@ -130,9 +130,19 @@
         frameHtml + signHtml + bgfixHtml +
         '<p class="hint">Drag the corner or side handles to size the crop box, or drag inside it to move it. The box keeps the shape of the size you choose. Always check the size rules on your own form.</p>' +
         '<div class="t-actions"><button class="btn" id="go"><i class="fa-solid fa-gear"></i> Crop &amp; Resize</button></div></div></div>' +
-        '<div class="card" id="cropCard"><h3 class="pane-t">1. Crop</h3><div id="cropHost" style="text-align:center"><p class="hint">Choose a photo to start.</p></div></div>' +
+        '<div class="card" id="cropCard"><h3 class="pane-t">1. Crop</h3><div id="cropHost" style="text-align:center"><p class="hint">Choose a photo to start.</p></div><div class="t-actions" id="rotRow" style="display:none;justify-content:center"><button class="btn alt" id="rotL" type="button"><i class="fa-solid fa-rotate-left"></i> Rotate left</button><button class="btn alt" id="rotR" type="button"><i class="fa-solid fa-rotate-right"></i> Rotate right</button></div></div>' +
         '<div class="card" id="outCard"><h3 class="pane-t">2. Result</h3><div id="stats"></div><div class="t-preview" id="pv" style="margin-top:10px"><p class="hint">Your resized picture will show here, next to the crop.</p></div><div class="t-actions"><button class="btn" id="dl" disabled><i class="fa-solid fa-download"></i> Download</button></div></div></div>';
-      var $ = function (s) { return root.querySelector(s); }, cr = null, out = null, srcName = 'image', cur = null;
+      var $ = function (s) { return root.querySelector(s); }, cr = null, out = null, srcName = 'image', cur = null, srcImg = null;
+      function mountCrop() {
+        var host = $('#cropHost'); host.innerHTML = ''; var w = parseFloat($('#w').value), hh = parseFloat($('#hh').value);
+        cr = CSC.cropper(srcImg, { aspect: w > 0 && hh > 0 ? w / hh : 0, maxWidth: 420 }); host.appendChild(cr.el); $('#rotRow').style.display = 'flex';
+      }
+      function rotateSrc(deg) {
+        if (!srcImg) return; var w = srcImg.naturalWidth, h = srcImg.naturalHeight, c = document.createElement('canvas'); c.width = h; c.height = w;
+        var x = c.getContext('2d'); x.translate(c.width / 2, c.height / 2); x.rotate(deg * Math.PI / 180); x.drawImage(srcImg, -w / 2, -h / 2); c.naturalWidth = c.width; c.naturalHeight = c.height; srcImg = c;
+        out = null; $('#dl').disabled = true; $('#stats').innerHTML = ''; $('#pv').innerHTML = '<p class="hint">Press Crop &amp; Resize. The result will show here, next to the crop.</p>'; mountCrop();
+      }
+      $('#rotL').onclick = function () { rotateSrc(-90); }; $('#rotR').onclick = function () { rotateSrc(90); };
       function dims() {
         var w = parseFloat($('#w').value), hh = parseFloat($('#hh').value), u = $('#u').value, dpi = parseFloat($('#dpi').value) || 300;
         var f = u === 'px' ? 1 : u === 'mm' ? dpi / 25.4 : u === 'cm' ? dpi / 2.54 : dpi;
@@ -160,9 +170,7 @@
             var img = await CSC.fileToImage(f[0]); srcName = f[0].name.replace(/\.[^.]+$/, '');
             $('#opts').style.display = ''; out = null; $('#dl').disabled = true; $('#stats').innerHTML = '';
             $('#pv').innerHTML = '<p class="hint">Press Crop &amp; Resize. The result will show here, next to the crop.</p>';
-            var host = $('#cropHost'); host.innerHTML = '';
-            var w = parseFloat($('#w').value), hh = parseFloat($('#hh').value);
-            cr = CSC.cropper(img, { aspect: w > 0 && hh > 0 ? w / hh : 0, maxWidth: 420 }); host.appendChild(cr.el);
+            srcImg = img; mountCrop();
           } catch (e) { CSC.toast(e.message, true); }
         }
       }));

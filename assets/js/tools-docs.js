@@ -329,6 +329,10 @@
     root.innerHTML = '<div class="t-grid"><div class="card no-print"><div class="field"><label>Front side image</label><div id="d1"></div></div><div class="field"><label>Back side image (optional)</label><div id="d2"></div></div>' +
       '<div class="field"><label for="sz">Card size</label><select id="sz"><option value="85.6x54">Standard card 85.6 × 54 mm (PAN, ATM, PVC)</option><option value="90x58">Aadhaar print 90 × 58 mm</option><option value="100x65">Large 100 × 65 mm</option></select></div>' +
       '<div class="field"><label for="lay">Layout</label><select id="lay"><option value="side">Front and back side by side</option><option value="stack">Front above back</option></select></div><div class="field"><label for="bd">Border</label><select id="bd"><option value="1">Thin cut line</option><option value="0">No border</option></select></div>' +
+      '<div class="field"><label for="gp">Gap between front and back: <span id="gpv">12</span> mm</label><input type="range" id="gp" min="0" max="60" value="12"></div>' +
+      '<div class="field"><label><input type="checkbox" id="ns"> Remove shadow (even out the light)</label></div>' +
+      '<div class="row2"><div class="field"><label for="br">Brightness: <span id="brv">0</span></label><input type="range" id="br" min="-60" max="60" value="0"></div><div class="field"><label for="ct">Contrast: <span id="ctv">0</span></label><input type="range" id="ct" min="-60" max="60" value="0"></div></div>' +
+      '<div class="t-actions"><button class="btn alt" id="fxr" type="button">Reset light</button></div>' +
       '<div class="t-actions"><button class="btn" id="pr"><i class="fa-solid fa-print"></i> Print on A4</button><button class="btn alt" id="pdf">Download PDF</button></div><p class="hint">Upload an image, drag the 4 pins to the card corners and press Set. Cards print at exact size. Set the printer scale to 100% (Actual size).</p></div><div class="card"><div class="adj-wrap no-print" id="adj"></div><div class="t-preview" id="pv"></div></div></div>';
     var $ = function (s) { return root.querySelector(s); };
     var raws = [null, null], adj = [null, null];
@@ -402,14 +406,34 @@
         showPanes(); build();
       } catch (e) { CSC.toast(e.message, true); }
     } })); });
-    var page = null;
+    /* Remove shadow (divide by the blurred light), then brightness and contrast */
+    function fx(im, cw, ch) {
+      var ns = $('#ns').checked, b = +$('#br').value, k = +$('#ct').value; if (!ns && !b && !k) return im;
+      var c = document.createElement('canvas'); c.width = cw; c.height = ch; var x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, cw, ch);
+      var id = x.getImageData(0, 0, cw, ch), d = id.data, n = cw * ch, i, j;
+      if (ns) {
+        var L = new Float32Array(n); for (i = 0, j = 0; j < n; i += 4, j++) L[j] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+        var S = cw + 1, I = new Float64Array(S * (ch + 1)), y, xx; for (y = 1; y <= ch; y++) { var rs = 0; for (xx = 1; xx <= cw; xx++) { rs += L[(y - 1) * cw + xx - 1]; I[y * S + xx] = I[(y - 1) * S + xx] + rs; } }
+        var R = Math.max(20, Math.round(Math.min(cw, ch) / 6)), tot = 0;
+        var M = new Float32Array(n); for (y = 0; y < ch; y++) { var y0 = Math.max(0, y - R), y1 = Math.min(ch - 1, y + R) + 1; for (xx = 0; xx < cw; xx++) { var x0 = Math.max(0, xx - R), x1 = Math.min(cw - 1, xx + R) + 1, m = (I[y1 * S + x1] - I[y0 * S + x1] - I[y1 * S + x0] + I[y0 * S + x0]) / ((x1 - x0) * (y1 - y0)); M[y * cw + xx] = m; tot += m; } }
+        var T = tot / n;
+        for (j = 0, i = 0; j < n; j++, i += 4) { var f = Math.min(1.6, Math.max(0.8, T / Math.max(40, M[j]))); d[i] = Math.min(255, d[i] * f); d[i + 1] = Math.min(255, d[i + 1] * f); d[i + 2] = Math.min(255, d[i + 2] * f); }
+      }
+      var cf = (259 * (k + 255)) / (255 * (259 - k));
+      if (b || k) for (i = 0; i < d.length; i += 4) { for (var t = 0; t < 3; t++) { var v = cf * (d[i + t] + b * 1.5 - 128) + 128; d[i + t] = v < 0 ? 0 : v > 255 ? 255 : v; } }
+      x.putImageData(id, 0, 0); return c;
+    }
+    var page = null, fxT = 0;
     function build() {
       if (!imgs[0] && !imgs[1]) { page = null; $('#pv').innerHTML = pv0; return; } var d = 300, W = Math.round(210 / 25.4 * d), H = Math.round(297 / 25.4 * d), s = $('#sz').value.split('x'), cw = Math.round(+s[0] / 25.4 * d), ch = Math.round(+s[1] / 25.4 * d);
       var c = document.createElement('canvas'); c.width = W; c.height = H; var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
-      var side = $('#lay').value === 'side', list = imgs.filter(Boolean), g = Math.round(8 / 25.4 * d), tw = side ? list.length * cw + (list.length - 1) * g : cw, th = side ? ch : list.length * ch + (list.length - 1) * g, ox = Math.round((W - tw) / 2), oy = Math.round(20 / 25.4 * d);
+      var side = $('#lay').value === 'side', list = imgs.filter(Boolean).map(function (im) { return fx(im, cw, ch); }), g = Math.round((+$('#gp').value || 0) / 25.4 * d), tw = side ? list.length * cw + (list.length - 1) * g : cw, th = side ? ch : list.length * ch + (list.length - 1) * g, ox = Math.round((W - tw) / 2), oy = Math.round(20 / 25.4 * d);
       list.forEach(function (im, i) { var px = side ? ox + i * (cw + g) : ox, py = side ? oy : oy + i * (ch + g); x.drawImage(im, px, py, cw, ch); if ($('#bd').value === '1') { x.strokeStyle = '#999'; x.lineWidth = 2; x.setLineDash([10, 8]); x.strokeRect(px, py, cw, ch); x.setLineDash([]); } });
       page = c; c.style.maxWidth = '100%'; $('#pv').innerHTML = ''; $('#pv').appendChild(c);
     }
+    ['gp', 'br', 'ct'].forEach(function (i) { $('#' + i).oninput = function () { $('#' + i + 'v').textContent = this.value; clearTimeout(fxT); fxT = setTimeout(build, 120); }; });
+    $('#ns').onchange = function () { build(); };
+    $('#fxr').onclick = function () { $('#ns').checked = false; ['br', 'ct'].forEach(function (i) { $('#' + i).value = 0; $('#' + i + 'v').textContent = 0; }); build(); };
     ['sz', 'lay', 'bd'].forEach(function (i) { $('#' + i).onchange = function () { if (i === 'sz') adj.forEach(function (a) { if (a) a.reapply(); }); build(); }; });
     $('#pr').onclick = function () { if (!page) return CSC.toast('Choose an image first', true); CSC.printHTML('<img src="' + page.toDataURL('image/jpeg', 0.95) + '" style="width:210mm;height:297mm;display:block">'); };
     $('#pdf').onclick = async function () {
