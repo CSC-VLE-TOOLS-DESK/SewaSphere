@@ -41,7 +41,7 @@
     ['tools_name_date_photo', 'Name & Date on Photo', 'Add the candidate name and date strip below a photo for job forms.', 'photo', 'fa-calendar-day'],
     ['tools_photo_sign_joiner', 'Photo & Signature Joiner', 'Join photo and signature into a single image with adjustable border.', 'photo', 'fa-object-group'],
     ['tools_image_text_extractor', 'Image Text Extractor (OCR)', 'Read text from an image in English or Hindi and copy it.', 'photo', 'fa-font'],
-    ['tools_handwriting_converter', 'Handwriting to Word, PDF & Text', 'Upload photos of handwritten pages and save them as Word, PDF or a Notepad text file. English and Hindi.', 'docs', 'fa-pen-fancy'],
+    ['tools_handwriting_converter', 'Handwriting to Text: Advanced OCR & Cursive Helper', 'Read handwriting from photos with crop, straighten and word check. Save Word, PDF or text. English and Hindi.', 'docs', 'fa-pen-fancy'],
     ['web-search', 'Web Search', 'Search Google, Bing, YouTube or Maps, or open any website. Results open in a new tab.', 'util', 'fa-magnifying-glass'],
     ['tools_whatsapp_image_print', 'WhatsApp Image Print', 'Enhance and print many images on A4 pages in a grid.', 'photo', 'fa-print'],
     // ID cards and print

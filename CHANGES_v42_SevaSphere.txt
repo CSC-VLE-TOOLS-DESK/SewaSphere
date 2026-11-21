@@ -51,3 +51,12 @@ v4.10 (20 Nov 2026)
 - Quick Utilities fix: the 3 wrong "WhatsApp Promo Maker" cards (they opened RGB to HEX and Stop Watch) are removed. Now one "Promo Maker" card opens a page with 5 tools.
 - New: Facebook, Instagram, X and Telegram Promo Makers (tools_facebook_promo_maker.html, tools_instagram_promo_maker.html, tools_x_promo_maker.html, tools_telegram_promo_maker.html). WhatsApp Promo Maker now uses the same shared code (assets/js/promo-maker.js).
 - Poster size choice: Auto, Square 1:1, Portrait 4:5, Story 9:16. Instagram caption uses "Link in bio". X has a 280 letter counter and Short version.
+
+v4.11 (21 Nov 2026)
+- Handwriting to Text: Advanced OCR & Cursive Helper (tools_handwriting_converter.html), upgraded from Handwriting to Word, PDF & Text:
+  * Crop (drag on the page picture), turn left or right, remove a page, page tabs.
+  * Writing type: neat handwriting, printed, faint pencil, cursive (try).
+  * Better cleaning (contrast stretch for pencil) and straighten tilted lines.
+  * "Check these uncertain words": small picture of each unsure word with a box to type the right word; the text is updated.
+  * Cursive helper: save a clear picture and copy a ready instruction for a free AI app (Gemini, ChatGPT, Claude), then paste the text back.
+  * Word, PDF and Notepad saving is unchanged.
